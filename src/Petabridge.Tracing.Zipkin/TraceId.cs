@@ -1,13 +1,21 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="TraceId.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 
 namespace Petabridge.Tracing.Zipkin
 {
     /// <summary>
-    /// The ID of this trace, with support for both 128bit and 64bit trace ids.S
+    ///     The ID of this trace, with support for both 128bit and 64bit trace ids.S
     /// </summary>
     public struct TraceId : IEquatable<TraceId>
     {
-        public TraceId(long traceIdLow) : this(0, traceIdLow) { }
+        public TraceId(long traceIdLow) : this(0, traceIdLow)
+        {
+        }
 
         public TraceId(long traceIdHigh, long traceIdLow)
         {

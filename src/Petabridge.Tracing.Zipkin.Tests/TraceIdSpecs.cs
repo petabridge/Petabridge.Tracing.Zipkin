@@ -1,7 +1,11 @@
-using System;
+// -----------------------------------------------------------------------
+// <copyright file="TraceIdSpecs.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
 using FsCheck;
 using FsCheck.Xunit;
-using Xunit;
 
 namespace Petabridge.Tracing.Zipkin.Tests
 {
