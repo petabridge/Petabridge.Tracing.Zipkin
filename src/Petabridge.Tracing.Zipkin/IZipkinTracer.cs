@@ -14,6 +14,11 @@ namespace Petabridge.Tracing.Zipkin
     public interface IZipkinTracer : ITracer
     {
         /// <summary>
+        /// The service endpoint that this <see cref="ITracer"/> is currently running on.
+        /// </summary>
+        Endpoint Endpoint { get; }
+
+        /// <summary>
         ///     The clock used by this <see cref="IZipkinTracer" />.
         /// </summary>
         ITimeProvider TimeProvider { get; }

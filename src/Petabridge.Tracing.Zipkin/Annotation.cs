@@ -8,19 +8,20 @@ using System;
 
 namespace Petabridge.Tracing.Zipkin
 {
+    /// <inheritdoc />
     /// <summary>
-    ///     Metadata that will be subsequently included in the Zipkin readout for a given <see cref="Span" />.
+    /// A standard string-based annotation.
     /// </summary>
     public struct Annotation
     {
-        public Annotation(string value, DateTimeOffset timeStamp)
+        public Annotation(DateTimeOffset timestamp, string value)
         {
+            Timestamp = timestamp;
             Value = value;
-            TimeStamp = timeStamp;
         }
 
-        public string Value { get; }
+        public DateTimeOffset Timestamp { get; }
 
-        public DateTimeOffset TimeStamp { get; }
+        public string Value { get; }
     }
 }

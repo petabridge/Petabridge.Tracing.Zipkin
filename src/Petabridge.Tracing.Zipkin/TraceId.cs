@@ -5,6 +5,8 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Globalization;
+using Petabridge.Tracing.Zipkin.Util;
 
 namespace Petabridge.Tracing.Zipkin
 {
@@ -55,6 +57,11 @@ namespace Petabridge.Tracing.Zipkin
         public static bool operator !=(TraceId left, TraceId right)
         {
             return !left.Equals(right);
+        }
+
+        public override string ToString()
+        {
+            return this.TraceIdToStringConcat();
         }
     }
 }
