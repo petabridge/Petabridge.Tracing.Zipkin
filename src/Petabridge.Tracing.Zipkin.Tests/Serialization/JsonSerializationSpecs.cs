@@ -5,10 +5,8 @@
 // -----------------------------------------------------------------------
 
 using System;
-using System.IO;
 using System.Text;
 using FluentAssertions;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Petabridge.Tracing.Zipkin.Reporting;
 using Petabridge.Tracing.Zipkin.Tracers;
@@ -19,19 +17,21 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
 {
     public class JsonSerializationSpec : SerializationSpecBase
     {
-        protected readonly MockZipkinTracer Tracer;
-
         public JsonSerializationSpec()
         {
             Tracer = new MockZipkinTracer(new Endpoint("actorsystem", "127.0.0.1", 8008));
         }
+
+        protected readonly MockZipkinTracer Tracer;
 
         public static void Assert(byte[] actual, byte[] expected)
         {
             var actualStr = Encoding.UTF8.GetString(actual);
             var expectedStr = Encoding.UTF8.GetString(expected);
             var actualObj = JArray.Parse(actualStr).Children<JObject>();
-            var expectedObj = JArray.Parse(expectedStr, new JsonLoadSettings(){ LineInfoHandling = LineInfoHandling.Ignore}).Children<JObject>();
+            var expectedObj = JArray
+                .Parse(expectedStr, new JsonLoadSettings {LineInfoHandling = LineInfoHandling.Ignore})
+                .Children<JObject>();
             var enum1 = actualObj.GetEnumerator();
             var enum2 = expectedObj.GetEnumerator();
             try
@@ -42,14 +42,11 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
                     var a2 = enum2.Current;
                     a1[JsonSpanSerializer.TraceId].Equals(a2[JsonSpanSerializer.TraceId]).Should().BeTrue();
                     if (a1.ContainsKey(Kind) && a2.ContainsKey(Kind))
-                    {
                         a1[Kind].Equals(a2[Kind]).Should().BeTrue();
-                    }
-                    else if((a1.ContainsKey(Kind) && !a2.ContainsKey(Kind)) || (!a1.ContainsKey(Kind) && a2.ContainsKey(Kind)))
-                    {
+                    else if (a1.ContainsKey(Kind) && !a2.ContainsKey(Kind) ||
+                             !a1.ContainsKey(Kind) && a2.ContainsKey(Kind))
                         throw new Exception("SpanKind should be defined on both actual and expected or on neither.");
-                    }
-                   
+
                     a1[SpanId].Equals(a2[SpanId]).Should().BeTrue();
                     a1[Timestamp].Equals(a2[Timestamp]).Should().BeTrue();
                     a1[Duration].Equals(a2[Duration]).Should().BeTrue();
@@ -60,8 +57,6 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
                 enum1.Dispose();
                 enum2.Dispose();
             }
-
-            
         }
 
         [Fact]
@@ -107,13 +102,15 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
             var endTime = startTime.AddMilliseconds(10);
             var expectedBytes = Encoding.UTF8.GetBytes(json);
 
-            var span = new Span(Tracer, "op1", new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), -7118946577185884628), startTime, SpanKind.CLIENT)
-                .SetDebug(true).SetRemoteEndpoint(new Endpoint("actorsystem", "127.0.0.1", 8009)).SetTag("foo1", "bar").SetTag("numberOfPets", 2)
+            var span = new Span(Tracer, "op1",
+                    new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), -7118946577185884628, null, true),
+                    startTime, SpanKind.CLIENT)
+                .SetRemoteEndpoint(new Endpoint("actorsystem", "127.0.0.1", 8009)).SetTag("foo1", "bar")
+                .SetTag("numberOfPets", 2)
                 .SetTag("timeInChair", "long").Log(startTime.AddMilliseconds(1), "foo");
             span.Finish(endTime);
 
-            VerifySerialization(new JsonSpanSerializer(), expectedBytes, (Span)span, Assert);
-
+            VerifySerialization(new JsonSpanSerializer(), expectedBytes, (Span) span, Assert);
         }
     }
 }

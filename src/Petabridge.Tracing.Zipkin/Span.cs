@@ -100,12 +100,17 @@ namespace Petabridge.Tracing.Zipkin
         /// <summary>
         ///     Indicates if the <see cref="Span" /> is being used to during debugging.
         /// </summary>
-        public bool Debug { get; private set; }
+        public bool Debug => TypedContext.Debug;
 
         /// <summary>
-        ///     Indicates if the current <see cref="Span" /> is shared among many
+        ///     Indicates if the current <see cref="Span" /> is shared among many other traces.
         /// </summary>
-        public bool Shared { get; private set; }
+        public bool Shared => TypedContext.Shared;
+
+        /// <summary>
+        /// Indicates if the current <see cref="Span"/> is part of sampling.
+        /// </summary>
+        public bool Sampled => TypedContext.Sampled;
 
         /// <summary>
         ///     The local <see cref="Endpoint" />
@@ -199,28 +204,6 @@ namespace Petabridge.Tracing.Zipkin
         ///     For OpenTracing compatibility.
         /// </summary>
         public ISpanContext Context => TypedContext;
-
-        /// <summary>
-        ///     Toggles the <see cref="Shared" /> setting to be equal to whatever the parameter value is.
-        /// </summary>
-        /// <param name="shared">The new value of the Shared flag.</param>
-        /// <returns>This <see cref="Span" />.</returns>
-        public Span SetShared(bool shared)
-        {
-            Shared = shared;
-            return this;
-        }
-
-        /// <summary>
-        ///     Toggles the <see cref="Debug" /> setting to be equal to whatever the parameter value is.
-        /// </summary>
-        /// <param name="debug">The new value of the Debug flag.</param>
-        /// <returns>This <see cref="Span" />.</returns>
-        public Span SetDebug(bool debug)
-        {
-            Debug = debug;
-            return this;
-        }
 
         /// <summary>
         ///     Sets the <see cref="RemoteEndpoint" /> for this span.

@@ -40,9 +40,14 @@ namespace Petabridge.Tracing.Zipkin.Tracers
             CollectedSpans.Enqueue(span);
         }
 
-        public ISpanBuilder BuildSpan(string operationName)
+        public IZipkinSpanBuilder BuildSpan(string operationName)
         {
             return new SpanBuilder(this, operationName);
+        }
+
+        ISpanBuilder ITracer.BuildSpan(string operationName)
+        {
+            return BuildSpan(operationName);
         }
 
         public void Inject<TCarrier>(ISpanContext spanContext, IFormat<TCarrier> format, TCarrier carrier)

@@ -33,5 +33,12 @@ namespace Petabridge.Tracing.Zipkin
         /// </summary>
         /// <param name="span">A completed span.</param>
         void Report(Span span);
+
+        /// <summary>
+        /// Used to build <see cref="Span"/> instances.
+        /// </summary>
+        /// <param name="operationName">The name of the operation we are tracing.</param>
+        /// <returns>A new <see cref="IZipkinSpanBuilder"/> instance.</returns>
+        new IZipkinSpanBuilder BuildSpan(string operationName);
     }
 }
