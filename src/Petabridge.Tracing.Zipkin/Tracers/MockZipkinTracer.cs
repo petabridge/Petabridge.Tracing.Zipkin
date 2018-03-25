@@ -56,8 +56,12 @@ namespace Petabridge.Tracing.Zipkin.Tracers
 
         public void Inject<TCarrier>(ISpanContext spanContext, IFormat<TCarrier> format, TCarrier carrier)
         {
-            if ((format == BuiltinFormats.TextMap || format == BuiltinFormats.TextMap) && carrier is ITextMap textMap)
+            if ((format == BuiltinFormats.TextMap || format == BuiltinFormats.HttpHeaders) &&
+                carrier is ITextMap textMap)
+            {
                 _propagator.Inject((SpanContext) spanContext, textMap);
+                return;
+            }
 
             throw new ZipkinFormatException(
                 $"Unrecognized carrier format [{format}]. Only ITextMap is supported by this driver.");
@@ -65,7 +69,8 @@ namespace Petabridge.Tracing.Zipkin.Tracers
 
         public ISpanContext Extract<TCarrier>(IFormat<TCarrier> format, TCarrier carrier)
         {
-            if ((format == BuiltinFormats.TextMap || format == BuiltinFormats.TextMap) && carrier is ITextMap textMap)
+            if ((format == BuiltinFormats.TextMap || format == BuiltinFormats.HttpHeaders) &&
+                carrier is ITextMap textMap)
                 return _propagator.Extract(textMap);
 
             throw new ZipkinFormatException(

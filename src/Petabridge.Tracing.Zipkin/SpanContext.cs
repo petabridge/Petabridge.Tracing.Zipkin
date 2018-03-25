@@ -62,7 +62,7 @@ namespace Petabridge.Tracing.Zipkin
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return TraceId.Equals(other.TraceId) && SpanId == other.SpanId;
+            return TraceId.Equals(other.TraceId) && SpanId == other.SpanId && ParentId == other.ParentId;
         }
 
         public IEnumerable<KeyValuePair<string, string>> GetBaggageItems()
@@ -81,7 +81,10 @@ namespace Petabridge.Tracing.Zipkin
         {
             unchecked
             {
-                return (TraceId.GetHashCode() * 397) ^ SpanId.GetHashCode();
+                var hashCode = TraceId.GetHashCode();
+                hashCode = (hashCode * 397) ^ SpanId.GetHashCode();
+                hashCode = (hashCode * 397) ^ ParentId.GetHashCode();
+                return hashCode;
             }
         }
 
