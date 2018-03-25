@@ -15,20 +15,11 @@ namespace Petabridge.Tracing.Zipkin
     /// </summary>
     public sealed class SpanContext : ISpanContext, IEquatable<SpanContext>
     {
-        public SpanContext(long traceLowId, long spanId, long? parentId = null, bool? isSampled = null,
-            bool debug = false)
-            : this(new TraceId(traceLowId), spanId, parentId, isSampled, debug)
-        {
-        }
-
-        public SpanContext(TraceId traceId, long spanId, long? parentId = null, bool? isSampled = null,
-            bool debug = false)
+        public SpanContext(TraceId traceId, long spanId, long? parentId = null)
         {
             TraceId = traceId;
             SpanId = spanId;
             ParentId = parentId;
-            Sampled = isSampled;
-            Debug = debug;
         }
 
         /// <summary>
@@ -47,16 +38,6 @@ namespace Petabridge.Tracing.Zipkin
         ///     Optional. Identify of the parent span if there is one.
         /// </summary>
         public long? ParentId { get; }
-
-        /// <summary>
-        ///     Optional. Indicates if this span is from a tracer that is currently using sampling.
-        /// </summary>
-        public bool? Sampled { get; }
-
-        /// <summary>
-        ///     Flag to indicate if we're in debug mode or not.
-        /// </summary>
-        public bool Debug { get; }
 
         public bool Equals(SpanContext other)
         {

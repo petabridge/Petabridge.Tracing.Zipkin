@@ -45,13 +45,15 @@ namespace Petabridge.Tracing.Zipkin
         private List<Annotation> _annotations;
         private Dictionary<string, string> _tags;
 
-        public Span(IZipkinTracer tracer, string operationName, SpanContext context, SpanKind? kind = null)
+        public Span(IZipkinTracer tracer, string operationName, SpanContext context, DateTimeOffset started,
+            SpanKind? kind = null, Endpoint localEndpoint = null)
         {
             _tracer = tracer;
             OperationName = operationName;
             TypedContext = context;
-            Started = tracer.TimeProvider.Now;
+            Started = started;
             SpanKind = kind;
+            LocalEndpoint = localEndpoint ?? _tracer.LocalEndpoint;
         }
 
         /// <summary>
@@ -108,7 +110,7 @@ namespace Petabridge.Tracing.Zipkin
         /// <summary>
         ///     The local <see cref="Endpoint" />
         /// </summary>
-        public Endpoint LocalEndpoint => _tracer.LocalEndpoint;
+        public Endpoint LocalEndpoint { get; }
 
         /// <summary>
         ///     The remote <see cref="Endpoint" />. Has to be set by the <see cref="ISpanBuilder" /> or the <see cref="ISpan" />.
@@ -203,7 +205,7 @@ namespace Petabridge.Tracing.Zipkin
         /// </summary>
         /// <param name="shared">The new value of the Shared flag.</param>
         /// <returns>This <see cref="Span" />.</returns>
-        public ISpan SetShared(bool shared)
+        public Span SetShared(bool shared)
         {
             Shared = shared;
             return this;
@@ -214,7 +216,7 @@ namespace Petabridge.Tracing.Zipkin
         /// </summary>
         /// <param name="debug">The new value of the Debug flag.</param>
         /// <returns>This <see cref="Span" />.</returns>
-        public ISpan SetDebug(bool debug)
+        public Span SetDebug(bool debug)
         {
             Debug = debug;
             return this;
@@ -225,13 +227,13 @@ namespace Petabridge.Tracing.Zipkin
         /// </summary>
         /// <param name="remoteEndpoint">The remote endpoint.</param>
         /// <returns>This <see cref="Span" />.</returns>
-        public ISpan SetRemoteEndpoint(Endpoint remoteEndpoint)
+        public Span SetRemoteEndpoint(Endpoint remoteEndpoint)
         {
             RemoteEndpoint = remoteEndpoint;
             return this;
         }
 
-        public ISpan SetSpanKind(SpanKind kind)
+        public Span SetSpanKind(SpanKind kind)
         {
             SpanKind = kind;
             return this;

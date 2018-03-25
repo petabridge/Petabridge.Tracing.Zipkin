@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="SpanJsonSerializer.cs" company="Petabridge, LLC">
+// <copyright file="JsonSpanSerializer.cs" company="Petabridge, LLC">
 //      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using Petabridge.Tracing.Zipkin.Util;
 
 namespace Petabridge.Tracing.Zipkin.Reporting
 {
@@ -22,25 +23,25 @@ namespace Petabridge.Tracing.Zipkin.Reporting
     /// <remarks>
     ///     Based on the Zipkin V2 API described here: https://zipkin.io/zipkin-api/#/default/post_spans
     /// </remarks>
-    public sealed class SpanJsonSerializer : ISpanSerializer
+    public sealed class JsonSpanSerializer : ISpanSerializer
     {
-        private const string TraceId = "traceId";
-        private const string SpanId = "id";
-        private const string ParentId = "parentId";
-        private const string OperationName = "name";
-        private const string Timestamp = "timestamp";
-        private const string Debug = "debug";
-        private const string Duration = "duration";
-        private const string LocalEndpoint = "localEndpoint";
-        private const string RemoteEndpoint = "remoteEndpoint";
-        private const string ServiceName = "serviceName";
-        private const string Ipv4 = "ipv4";
-        private const string Ipv6 = "ipv6";
-        private const string Port = "port";
-        private const string Kind = "kind";
-        private const string Tags = "tags";
-        private const string Annotations = "annotations";
-        private const string Value = "value";
+        internal const string TraceId = "traceId";
+        internal const string SpanId = "id";
+        internal const string ParentId = "parentId";
+        internal const string OperationName = "name";
+        internal const string Timestamp = "timestamp";
+        internal const string Debug = "debug";
+        internal const string Duration = "duration";
+        internal const string LocalEndpoint = "localEndpoint";
+        internal const string RemoteEndpoint = "remoteEndpoint";
+        internal const string ServiceName = "serviceName";
+        internal const string Ipv4 = "ipv4";
+        internal const string Ipv6 = "ipv6";
+        internal const string Port = "port";
+        internal const string Kind = "kind";
+        internal const string Tags = "tags";
+        internal const string Annotations = "annotations";
+        internal const string Value = "value";
 
         public void Serialize(Stream stream, Span span)
         {
@@ -83,7 +84,8 @@ namespace Petabridge.Tracing.Zipkin.Reporting
             writer.WritePropertyName(TraceId);
             writer.WriteValue(span.TypedContext.TraceId.ToString());
             writer.WritePropertyName(SpanId);
-            writer.WriteValue(span.TypedContext.SpanId.ToString("x16"));
+            var spanId = span.TypedContext.SpanId.ToString("x16");
+            writer.WriteValue(spanId);
             if (span.TypedContext.ParentId.HasValue)
             {
                 writer.WritePropertyName(ParentId);
@@ -94,12 +96,12 @@ namespace Petabridge.Tracing.Zipkin.Reporting
 
             // timing
             writer.WritePropertyName(Timestamp);
-            writer.WriteValue(span.Started.ToUnixTimeMilliseconds());
+            writer.WriteValue(span.Started.ToUnixMicros());
 
             if (span.Duration.HasValue)
             {
                 writer.WritePropertyName(Duration);
-                writer.WriteValue(span.Duration.Value.TotalMilliseconds);
+                writer.WriteValue(span.Duration.Value.ToMicros());
             }
 
             // special flags
@@ -153,13 +155,12 @@ namespace Petabridge.Tracing.Zipkin.Reporting
             {
                 writer.WriteStartObject();
                 writer.WritePropertyName(Timestamp);
-                writer.WriteValue(a.Timestamp.ToUnixTimeMilliseconds());
+                writer.WriteValue(a.Timestamp.ToUnixMicros());
                 writer.WritePropertyName(Value);
                 writer.WriteValue(a.Value);
                 writer.WriteEndObject();
             }
             writer.WriteEndArray();
-            writer.WriteEndObject();
         }
 
         private static void WriteTags(JsonTextWriter writer, IReadOnlyDictionary<string, string> tags)

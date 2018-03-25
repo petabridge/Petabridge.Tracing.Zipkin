@@ -18,18 +18,14 @@ namespace Petabridge.Tracing.Zipkin.Tracers
     /// </summary>
     public sealed class MockZipkinTracer : IZipkinTracer
     {
-        public MockZipkinTracer() : this(Endpoint.Testing, new DateTimeOffsetTimeProvider(),
-            ThreadLocalRngSpanIdProvider.TraceId128BitProvider, NoOpScopeManager.Instance)
+        public MockZipkinTracer(Endpoint localEndpoint = null, ITimeProvider timeProvider = null,
+            ISpanIdProvider idProvider = null,
+            IScopeManager scopeManager = null)
         {
-        }
-
-        public MockZipkinTracer(Endpoint localEndpoint, ITimeProvider timeProvider, ISpanIdProvider idProvider,
-            IScopeManager scopeManager)
-        {
-            LocalEndpoint = localEndpoint;
-            TimeProvider = timeProvider;
-            IdProvider = idProvider;
-            ScopeManager = scopeManager;
+            LocalEndpoint = localEndpoint ?? Endpoint.Testing;
+            TimeProvider = timeProvider ?? new DateTimeOffsetTimeProvider();
+            IdProvider = idProvider ?? ThreadLocalRngSpanIdProvider.TraceId128BitProvider;
+            ScopeManager = scopeManager ?? NoOpScopeManager.Instance;
             CollectedSpans = new ConcurrentQueue<Span>();
         }
 
@@ -46,7 +42,7 @@ namespace Petabridge.Tracing.Zipkin.Tracers
 
         public ISpanBuilder BuildSpan(string operationName)
         {
-            throw new NotImplementedException();
+            return new SpanBuilder(this, operationName);
         }
 
         public void Inject<TCarrier>(ISpanContext spanContext, IFormat<TCarrier> format, TCarrier carrier)

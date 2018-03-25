@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using OpenTracing;
+using Petabridge.Tracing.Zipkin.Util;
 
 namespace Petabridge.Tracing.Zipkin
 {
@@ -24,6 +25,7 @@ namespace Petabridge.Tracing.Zipkin
         private bool _ignoreActive;
         private Dictionary<string, string> _initialTags;
         private List<SpanReference> _references;
+        private SpanKind? _spanKind;
         private DateTimeOffset? _start;
 
         public SpanBuilder(IZipkinTracer tracer, string operationName)
@@ -96,14 +98,21 @@ namespace Petabridge.Tracing.Zipkin
             var activeSpanContext = _tracer.ActiveSpan?.Context;
             SpanContext parentContext = null;
 
-            if (_references != null && (_ignoreActive || activeSpanContext == null))
+            if (_references != null && (_ignoreActive || activeSpanContext.IsEmpty()))
                 parentContext = FindBestFittingReference(_references);
-            else if (activeSpanContext != null)
+            else if (!activeSpanContext.IsEmpty())
                 parentContext = (SpanContext) activeSpanContext;
 
             return new Span(_tracer, _operationName,
-                new SpanContext(_tracer.IdProvider.NextTraceId(), _tracer.IdProvider.NextSpanId(),
-                    parentContext?.SpanId, debug: _enableDebug));
+                new SpanContext(parentContext.IsEmpty() ? _tracer.IdProvider.NextTraceId() : parentContext.TraceId,
+                    _tracer.IdProvider.NextSpanId(),
+                    parentContext?.SpanId), _start.Value, _spanKind).SetDebug(_enableDebug);
+        }
+
+        public ISpanBuilder WithSpanKind(SpanKind spanKind)
+        {
+            _spanKind = spanKind;
+            return this;
         }
 
         public ISpanBuilder EnableDebugMode()
