@@ -59,7 +59,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
             }
         }
 
-        [Fact]
+        [Fact(DisplayName = "Should be able to serialize span into a valid Zipkin-friendly JSON format.")]
         public void ShouldMapSingleSpanIntoValidJson()
         {
             var json = @"

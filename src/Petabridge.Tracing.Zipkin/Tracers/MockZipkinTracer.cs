@@ -4,10 +4,11 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
 using System.Collections.Concurrent;
 using OpenTracing;
 using OpenTracing.Propagation;
+using Petabridge.Tracing.Zipkin.Exceptions;
+using Petabridge.Tracing.Zipkin.Propagation;
 using Petabridge.Tracing.Zipkin.Tracers.NoOp;
 using Petabridge.Tracing.Zipkin.Util;
 
@@ -18,14 +19,17 @@ namespace Petabridge.Tracing.Zipkin.Tracers
     /// </summary>
     public sealed class MockZipkinTracer : IZipkinTracer
     {
+        private readonly IPropagator<ITextMap> _propagator;
+
         public MockZipkinTracer(Endpoint localEndpoint = null, ITimeProvider timeProvider = null,
             ISpanIdProvider idProvider = null,
-            IScopeManager scopeManager = null)
+            IScopeManager scopeManager = null, IPropagator<ITextMap> propagtor = null)
         {
             LocalEndpoint = localEndpoint ?? Endpoint.Testing;
             TimeProvider = timeProvider ?? new DateTimeOffsetTimeProvider();
             IdProvider = idProvider ?? ThreadLocalRngSpanIdProvider.TraceId128BitProvider;
             ScopeManager = scopeManager ?? NoOpScopeManager.Instance;
+            _propagator = propagtor ?? new B3Propagator();
             CollectedSpans = new ConcurrentQueue<Span>();
         }
 
@@ -52,12 +56,20 @@ namespace Petabridge.Tracing.Zipkin.Tracers
 
         public void Inject<TCarrier>(ISpanContext spanContext, IFormat<TCarrier> format, TCarrier carrier)
         {
-            throw new NotImplementedException();
+            if ((format == BuiltinFormats.TextMap || format == BuiltinFormats.TextMap) && carrier is ITextMap textMap)
+                _propagator.Inject((SpanContext) spanContext, textMap);
+
+            throw new ZipkinFormatException(
+                $"Unrecognized carrier format [{format}]. Only ITextMap is supported by this driver.");
         }
 
         public ISpanContext Extract<TCarrier>(IFormat<TCarrier> format, TCarrier carrier)
         {
-            throw new NotImplementedException();
+            if ((format == BuiltinFormats.TextMap || format == BuiltinFormats.TextMap) && carrier is ITextMap textMap)
+                return _propagator.Extract(textMap);
+
+            throw new ZipkinFormatException(
+                $"Unrecognized carrier format [{format}]. Only ITextMap is supported by this driver.");
         }
 
         public IScopeManager ScopeManager { get; }

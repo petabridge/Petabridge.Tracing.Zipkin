@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Globalization;
 using Petabridge.Tracing.Zipkin.Util;
 
 namespace Petabridge.Tracing.Zipkin
@@ -61,6 +62,44 @@ namespace Petabridge.Tracing.Zipkin
         public override string ToString()
         {
             return this.TraceIdToStringConcat();
+        }
+
+        /// <summary>
+        ///     Attempts to parse a <see cref="TraceId" /> from a HEX string.
+        /// </summary>
+        /// <param name="hex">A valid HEX string.</param>
+        /// <param name="traceId">The TraceId that was parsed from <see cref="hex" />, if any.</param>
+        /// <returns><c>true</c> if the parse operation was successful, <c>false</c> otherwise.</returns>
+        public static bool TryParse(string hex, out TraceId traceId)
+        {
+            traceId = default(TraceId);
+            if (string.IsNullOrEmpty(hex)) return false;
+
+            switch (hex.Length)
+            {
+                case 32: //128bit
+                    var high = hex.Substring(0, 16);
+                    var low = hex.Substring(16);
+                    if (long.TryParse(high, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var traceIdHigh)
+                        && long.TryParse(low, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var traceIdLow))
+                    {
+                        traceId = new TraceId(traceIdHigh, traceIdLow);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                case 16: //64bit
+                    if (long.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var traceIdLow2))
+                    {
+                        traceId = new TraceId(traceIdLow2);
+                        return true;
+                    }
+                    return false;
+                default: //something illegal
+                    return false;
+            }
         }
     }
 }
