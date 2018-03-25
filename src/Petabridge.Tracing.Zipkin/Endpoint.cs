@@ -1,4 +1,5 @@
 ﻿using System;
+using Petabridge.Tracing.Zipkin.Tracers;
 
 namespace Petabridge.Tracing.Zipkin
 {
@@ -8,6 +9,11 @@ namespace Petabridge.Tracing.Zipkin
     /// </summary>
     public sealed class Endpoint : IEquatable<Endpoint>
     {
+        /// <summary>
+        /// Singleton used inside the <see cref="MockZipkinTracer"/> for testing purposes.
+        /// </summary>
+        public static readonly Endpoint Testing = new Endpoint("testing", "testing", 0);
+
         public Endpoint(string serviceName, string host, int port)
         {
             ServiceName = serviceName;

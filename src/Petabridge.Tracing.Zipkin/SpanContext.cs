@@ -13,7 +13,7 @@ namespace Petabridge.Tracing.Zipkin
     /// <summary>
     ///     Zipkin span context.
     /// </summary>
-    public sealed class SpanContext : ISpanContext
+    public sealed class SpanContext : ISpanContext, IEquatable<SpanContext>
     {
         public SpanContext(long traceLowId, long spanId, long? parentId = null, bool? isSampled = null,
             bool debug = false)
@@ -61,6 +61,38 @@ namespace Petabridge.Tracing.Zipkin
         public IEnumerable<KeyValuePair<string, string>> GetBaggageItems()
         {
             throw new NotSupportedException("Baggage is not supported in Zipkin.");
+        }
+
+        public bool Equals(SpanContext other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return TraceId.Equals(other.TraceId) && SpanId == other.SpanId;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj is SpanContext && Equals((SpanContext) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (TraceId.GetHashCode() * 397) ^ SpanId.GetHashCode();
+            }
+        }
+
+        public static bool operator ==(SpanContext left, SpanContext right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(SpanContext left, SpanContext right)
+        {
+            return !Equals(left, right);
         }
     }
 }
