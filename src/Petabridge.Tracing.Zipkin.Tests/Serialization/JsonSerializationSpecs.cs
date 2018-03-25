@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿// -----------------------------------------------------------------------
+// <copyright file="JsonSerializationSpecs.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
 using System.IO;
-using System.Text;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,6 +14,14 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
 {
     public class JsonSerializationSpec : SerializationSpecBase
     {
+        public static void Assert(byte[] actual, byte[] expected)
+        {
+            var actualObj = JObject.Load(new JsonTextReader(new StreamReader(new MemoryStream(actual))));
+            var expectedObj = JObject.Load(new JsonTextReader(new StreamReader(new MemoryStream(expected))));
+
+            JToken.DeepEquals(actualObj, expectedObj).Should().BeTrue();
+        }
+
         [Fact]
         public void ShouldMapSingleSpanIntoValidJson()
         {
@@ -50,17 +62,6 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
                     }
                   }
                 ]";
-
-            
-        }
-
-
-        public static void Assert(byte[] actual, byte[] expected)
-        {
-            var actualObj = JObject.Load(new JsonTextReader(new StreamReader(new MemoryStream(actual))));
-            var expectedObj = JObject.Load(new JsonTextReader(new StreamReader(new MemoryStream(expected))));
-
-            JToken.DeepEquals(actualObj, expectedObj).Should().BeTrue();
         }
     }
 }

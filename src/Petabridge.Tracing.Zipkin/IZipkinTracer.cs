@@ -14,7 +14,7 @@ namespace Petabridge.Tracing.Zipkin
     public interface IZipkinTracer : ITracer
     {
         /// <summary>
-        /// The service endpoint that this <see cref="ITracer"/> is currently running on.
+        ///     The service endpoint that this <see cref="ITracer" /> is currently running on.
         /// </summary>
         Endpoint LocalEndpoint { get; }
 
@@ -24,7 +24,7 @@ namespace Petabridge.Tracing.Zipkin
         ITimeProvider TimeProvider { get; }
 
         /// <summary>
-        /// Factory using for emitting <see cref="TraceId"/> and SpanId objects.
+        ///     Factory using for emitting <see cref="TraceId" /> and SpanId objects.
         /// </summary>
         ISpanIdProvider IdProvider { get; }
 

@@ -10,7 +10,7 @@ namespace Petabridge.Tracing.Zipkin
 {
     /// <inheritdoc />
     /// <summary>
-    /// A standard string-based annotation.
+    ///     A standard string-based annotation.
     /// </summary>
     public struct Annotation
     {

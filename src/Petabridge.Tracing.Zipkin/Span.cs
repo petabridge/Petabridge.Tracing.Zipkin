@@ -13,10 +13,10 @@ using OpenTracing;
 namespace Petabridge.Tracing.Zipkin
 {
     /// <summary>
-    /// Describes the type of span being used.
+    ///     Describes the type of span being used.
     /// </summary>
     /// <remarks>
-    /// Based on the Zipkin conventions outlined here: https://zipkin.io/pages/instrumenting.html
+    ///     Based on the Zipkin conventions outlined here: https://zipkin.io/pages/instrumenting.html
     /// </remarks>
     public enum SpanKind
     {
@@ -65,17 +65,12 @@ namespace Petabridge.Tracing.Zipkin
         public DateTimeOffset Started { get; }
 
         /// <summary>
-        /// Context of this <see cref="Span"/>'s parent.
-        /// </summary>
-        public SpanContext ParentContext { get; }
-
-        /// <summary>
         ///     The completion time of this operation.
         /// </summary>
         public DateTimeOffset? Finished { get; private set; }
 
         /// <summary>
-        /// The duration of this operation.
+        ///     The duration of this operation.
         /// </summary>
         public TimeSpan? Duration
         {
@@ -87,7 +82,7 @@ namespace Petabridge.Tracing.Zipkin
         }
 
         /// <summary>
-        /// Optional. The type of span for this operation. Defaults to <c>null</c>.
+        ///     Optional. The type of span for this operation. Defaults to <c>null</c>.
         /// </summary>
         public SpanKind? SpanKind { get; private set; }
 
@@ -101,62 +96,28 @@ namespace Petabridge.Tracing.Zipkin
         public SpanContext TypedContext { get; }
 
         /// <summary>
-        /// Indicates if the <see cref="Span"/> is being used to during debugging.
+        ///     Indicates if the <see cref="Span" /> is being used to during debugging.
         /// </summary>
         public bool Debug { get; private set; }
 
         /// <summary>
-        /// Indicates if the current <see cref="Span"/> is shared among many
+        ///     Indicates if the current <see cref="Span" /> is shared among many
         /// </summary>
         public bool Shared { get; private set; }
 
         /// <summary>
-        /// The local <see cref="Endpoint"/>
+        ///     The local <see cref="Endpoint" />
         /// </summary>
         public Endpoint LocalEndpoint => _tracer.LocalEndpoint;
 
         /// <summary>
-        /// The remote <see cref="Endpoint"/>. Has to be set by the <see cref="ISpanBuilder"/> or the <see cref="ISpan"/>.
+        ///     The remote <see cref="Endpoint" />. Has to be set by the <see cref="ISpanBuilder" /> or the <see cref="ISpan" />.
         /// </summary>
         public Endpoint RemoteEndpoint { get; private set; }
 
-        /// <summary>
-        /// Toggles the <see cref="Shared"/> setting to be equal to whatever the parameter value is.
-        /// </summary>
-        /// <param name="shared">The new value of the Shared flag.</param>
-        /// <returns>This <see cref="Span"/>.</returns>
-        public ISpan SetShared(bool shared)
+        public void Dispose()
         {
-            Shared = shared;
-            return this;
-        }
-
-        /// <summary>
-        /// Toggles the <see cref="Debug"/> setting to be equal to whatever the parameter value is.
-        /// </summary>
-        /// <param name="debug">The new value of the Debug flag.</param>
-        /// <returns>This <see cref="Span"/>.</returns>
-        public ISpan SetDebug(bool debug)
-        {
-            Debug = debug;
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the <see cref="RemoteEndpoint"/> for this span.
-        /// </summary>
-        /// <param name="remoteEndpoint">The remote endpoint.</param>
-        /// <returns>This <see cref="Span"/>.</returns>
-        public ISpan SetRemoteEndpoint(Endpoint remoteEndpoint)
-        {
-            RemoteEndpoint = remoteEndpoint;
-            return this;
-        }
-
-        public ISpan SetSpanKind(SpanKind kind)
-        {
-            SpanKind = kind;
-            return this;
+            Finish();
         }
 
         public ISpan SetTag(string key, string value)
@@ -201,11 +162,6 @@ namespace Petabridge.Tracing.Zipkin
             return Annotate(timestamp, @event);
         }
 
-        private static string MergeFields(IDictionary<string, object> fields)
-        {
-            return string.Join(" ", fields.Select(entry => entry.Key + ":" + entry.Value));
-        }
-
         public ISpan SetBaggageItem(string key, string value)
         {
             throw new NotSupportedException("Baggage is not supported in Zipkin");
@@ -219,13 +175,6 @@ namespace Petabridge.Tracing.Zipkin
         public ISpan SetOperationName(string operationName)
         {
             OperationName = operationName;
-            return this;
-        }
-
-        internal ISpan Annotate(DateTimeOffset time, string annotationValue)
-        {
-            _annotations = _annotations ?? new List<Annotation>();
-            _annotations.Add(new Annotation(time, annotationValue));
             return this;
         }
 
@@ -249,9 +198,55 @@ namespace Petabridge.Tracing.Zipkin
         /// </summary>
         public ISpanContext Context => TypedContext;
 
-        public void Dispose()
+        /// <summary>
+        ///     Toggles the <see cref="Shared" /> setting to be equal to whatever the parameter value is.
+        /// </summary>
+        /// <param name="shared">The new value of the Shared flag.</param>
+        /// <returns>This <see cref="Span" />.</returns>
+        public ISpan SetShared(bool shared)
         {
-            Finish();
+            Shared = shared;
+            return this;
+        }
+
+        /// <summary>
+        ///     Toggles the <see cref="Debug" /> setting to be equal to whatever the parameter value is.
+        /// </summary>
+        /// <param name="debug">The new value of the Debug flag.</param>
+        /// <returns>This <see cref="Span" />.</returns>
+        public ISpan SetDebug(bool debug)
+        {
+            Debug = debug;
+            return this;
+        }
+
+        /// <summary>
+        ///     Sets the <see cref="RemoteEndpoint" /> for this span.
+        /// </summary>
+        /// <param name="remoteEndpoint">The remote endpoint.</param>
+        /// <returns>This <see cref="Span" />.</returns>
+        public ISpan SetRemoteEndpoint(Endpoint remoteEndpoint)
+        {
+            RemoteEndpoint = remoteEndpoint;
+            return this;
+        }
+
+        public ISpan SetSpanKind(SpanKind kind)
+        {
+            SpanKind = kind;
+            return this;
+        }
+
+        private static string MergeFields(IDictionary<string, object> fields)
+        {
+            return string.Join(" ", fields.Select(entry => entry.Key + ":" + entry.Value));
+        }
+
+        internal ISpan Annotate(DateTimeOffset time, string annotationValue)
+        {
+            _annotations = _annotations ?? new List<Annotation>();
+            _annotations.Add(new Annotation(time, annotationValue));
+            return this;
         }
     }
 }

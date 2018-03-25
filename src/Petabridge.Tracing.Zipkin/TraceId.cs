@@ -5,7 +5,6 @@
 // -----------------------------------------------------------------------
 
 using System;
-using System.Globalization;
 using Petabridge.Tracing.Zipkin.Util;
 
 namespace Petabridge.Tracing.Zipkin

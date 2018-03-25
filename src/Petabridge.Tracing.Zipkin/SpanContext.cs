@@ -58,16 +58,16 @@ namespace Petabridge.Tracing.Zipkin
         /// </summary>
         public bool Debug { get; }
 
-        public IEnumerable<KeyValuePair<string, string>> GetBaggageItems()
-        {
-            throw new NotSupportedException("Baggage is not supported in Zipkin.");
-        }
-
         public bool Equals(SpanContext other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return TraceId.Equals(other.TraceId) && SpanId == other.SpanId;
+        }
+
+        public IEnumerable<KeyValuePair<string, string>> GetBaggageItems()
+        {
+            throw new NotSupportedException("Baggage is not supported in Zipkin.");
         }
 
         public override bool Equals(object obj)

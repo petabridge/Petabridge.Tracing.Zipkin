@@ -1,16 +1,22 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="Endpoint.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using Petabridge.Tracing.Zipkin.Tracers;
 
 namespace Petabridge.Tracing.Zipkin
 {
     /// <inheritdoc />
     /// <summary>
-    /// Describes the endpoint of the service that is producing traces.
+    ///     Describes the endpoint of the service that is producing traces.
     /// </summary>
     public sealed class Endpoint : IEquatable<Endpoint>
     {
         /// <summary>
-        /// Singleton used inside the <see cref="MockZipkinTracer"/> for testing purposes.
+        ///     Singleton used inside the <see cref="MockZipkinTracer" /> for testing purposes.
         /// </summary>
         public static readonly Endpoint Testing = new Endpoint("testing", "testing", 0);
 
@@ -22,17 +28,17 @@ namespace Petabridge.Tracing.Zipkin
         }
 
         /// <summary>
-        /// The friendly name of this service.
+        ///     The friendly name of this service.
         /// </summary>
         public string ServiceName { get; }
 
         /// <summary>
-        /// Hostname or IP address.
+        ///     Hostname or IP address.
         /// </summary>
         public string Host { get; }
 
         /// <summary>
-        /// The port number.
+        ///     The port number.
         /// </summary>
         public int Port { get; }
 
@@ -40,7 +46,8 @@ namespace Petabridge.Tracing.Zipkin
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(ServiceName, other.ServiceName) && string.Equals(Host, other.Host) && Port == other.Port;
+            return string.Equals(ServiceName, other.ServiceName) && string.Equals(Host, other.Host) &&
+                   Port == other.Port;
         }
 
         public override bool Equals(object obj)

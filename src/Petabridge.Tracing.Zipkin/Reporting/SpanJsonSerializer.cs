@@ -1,8 +1,13 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="SpanJsonSerializer.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace Petabridge.Tracing.Zipkin.Reporting
@@ -11,11 +16,11 @@ namespace Petabridge.Tracing.Zipkin.Reporting
      * TODO: rewrite this without using Json.NET (nice to have)
      */
     /// <summary>
-    /// Serializes <see cref="Span"/> objects into JSON format for delivery
-    /// over one of the registered <see cref="ITraceReporter"/> implementations.
+    ///     Serializes <see cref="Span" /> objects into JSON format for delivery
+    ///     over one of the registered <see cref="ITraceReporter" /> implementations.
     /// </summary>
     /// <remarks>
-    /// Based on the Zipkin V2 API described here: https://zipkin.io/zipkin-api/#/default/post_spans
+    ///     Based on the Zipkin V2 API described here: https://zipkin.io/zipkin-api/#/default/post_spans
     /// </remarks>
     public sealed class SpanJsonSerializer : ISpanSerializer
     {
@@ -52,32 +57,28 @@ namespace Petabridge.Tracing.Zipkin.Reporting
             using (var writer = new JsonTextWriter(new StreamWriter(stream)))
             {
                 writer.WriteStartArray();
-                foreach(var span in spans)
-                {
+                foreach (var span in spans)
                     SpanToJson(writer, span);
-                }
                 writer.WriteEndArray();
             }
         }
 
         /// <summary>
-        /// Serializes the Span to JSON.
+        ///     Serializes the Span to JSON.
         /// </summary>
         /// <param name="writer">The JSON Writer.</param>
         /// <param name="span">The Span.</param>
         /// <remarks>
-        /// Implementation note, for performance and correctness:
-        /// 
-        /// 1. Don't emit null fields at all if the value isn't populated.
-        ///    No need for that space in the content on the wire.
-        /// 
-        /// 2. Design this method to be repeatable for multiple spans in case 
-        ///    we want to batch. 
+        ///     Implementation note, for performance and correctness:
+        ///     1. Don't emit null fields at all if the value isn't populated.
+        ///     No need for that space in the content on the wire.
+        ///     2. Design this method to be repeatable for multiple spans in case
+        ///     we want to batch.
         /// </remarks>
         private static void SpanToJson(JsonTextWriter writer, Span span)
         {
             writer.WriteStartObject();
-            
+
             // meta-data
             writer.WritePropertyName(TraceId);
             writer.WriteValue(span.TypedContext.TraceId.ToString());
@@ -100,7 +101,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting
                 writer.WritePropertyName(Duration);
                 writer.WriteValue(span.Duration.Value.TotalMilliseconds);
             }
-            
+
             // special flags
             writer.WritePropertyName(Debug);
             writer.WriteValue(span.Debug);
@@ -131,21 +132,15 @@ namespace Petabridge.Tracing.Zipkin.Reporting
             WriteEndpoint(writer, true, span.LocalEndpoint);
 
             if (span.RemoteEndpoint != null)
-            {
                 WriteEndpoint(writer, false, span.RemoteEndpoint);
-            }
 
             // tags
             if (span.Tags.Any())
-            {
                 WriteTags(writer, span.Tags);
-            }
 
             // annotations
             if (span.Annotations.Any())
-            {
                 WriteAnnotations(writer, span.Annotations);
-            }
 
             writer.WriteEndObject();
         }
