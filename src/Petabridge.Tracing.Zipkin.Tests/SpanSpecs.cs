@@ -22,8 +22,8 @@ namespace Petabridge.Tracing.Zipkin.Tests
         [Fact(DisplayName = "Should be able to create child spans")]
         public void ShouldCreateChildSpansWithSameTraceId()
         {
-            var span1 = (Span) Tracer.BuildSpan("op1").Start();
-            var span2 = (Span) Tracer.BuildSpan("op1.op2").AsChildOf(span1).Start();
+            var span1 = Tracer.BuildSpan("op1").Start();
+            var span2 = Tracer.BuildSpan("op1.op2").AsChildOf(span1).Start();
 
             span2.Finish();
             span1.Finish();
@@ -39,7 +39,7 @@ namespace Petabridge.Tracing.Zipkin.Tests
         [Fact(DisplayName = "Should be able to create a basic span")]
         public void ShouldCreateNewSpan()
         {
-            var span = (Span) Tracer.BuildSpan("op1").Start();
+            var span = Tracer.BuildSpan("op1").Start();
             span.Finish();
 
             span.SpanKind.Should().BeNull();
@@ -62,8 +62,8 @@ namespace Petabridge.Tracing.Zipkin.Tests
         [Fact(DisplayName = "Should not leak the TraceId across unrelated spans")]
         public void ShouldNotLeakTraceIdAcrossUnrelatedSpans()
         {
-            var span1 = (Span) Tracer.BuildSpan("op1").Start();
-            var span2 = (Span) Tracer.BuildSpan("op2").Start();
+            var span1 = Tracer.BuildSpan("op1").Start();
+            var span2 = Tracer.BuildSpan("op2").Start();
             span1.Finish();
             span2.Finish();
 
@@ -73,7 +73,7 @@ namespace Petabridge.Tracing.Zipkin.Tests
         [Fact(DisplayName = "Should be able to use the Debug flag on spans")]
         public void ShouldUseDebugFlag()
         {
-            var span1 = ((Span) Tracer.BuildSpan("op1").Start());
+            var span1 = Tracer.BuildSpan("op1").EnableDebugMode().Start();
             span1.Finish();
 
             Tracer.CollectedSpans.TryDequeue(out var innerSpan);

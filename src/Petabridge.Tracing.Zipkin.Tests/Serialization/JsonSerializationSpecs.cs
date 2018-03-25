@@ -103,7 +103,8 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
             var expectedBytes = Encoding.UTF8.GetBytes(json);
 
             var span = new Span(Tracer, "op1",
-                    new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), -7118946577185884628, null, true),
+                    new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), -7118946577185884628, null,
+                        true),
                     startTime, SpanKind.CLIENT)
                 .SetRemoteEndpoint(new Endpoint("actorsystem", "127.0.0.1", 8009)).SetTag("foo1", "bar")
                 .SetTag("numberOfPets", 2)

@@ -13,33 +13,6 @@ using Petabridge.Tracing.Zipkin.Util;
 
 namespace Petabridge.Tracing.Zipkin
 {
-    public interface IZipkinSpanBuilder : ISpanBuilder
-    {
-        new IZipkinSpanBuilder AsChildOf(ISpanContext parent);
-
-        new IZipkinSpanBuilder AsChildOf(ISpan parent);
-
-        new IZipkinSpanBuilder AddReference(string referenceType, ISpanContext referencedContext);
-
-        new IZipkinSpanBuilder IgnoreActiveSpan();
-
-        new IZipkinSpanBuilder WithTag(string key, string value);
-
-        new IZipkinSpanBuilder WithTag(string key, bool value);
-
-        new IZipkinSpanBuilder WithTag(string key, int value);
-
-        new IZipkinSpanBuilder WithTag(string key, double value);
-
-        new IZipkinSpanBuilder WithStartTimestamp(DateTimeOffset timestamp);
-
-        new Span Start();
-
-        IZipkinSpanBuilder WithSpanKind(SpanKind spanKind);
-
-        IZipkinSpanBuilder EnableDebugMode();
-    }
-
     /// <summary>
     ///     Builder interface for constructing new <see cref="Span" /> instances.
     /// </summary>
@@ -49,11 +22,11 @@ namespace Petabridge.Tracing.Zipkin
 
         private readonly IZipkinTracer _tracer;
         private bool _enableDebug;
-        private bool _shared;
-        private bool _sampled;
         private bool _ignoreActive;
         private Dictionary<string, string> _initialTags;
         private List<SpanReference> _references;
+        private bool _sampled;
+        private bool _shared;
         private SpanKind? _spanKind;
         private DateTimeOffset? _start;
 

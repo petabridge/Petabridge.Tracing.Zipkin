@@ -108,7 +108,7 @@ namespace Petabridge.Tracing.Zipkin
         public bool Shared => TypedContext.Shared;
 
         /// <summary>
-        /// Indicates if the current <see cref="Span"/> is part of sampling.
+        ///     Indicates if the current <see cref="Span" /> is part of sampling.
         /// </summary>
         public bool Sampled => TypedContext.Sampled;
 

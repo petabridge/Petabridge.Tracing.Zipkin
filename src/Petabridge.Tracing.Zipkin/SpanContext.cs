@@ -15,7 +15,8 @@ namespace Petabridge.Tracing.Zipkin
     /// </summary>
     public sealed class SpanContext : ISpanContext, IEquatable<SpanContext>
     {
-        public SpanContext(TraceId traceId, long spanId, long? parentId = null, bool debug = false, bool sampled = false, bool shared = false)
+        public SpanContext(TraceId traceId, long spanId, long? parentId = null, bool debug = false,
+            bool sampled = false, bool shared = false)
         {
             TraceId = traceId;
             SpanId = spanId;
@@ -43,17 +44,17 @@ namespace Petabridge.Tracing.Zipkin
         public long? ParentId { get; }
 
         /// <summary>
-        /// Indicates if this is a Debug trace or not.
+        ///     Indicates if this is a Debug trace or not.
         /// </summary>
         public bool Debug { get; }
 
         /// <summary>
-        /// Indicates if this is a sampled trace or not.
+        ///     Indicates if this is a sampled trace or not.
         /// </summary>
         public bool Sampled { get; }
 
         /// <summary>
-        /// Indicates if this is a shared trace or not.
+        ///     Indicates if this is a shared trace or not.
         /// </summary>
         public bool Shared { get; }
 
