@@ -60,14 +60,10 @@ namespace Petabridge.Tracing.Zipkin
              */
 
             if (Options.DefaultSpanKind.HasValue)
-            {
                 sb = sb.WithSpanKind(Options.DefaultSpanKind.Value);
-            }
 
             if (Options.DebugMode)
-            {
                 sb = sb.SetDebugMode(true);
-            }
 
             return sb;
         }
