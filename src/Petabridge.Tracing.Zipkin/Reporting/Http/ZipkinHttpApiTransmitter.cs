@@ -35,7 +35,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
 
         private readonly HttpClient _client;
 
-        private readonly ISpanSerializer Serializer = new JsonSpanSerializer();
+        private readonly ISpanSerializer _serializer = new JsonSpanSerializer();
 
         public ZipkinHttpApiTransmitter(HttpClient client, Uri uri)
         {
@@ -49,7 +49,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
         {
             using (var stream = StreamManager.GetStream("Petabridge.Tracing.Zipkin.HttpTransmitter"))
             {
-                Serializer.Serialize(stream, spans);
+                _serializer.Serialize(stream, spans);
                 var cts = new CancellationTokenSource(timeout);
                 stream.Position = 0;
                 var content = new StreamContent(stream);
