@@ -99,6 +99,11 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
             RescheduleBatchTransmission();
         }
 
+        protected override void PostStop()
+        {
+            _batchTransimissionTimer?.Cancel();
+        }
+
         /// <summary>
         ///     INTERNAL API.
         ///     Signal
