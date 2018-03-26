@@ -1,3 +1,10 @@
+#### 0.1.1 March 26 2018 ####
+Fixed the following issues:
+
+* [HTTP Reporting actor must cancel its task upon termination](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/13)
+* [Add mechanism to terminate the Zipkin HTTP Reporter actor upon Dispose](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/12)
+* [Allow HttpReportingActor to consume logging settings from outside ActorSystem](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/11)
+
 #### 0.1.0 March 26 2018 ####
 Initial release of Petabridge.Tracing.Zipkin.
 

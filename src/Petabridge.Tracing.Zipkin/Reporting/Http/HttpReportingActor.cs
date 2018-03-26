@@ -60,7 +60,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
 
             Receive<HttpResponseMessage>(rsp =>
             {
-                if (_options.DebugLogging)
+                if (_log.IsDebugEnabled)
                     _log.Debug(
                         "Received notification that Span batch was received by Zipkin at [{0}] with success code [{1}]",
                         _transmitter.Uri, rsp.StatusCode);
@@ -69,7 +69,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
             // Indicates that one of our HTTP requests timed out
             Receive<Status.Failure>(f =>
             {
-                if (_options.ErrorLogging)
+                if (_log.IsErrorEnabled)
                     _log.Error(f.Cause, "Error occurred while uploading Spans to [{0}]", _transmitter.Uri);
             });
         }
@@ -97,6 +97,11 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
         protected override void PreStart()
         {
             RescheduleBatchTransmission();
+        }
+
+        protected override void PostStop()
+        {
+            _batchTransimissionTimer?.Cancel();
         }
 
         /// <summary>
