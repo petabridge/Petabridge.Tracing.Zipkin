@@ -36,7 +36,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
 
         public void Dispose()
         {
-            _ownedActorSystem?.Dispose();
+            _ownedActorSystem?.Terminate().Wait();
         }
 
         /// <summary>
