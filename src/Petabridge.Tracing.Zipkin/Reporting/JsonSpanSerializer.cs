@@ -195,7 +195,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting
                 writer.WritePropertyName(Port);
                 writer.WriteValue(ep.Port);
             }
-            
+
             writer.WriteEndObject();
         }
     }
