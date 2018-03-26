@@ -55,7 +55,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
                 var content = new StreamContent(stream);
                 content.Headers.Add("Content-Type", MediaType);
                 content.Headers.Add("Content-Length", stream.Length.ToString());
-                return await _client.PostAsync(Uri, new StreamContent(stream), cts.Token);
+                return await _client.PostAsync(Uri, content, cts.Token);
             }
         }
 
