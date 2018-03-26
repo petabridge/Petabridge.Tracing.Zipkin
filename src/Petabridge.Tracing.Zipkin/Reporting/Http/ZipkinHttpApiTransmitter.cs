@@ -28,14 +28,14 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
         /// </summary>
         public const string SpanPostUriPath = "api/v2/spans";
 
-        private readonly ISpanSerializer Serializer = new JsonSpanSerializer();
-
         /// <summary>
         ///     Only need one of these globally, and it's thread-safe. The streams it accesses internally are inherently not safe.
         /// </summary>
         private static readonly RecyclableMemoryStreamManager StreamManager = new RecyclableMemoryStreamManager();
 
         private readonly HttpClient _client;
+
+        private readonly ISpanSerializer Serializer = new JsonSpanSerializer();
 
         public ZipkinHttpApiTransmitter(HttpClient client, Uri uri)
         {
