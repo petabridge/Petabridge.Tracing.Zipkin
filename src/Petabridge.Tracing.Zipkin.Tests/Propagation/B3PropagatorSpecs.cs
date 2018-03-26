@@ -21,7 +21,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
             Tracer = new MockZipkinTracer();
         }
 
-        [Property]
+        [Property(DisplayName = "Should be able to extract and inject spans via B3 headers")]
         public Property ShouldExtractAndInjectSpansViaB3(long traceIdHigh, long traceIdLow, long spanId, long? parentId,
             bool debug)
         {

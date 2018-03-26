@@ -50,6 +50,8 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
             var stream = new MemoryStream();
             serializer.Serialize(stream, inputSpans);
             var actualOutput = stream.ToArray();
+            stream.Flush();
+            stream.Dispose();
             verifier(actualOutput, expectedOutput);
         }
     }

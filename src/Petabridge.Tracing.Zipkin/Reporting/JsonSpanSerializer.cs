@@ -46,7 +46,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting
 
         public void Serialize(Stream stream, Span span)
         {
-            using (var writer = new JsonTextWriter(new StreamWriter(stream, Encoding.UTF8, 2084, true)))
+            using (var writer = new JsonTextWriter(new StreamWriter(stream, Encoding.Default, 2048, true)))
             {
                 writer.WriteStartArray();
                 SpanToJson(writer, span);
@@ -56,7 +56,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting
 
         public void Serialize(Stream stream, IEnumerable<Span> spans)
         {
-            using (var writer = new JsonTextWriter(new StreamWriter(stream, Encoding.UTF8, 2084, true)))
+            using (var writer = new JsonTextWriter(new StreamWriter(stream, Encoding.Default, 2048, true)))
             {
                 writer.WriteStartArray();
                 foreach (var span in spans)
@@ -90,7 +90,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting
             if (span.TypedContext.ParentId.HasValue)
             {
                 writer.WritePropertyName(ParentId);
-                writer.WriteValue(span.TypedContext.ParentId.ToString());
+                writer.WriteValue(span.TypedContext.ParentId.Value.ToString("x16"));
             }
             writer.WritePropertyName(OperationName);
             writer.WriteValue(span.OperationName);
