@@ -24,11 +24,13 @@ namespace Petabridge.Tracing.Zipkin
         /// <param name="localServiceName">The name of the local service.</param>
         /// <param name="localServiceAddress">The bound address of the local service.</param>
         /// <param name="localServicePort">The bound port of the local service.</param>
+        /// <param name="debug">Turns on debugging settings.</param>
         public ZipkinTracerOptions(string zipkinHttpUrl, string localServiceName, string localServiceAddress = null,
-            int? localServicePort = null)
+            int? localServicePort = null, bool debug = false)
         {
-            Reporter = ZipkinHttpSpanReporter.Create(new ZipkinHttpReportingOptions(zipkinHttpUrl));
+            Reporter = ZipkinHttpSpanReporter.Create(new ZipkinHttpReportingOptions(zipkinHttpUrl, debugLogging:debug));
             LocalEndpoint = new Endpoint(localServiceName, localServiceAddress, localServicePort);
+            DebugMode = debug;
         }
 
         public ZipkinTracerOptions(Endpoint localEndpoint, ISpanReporter reporter)

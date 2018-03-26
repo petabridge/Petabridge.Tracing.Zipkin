@@ -57,7 +57,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
             if (actorSystem == null) // create our own ActorSystem if it doesn't already exist.
             {
                 weOwnActorSystem = true;
-                actorSystem = ActorSystem.Create("petabridge.tracing.zipkin",
+                actorSystem = ActorSystem.Create("pbzipkin",
                     options.DebugLogging ? DebugHocon : NormalHocon);
             }
 
