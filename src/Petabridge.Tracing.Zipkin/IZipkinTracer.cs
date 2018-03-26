@@ -29,7 +29,7 @@ namespace Petabridge.Tracing.Zipkin
         ISpanIdProvider IdProvider { get; }
 
         /// <summary>
-        ///     Pipes the completed span to a <see cref="ITraceReporter" /> for delivery.
+        ///     Pipes the completed span to a <see cref="ISpanReporter" /> for delivery.
         /// </summary>
         /// <param name="span">A completed span.</param>
         void Report(Span span);

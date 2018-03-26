@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="MockZipkinTracer.cs" company="Petabridge, LLC">
-//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
-// </copyright>
-// -----------------------------------------------------------------------
-
-using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using OpenTracing;
 using OpenTracing.Propagation;
 using Petabridge.Tracing.Zipkin.Exceptions;
@@ -12,36 +8,36 @@ using Petabridge.Tracing.Zipkin.Propagation;
 using Petabridge.Tracing.Zipkin.Tracers.NoOp;
 using Petabridge.Tracing.Zipkin.Util;
 
-namespace Petabridge.Tracing.Zipkin.Tracers
+namespace Petabridge.Tracing.Zipkin
 {
     /// <summary>
-    ///     Used for unit-testing Petabridge.Tracing.Zipkin.
+    /// Standard <see cref="ITracer"/> implementation for working with Zipkin.
     /// </summary>
-    public sealed class MockZipkinTracer : IZipkinTracer
+    public sealed class ZipkinTracer : IZipkinTracer, IDisposable
     {
         private readonly IPropagator<ITextMap> _propagator;
+        private readonly ISpanReporter _reporter;
 
-        public MockZipkinTracer(Endpoint localEndpoint = null, ITimeProvider timeProvider = null,
-            ISpanIdProvider idProvider = null,
-            IScopeManager scopeManager = null, IPropagator<ITextMap> propagtor = null)
+        public ZipkinTracer(ZipkinTracerOptions options)
         {
-            LocalEndpoint = localEndpoint ?? Endpoint.Testing;
-            TimeProvider = timeProvider ?? new DateTimeOffsetTimeProvider();
-            IdProvider = idProvider ?? ThreadLocalRngSpanIdProvider.TraceId128BitProvider;
-            ScopeManager = scopeManager ?? NoOpScopeManager.Instance;
-            _propagator = propagtor ?? new B3Propagator();
-            CollectedSpans = new ConcurrentQueue<Span>();
+            _propagator = new B3Propagator();
+            _reporter = options.Reporter;
+            LocalEndpoint = options.LocalEndpoint;
+            TimeProvider = options.TimeProvider ?? new DateTimeOffsetTimeProvider();
+            ScopeManager = options.ScopeManager ?? NoOpScopeManager.Instance;
+            IdProvider = options.IdProvider ?? ThreadLocalRngSpanIdProvider.TraceId128BitProvider;
+            Options = options;
         }
 
-        public ConcurrentQueue<Span> CollectedSpans { get; }
-
+        public ZipkinTracerOptions Options { get; }
+        
         public Endpoint LocalEndpoint { get; }
         public ITimeProvider TimeProvider { get; }
         public ISpanIdProvider IdProvider { get; }
 
         public void Report(Span span)
         {
-            CollectedSpans.Enqueue(span);
+            _reporter.Report(span);
         }
 
         public IZipkinSpanBuilder BuildSpan(string operationName)
@@ -59,7 +55,7 @@ namespace Petabridge.Tracing.Zipkin.Tracers
             if ((format == BuiltinFormats.TextMap || format == BuiltinFormats.HttpHeaders) &&
                 carrier is ITextMap textMap)
             {
-                _propagator.Inject((SpanContext) spanContext, textMap);
+                _propagator.Inject((SpanContext)spanContext, textMap);
                 return;
             }
 
@@ -82,7 +78,7 @@ namespace Petabridge.Tracing.Zipkin.Tracers
 
         public void Dispose()
         {
-            // no-op
+            _reporter?.Dispose();
         }
     }
 }

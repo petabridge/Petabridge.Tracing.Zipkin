@@ -18,7 +18,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting
      */
     /// <summary>
     ///     Serializes <see cref="Span" /> objects into JSON format for delivery
-    ///     over one of the registered <see cref="ITraceReporter" /> implementations.
+    ///     over one of the registered <see cref="ISpanReporter" /> implementations.
     /// </summary>
     /// <remarks>
     ///     Based on the Zipkin V2 API described here: https://zipkin.io/zipkin-api/#/default/post_spans
