@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 using Petabridge.Tracing.Zipkin.Util;
 
@@ -45,7 +46,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting
 
         public void Serialize(Stream stream, Span span)
         {
-            using (var writer = new JsonTextWriter(new StreamWriter(stream)))
+            using (var writer = new JsonTextWriter(new StreamWriter(stream, Encoding.UTF8, 2084, true)))
             {
                 writer.WriteStartArray();
                 SpanToJson(writer, span);
@@ -55,7 +56,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting
 
         public void Serialize(Stream stream, IEnumerable<Span> spans)
         {
-            using (var writer = new JsonTextWriter(new StreamWriter(stream)))
+            using (var writer = new JsonTextWriter(new StreamWriter(stream, Encoding.UTF8, 2084, true)))
             {
                 writer.WriteStartArray();
                 foreach (var span in spans)

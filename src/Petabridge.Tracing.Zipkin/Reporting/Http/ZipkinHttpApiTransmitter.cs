@@ -28,10 +28,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
         /// </summary>
         public const string SpanPostUriPath = "api/v2/spans";
 
-        /// <summary>
-        ///     The JSON serializer behaves statically.
-        /// </summary>
-        private static readonly ISpanSerializer Serializer = new JsonSpanSerializer();
+        private readonly ISpanSerializer Serializer = new JsonSpanSerializer();
 
         /// <summary>
         ///     Only need one of these globally, and it's thread-safe. The streams it accesses internally are inherently not safe.
@@ -54,6 +51,10 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
             {
                 Serializer.Serialize(stream, spans);
                 var cts = new CancellationTokenSource(timeout);
+                stream.Position = 0;
+                var content = new StreamContent(stream);
+                content.Headers.Add("Content-Type", MediaType);
+                content.Headers.Add("Content-Length", stream.Length.ToString());
                 return await _client.PostAsync(Uri, new StreamContent(stream), cts.Token);
             }
         }
@@ -65,7 +66,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
         /// <returns>A valid route to the Zipkin HTTP Uri for posting <see cref="Span" /> instances.</returns>
         public static Uri GetFullZipkinUri(string fullHostname)
         {
-            return new Uri(new Uri(fullHostname), new Uri(SpanPostUriPath));
+            return new Uri(new Uri(fullHostname, UriKind.Absolute), new Uri(SpanPostUriPath, UriKind.Relative));
         }
     }
 }
