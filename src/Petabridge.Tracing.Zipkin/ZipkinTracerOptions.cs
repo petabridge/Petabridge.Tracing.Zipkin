@@ -4,6 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Diagnostics;
 using OpenTracing;
 using OpenTracing.Util;
 using Petabridge.Tracing.Zipkin.Reporting.Http;
@@ -15,6 +16,21 @@ namespace Petabridge.Tracing.Zipkin
     /// </summary>
     public sealed class ZipkinTracerOptions
     {
+        /// <summary>
+        /// Creates a set of <see cref="ZipkinTracerOptions"/> that uses a <see cref="ZipkinHttpSpanReporter"/>
+        /// created from the provided values.
+        /// </summary>
+        /// <param name="zipkinHttpUrl">The HTTP API of the Zipkin server.</param>
+        /// <param name="localServiceName">The name of the local service.</param>
+        /// <param name="localServiceAddress">The bound address of the local service.</param>
+        /// <param name="localServicePort">The bound port of the local service.</param>
+        public ZipkinTracerOptions(string zipkinHttpUrl, string localServiceName, string localServiceAddress = null,
+            int? localServicePort = null)
+        {
+            Reporter = ZipkinHttpSpanReporter.Create(new ZipkinHttpReportingOptions(zipkinHttpUrl));
+            LocalEndpoint = new Endpoint(localServiceName, localServiceAddress, localServicePort);
+        }
+
         public ZipkinTracerOptions(Endpoint localEndpoint, ISpanReporter reporter)
         {
             LocalEndpoint = localEndpoint;
@@ -55,5 +71,10 @@ namespace Petabridge.Tracing.Zipkin
         ///     instances will be created inside async / await blocks, use the <see cref="AsyncLocalScopeManager" />.
         /// </summary>
         public IScopeManager ScopeManager { get; set; }
+
+        /// <summary>
+        /// Toggles Zipkin's "debug" mode on or off.
+        /// </summary>
+        public bool DebugMode { get; set; }
     }
 }

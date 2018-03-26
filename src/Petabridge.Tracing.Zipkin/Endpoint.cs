@@ -18,9 +18,13 @@ namespace Petabridge.Tracing.Zipkin
         /// <summary>
         ///     Singleton used inside the <see cref="MockZipkinTracer" /> for testing purposes.
         /// </summary>
-        public static readonly Endpoint Testing = new Endpoint("testing", "testing", 0);
+        public static readonly Endpoint Testing = new Endpoint("testing");
 
-        public Endpoint(string serviceName, string host, int port)
+        public Endpoint(string serviceName) : this(serviceName, null, null)
+        {
+        }
+
+        public Endpoint(string serviceName, string host, int? port)
         {
             ServiceName = serviceName;
             Host = host;
@@ -40,14 +44,14 @@ namespace Petabridge.Tracing.Zipkin
         /// <summary>
         ///     The port number.
         /// </summary>
-        public int Port { get; }
+        public int? Port { get; }
 
         public bool Equals(Endpoint other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(ServiceName, other.ServiceName) && string.Equals(Host, other.Host) &&
-                   Port == other.Port;
+            return string.Equals(ServiceName, other.ServiceName) 
+                && string.Equals(Host, other.Host) && Port == other.Port;
         }
 
         public override bool Equals(object obj)
@@ -61,9 +65,9 @@ namespace Petabridge.Tracing.Zipkin
         {
             unchecked
             {
-                var hashCode = ServiceName.GetHashCode();
-                hashCode = (hashCode * 397) ^ Host.GetHashCode();
-                hashCode = (hashCode * 397) ^ Port;
+                var hashCode = (ServiceName != null ? ServiceName.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Host != null ? Host.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ Port.GetHashCode();
                 return hashCode;
             }
         }

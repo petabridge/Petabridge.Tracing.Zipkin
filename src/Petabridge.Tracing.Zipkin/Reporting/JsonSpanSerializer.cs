@@ -181,12 +181,20 @@ namespace Petabridge.Tracing.Zipkin.Reporting
             writer.WriteStartObject();
             writer.WritePropertyName(ServiceName);
             writer.WriteValue(ep.ServiceName);
-            writer.WritePropertyName(Ipv4); // N.B. - don't really care what the IP family is.
-            writer.WriteValue(ep.Host);
-            writer.WritePropertyName(Ipv6);
-            writer.WriteValue(ep.Host);
-            writer.WritePropertyName(Port);
-            writer.WriteValue(ep.Port);
+            if (!string.IsNullOrEmpty(ep.Host))
+            {
+                writer.WritePropertyName(Ipv4); // N.B. - don't really care what the IP family is.
+                writer.WriteValue(ep.Host);
+                writer.WritePropertyName(Ipv6);
+                writer.WriteValue(ep.Host);
+            }
+
+            if (ep.Port != null)
+            {
+                writer.WritePropertyName(Port);
+                writer.WriteValue(ep.Port);
+            }
+            
             writer.WriteEndObject();
         }
     }

@@ -73,7 +73,7 @@ namespace Petabridge.Tracing.Zipkin.Tests
         [Fact(DisplayName = "Should be able to use the Debug flag on spans")]
         public void ShouldUseDebugFlag()
         {
-            var span1 = Tracer.BuildSpan("op1").EnableDebugMode().Start();
+            var span1 = Tracer.BuildSpan("op1").SetDebugMode(false).Start();
             span1.Finish();
 
             Tracer.CollectedSpans.TryDequeue(out var innerSpan);

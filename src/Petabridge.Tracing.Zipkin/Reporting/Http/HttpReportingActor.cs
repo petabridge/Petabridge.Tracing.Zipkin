@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+﻿// -----------------------------------------------------------------------
+// <copyright file="HttpReportingActor.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using Akka.Actor;
@@ -8,33 +14,18 @@ using Phobos.Actor.Common;
 namespace Petabridge.Tracing.Zipkin.Reporting.Http
 {
     /// <summary>
-    /// INTERNAL API.
-    /// Actor responsible for managing the batching of outbound <see cref="T:Petabridge.Tracing.Zipkin.Span" /> instances.
+    ///     INTERNAL API.
+    ///     Actor responsible for managing the batching of outbound <see cref="T:Petabridge.Tracing.Zipkin.Span" /> instances.
     /// </summary>
     internal sealed class HttpReportingActor : ReceiveActor, INeverMonitor, INeverTrace
     {
-        public List<Span> PendingMessages { get; }
-
-        /// <summary>
-        /// INTERNAL API. 
-        /// 
-        /// Signal 
-        /// </summary>
-        private sealed class DeliverBatch
-        {
-            public static readonly DeliverBatch Instance = new DeliverBatch();
-            private DeliverBatch() { }
-        }
-
-        public bool BatchSizeReached => PendingMessages.Count >= _options.MaximumBatchSize;
-
-        private ICancelable _batchTransimissionTimer;
+        private readonly ILoggingAdapter _log = Context.GetLogger();
 
         private readonly ZipkinHttpReportingOptions _options;
 
         private readonly ZipkinHttpApiTransmitter _transmitter;
 
-        private readonly ILoggingAdapter _log = Context.GetLogger();
+        private ICancelable _batchTransimissionTimer;
 
         public HttpReportingActor(ZipkinHttpReportingOptions options)
         {
@@ -46,44 +37,40 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
             Batching();
         }
 
+        public List<Span> PendingMessages { get; }
+
+        public bool BatchSizeReached => PendingMessages.Count >= _options.MaximumBatchSize;
+
         private void Batching()
         {
             Receive<Span>(s =>
             {
                 PendingMessages.Add(s);
                 if (BatchSizeReached)
-                {
                     ExecuteDelivery();
-                }
             });
 
             Receive<DeliverBatch>(d =>
             {
                 if (PendingMessages.Any())
-                {
                     ExecuteDelivery();
-                }
                 else
-                {
                     RescheduleBatchTransmission();
-                }
             });
 
             Receive<HttpResponseMessage>(rsp =>
             {
                 if (_options.DebugLogging)
-                {
-                    _log.Debug("Received notification that Span batch was received by Zipkin at [{0}] with success code [{1}]", _transmitter.Uri, rsp.StatusCode);
-                }
+                    _log.Debug(
+                        "Received notification that Span batch was received by Zipkin at [{0}] with success code [{1}]",
+                        _transmitter.Uri, rsp.StatusCode);
             });
 
             // Indicates that one of our HTTP requests timed out
             Receive<Status.Failure>(f =>
             {
                 if (_options.ErrorLogging)
-                {
                     _log.Error(f.Cause, "Error occurred while uploading Spans to [{0}]", _transmitter.Uri);
-                }
             });
         }
 
@@ -110,6 +97,19 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
         protected override void PreStart()
         {
             RescheduleBatchTransmission();
+        }
+
+        /// <summary>
+        ///     INTERNAL API.
+        ///     Signal
+        /// </summary>
+        private sealed class DeliverBatch
+        {
+            public static readonly DeliverBatch Instance = new DeliverBatch();
+
+            private DeliverBatch()
+            {
+            }
         }
     }
 }

@@ -167,7 +167,7 @@ namespace Petabridge.Tracing.Zipkin
             return this;
         }
 
-        public IZipkinSpanBuilder EnableDebugMode()
+        public IZipkinSpanBuilder SetDebugMode(bool debugOn)
         {
             _enableDebug = true;
             return this;

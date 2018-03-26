@@ -1,6 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// -----------------------------------------------------------------------
+// <copyright file="ZipkinTracer.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using OpenTracing;
 using OpenTracing.Propagation;
 using Petabridge.Tracing.Zipkin.Exceptions;
@@ -11,7 +15,7 @@ using Petabridge.Tracing.Zipkin.Util;
 namespace Petabridge.Tracing.Zipkin
 {
     /// <summary>
-    /// Standard <see cref="ITracer"/> implementation for working with Zipkin.
+    ///     Standard <see cref="ITracer" /> implementation for working with Zipkin.
     /// </summary>
     public sealed class ZipkinTracer : IZipkinTracer, IDisposable
     {
@@ -30,7 +34,12 @@ namespace Petabridge.Tracing.Zipkin
         }
 
         public ZipkinTracerOptions Options { get; }
-        
+
+        public void Dispose()
+        {
+            _reporter?.Dispose();
+        }
+
         public Endpoint LocalEndpoint { get; }
         public ITimeProvider TimeProvider { get; }
         public ISpanIdProvider IdProvider { get; }
@@ -42,7 +51,25 @@ namespace Petabridge.Tracing.Zipkin
 
         public IZipkinSpanBuilder BuildSpan(string operationName)
         {
-            return new SpanBuilder(this, operationName);
+            IZipkinSpanBuilder sb = new SpanBuilder(this, operationName);
+
+            /*
+             * Turn on auto-properties when explicitly configured by user.
+             * 
+             * Can be changed or overwritten via the IZipkinSpanBuilder elsewhere.
+             */
+
+            if (Options.DefaultSpanKind.HasValue)
+            {
+                sb = sb.WithSpanKind(Options.DefaultSpanKind.Value);
+            }
+
+            if (Options.DebugMode)
+            {
+                sb = sb.SetDebugMode(true);
+            }
+
+            return sb;
         }
 
         ISpanBuilder ITracer.BuildSpan(string operationName)
@@ -55,7 +82,7 @@ namespace Petabridge.Tracing.Zipkin
             if ((format == BuiltinFormats.TextMap || format == BuiltinFormats.HttpHeaders) &&
                 carrier is ITextMap textMap)
             {
-                _propagator.Inject((SpanContext)spanContext, textMap);
+                _propagator.Inject((SpanContext) spanContext, textMap);
                 return;
             }
 
@@ -75,10 +102,5 @@ namespace Petabridge.Tracing.Zipkin
 
         public IScopeManager ScopeManager { get; }
         public ISpan ActiveSpan => ScopeManager.Active.Span;
-
-        public void Dispose()
-        {
-            _reporter?.Dispose();
-        }
     }
 }

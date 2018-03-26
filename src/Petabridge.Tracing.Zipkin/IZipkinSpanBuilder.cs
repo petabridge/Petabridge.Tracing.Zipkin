@@ -36,6 +36,6 @@ namespace Petabridge.Tracing.Zipkin
 
         IZipkinSpanBuilder WithSpanKind(SpanKind spanKind);
 
-        IZipkinSpanBuilder EnableDebugMode();
+        IZipkinSpanBuilder SetDebugMode(bool debugOn);
     }
 }
