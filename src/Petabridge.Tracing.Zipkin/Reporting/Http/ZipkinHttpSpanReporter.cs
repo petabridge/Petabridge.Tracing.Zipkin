@@ -4,6 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System;
 using Akka.Actor;
 using Akka.Configuration;
 using Akka.Util.Internal;
@@ -36,6 +37,10 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
 
         public void Dispose()
         {
+            // give it a chance to cleanup
+            _reporterActorRef.GracefulStop(TimeSpan.FromSeconds(5)).Wait();
+
+            // then optionall terminate ActorSystem
             _ownedActorSystem?.Terminate().Wait();
         }
 
