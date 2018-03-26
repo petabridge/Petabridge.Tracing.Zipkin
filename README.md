@@ -2,7 +2,7 @@
 
 YAZDC - Yet Another Zipkin Driver for C#.
 
-[Petabridge](https://petabridge.com/) develops highly tested, open source infrastructure software for .NET developers for a living. 
+[Petabridge](https://petabridge.com/) develops highly tested, open source infrastructure software for .NET developers professionally.
 
 We built this driver in order to provide a commercially supported, production-grade [Zipkin](https://zipkin.io/) driver for our customers but it's also available for users at large under the terms of the [Apache 2 License](LICENSE.md). We did not feel like the other drivers out there for Zipkin were particularly well-suited for the types of things our customers do (i.e. large scale IOT, finance, etc...) thus this project now exists and will be supported on behalf of our customers and users.
 
