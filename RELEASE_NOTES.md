@@ -1,3 +1,7 @@
+#### 0.2.0 April 3 2018 ####
+* Added support for sampling inside Petabridge.Tracing.Zipkin.
+* Extracted `IZipkinSpan` and `IZipkinSpanContext` interfaces in order to make it easier to work with mocks and fakes during testing.
+
 #### 0.1.1 March 26 2018 ####
 Fixed the following issues:
 
