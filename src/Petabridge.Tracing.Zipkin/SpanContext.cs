@@ -21,7 +21,7 @@ namespace Petabridge.Tracing.Zipkin
             SpanId = spanId;
             ParentId = parentId;
             Debug = debug;
-            Sampled = sampled;
+            Sampled = !Debug && sampled;
             Shared = shared;
         }
 
