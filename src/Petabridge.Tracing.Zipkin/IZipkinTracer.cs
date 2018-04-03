@@ -8,6 +8,7 @@ using OpenTracing;
 
 namespace Petabridge.Tracing.Zipkin
 {
+    /// <inheritdoc />
     /// <summary>
     ///     Interface for instrumenting
     /// </summary>
@@ -27,6 +28,12 @@ namespace Petabridge.Tracing.Zipkin
         ///     Factory using for emitting <see cref="TraceId" /> and SpanId objects.
         /// </summary>
         ISpanIdProvider IdProvider { get; }
+
+        /// <summary>
+        /// Strategy used for determining which <see cref="Span"/> instances are included in the sample
+        /// and which are not.
+        /// </summary>
+        ITraceSampler Sampler { get; }
 
         /// <summary>
         ///     Pipes the completed span to a <see cref="ISpanReporter" /> for delivery.

@@ -92,6 +92,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting
                 writer.WritePropertyName(ParentId);
                 writer.WriteValue(span.TypedContext.ParentId.Value.ToString("x16"));
             }
+
             writer.WritePropertyName(OperationName);
             writer.WriteValue(span.OperationName);
 
@@ -161,6 +162,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting
                 writer.WriteValue(a.Value);
                 writer.WriteEndObject();
             }
+
             writer.WriteEndArray();
         }
 
@@ -173,6 +175,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting
                 writer.WritePropertyName(tag.Key);
                 writer.WriteValue(tag.Value);
             }
+
             writer.WriteEndObject();
         }
 

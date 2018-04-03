@@ -96,6 +96,7 @@ namespace Petabridge.Tracing.Zipkin
                         traceId = new TraceId(traceIdLow2);
                         return true;
                     }
+
                     return false;
                 default: //something illegal
                     return false;

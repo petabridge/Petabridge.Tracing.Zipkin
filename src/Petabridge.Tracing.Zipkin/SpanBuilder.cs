@@ -25,7 +25,7 @@ namespace Petabridge.Tracing.Zipkin
         private bool _ignoreActive;
         private Dictionary<string, string> _initialTags;
         private List<SpanReference> _references;
-        private bool _sampled;
+        private bool _forceIncludeInSample;
         private bool _shared;
         private SpanKind? _spanKind;
         private DateTimeOffset? _start;
@@ -33,8 +33,7 @@ namespace Petabridge.Tracing.Zipkin
         public SpanBuilder(IZipkinTracer tracer, string operationName)
         {
             _tracer = tracer;
-            _operationName = operationName;
-        }
+            _operationName = operationName;        }
 
         public IZipkinSpanBuilder AsChildOf(ISpanContext parent)
         {
@@ -155,10 +154,13 @@ namespace Petabridge.Tracing.Zipkin
             else if (!activeSpanContext.IsEmpty())
                 parentContext = (SpanContext) activeSpanContext;
 
+            // make a sampling decision
+            var includedInSample = _forceIncludeInSample || _tracer.Sampler.IncludeInSample(_operationName);
+
             return new Span(_tracer, _operationName,
                 new SpanContext(parentContext.IsEmpty() ? _tracer.IdProvider.NextTraceId() : parentContext.TraceId,
                     _tracer.IdProvider.NextSpanId(),
-                    parentContext?.SpanId, _enableDebug, _sampled, _shared), _start.Value, _spanKind);
+                    parentContext?.SpanId, _enableDebug, includedInSample, _shared), _start.Value, _spanKind);
         }
 
         public IZipkinSpanBuilder WithSpanKind(SpanKind spanKind)
@@ -170,6 +172,12 @@ namespace Petabridge.Tracing.Zipkin
         public IZipkinSpanBuilder SetDebugMode(bool debugOn)
         {
             _enableDebug = true;
+            return this;
+        }
+
+        public IZipkinSpanBuilder ForceIncludeInSample(bool includeInSample = true)
+        {
+            _forceIncludeInSample = includeInSample;
             return this;
         }
 
