@@ -18,7 +18,7 @@ namespace Petabridge.Tracing.Zipkin.SimpleDemo
             Console.WriteLine("Type some gibberish and press enter to create a trace!");
             Console.WriteLine("Type '/exit to quit.");
             var line = Console.ReadLine();
-            Span current = null;
+            IZipkinSpan current = null;
             while (string.IsNullOrEmpty(line) || !line.Equals("/exit"))
             {
                 IZipkinSpanBuilder sb = null;

@@ -5,7 +5,6 @@
 // -----------------------------------------------------------------------
 
 using FluentAssertions;
-using OpenTracing;
 using Petabridge.Tracing.Zipkin.Tracers.NoOp;
 using Petabridge.Tracing.Zipkin.Util;
 using Xunit;
@@ -23,7 +22,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Util
         [Fact(DisplayName = "null.IsEmpty() shoudl always be true")]
         public void NullSpanContextShouldBeEmpty()
         {
-            ISpanContext none = null;
+            IZipkinSpanContext none = null;
             none.IsEmpty().Should().BeTrue();
         }
     }

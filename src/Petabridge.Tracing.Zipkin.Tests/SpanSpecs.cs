@@ -22,8 +22,8 @@ namespace Petabridge.Tracing.Zipkin.Tests
         [Fact(DisplayName = "Should be able to create child spans")]
         public void ShouldCreateChildSpansWithSameTraceId()
         {
-            var span1 = Tracer.BuildSpan("op1").Start();
-            var span2 = Tracer.BuildSpan("op1.op2").AsChildOf(span1).Start();
+            var span1 = (Span) Tracer.BuildSpan("op1").Start();
+            var span2 = (Span) Tracer.BuildSpan("op1.op2").AsChildOf(span1).Start();
 
             span2.Finish();
             span1.Finish();
@@ -39,7 +39,7 @@ namespace Petabridge.Tracing.Zipkin.Tests
         [Fact(DisplayName = "Should be able to create a basic span")]
         public void ShouldCreateNewSpan()
         {
-            var span = Tracer.BuildSpan("op1").Start();
+            var span = (Span) Tracer.BuildSpan("op1").Start();
             span.Finish();
 
             span.SpanKind.Should().BeNull();

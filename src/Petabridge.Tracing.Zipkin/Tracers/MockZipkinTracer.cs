@@ -9,6 +9,7 @@ using OpenTracing;
 using OpenTracing.Propagation;
 using Petabridge.Tracing.Zipkin.Exceptions;
 using Petabridge.Tracing.Zipkin.Propagation;
+using Petabridge.Tracing.Zipkin.Sampling;
 using Petabridge.Tracing.Zipkin.Tracers.NoOp;
 using Petabridge.Tracing.Zipkin.Util;
 
@@ -23,13 +24,14 @@ namespace Petabridge.Tracing.Zipkin.Tracers
 
         public MockZipkinTracer(Endpoint localEndpoint = null, ITimeProvider timeProvider = null,
             ISpanIdProvider idProvider = null,
-            IScopeManager scopeManager = null, IPropagator<ITextMap> propagtor = null)
+            IScopeManager scopeManager = null, IPropagator<ITextMap> propagtor = null, ITraceSampler sampler = null)
         {
             LocalEndpoint = localEndpoint ?? Endpoint.Testing;
             TimeProvider = timeProvider ?? new DateTimeOffsetTimeProvider();
             IdProvider = idProvider ?? ThreadLocalRngSpanIdProvider.TraceId128BitProvider;
             ScopeManager = scopeManager ?? NoOpScopeManager.Instance;
             _propagator = propagtor ?? new B3Propagator();
+            Sampler = sampler ?? NoSampler.Instance;
             CollectedSpans = new ConcurrentQueue<Span>();
         }
 
@@ -38,6 +40,7 @@ namespace Petabridge.Tracing.Zipkin.Tracers
         public Endpoint LocalEndpoint { get; }
         public ITimeProvider TimeProvider { get; }
         public ISpanIdProvider IdProvider { get; }
+        public ITraceSampler Sampler { get; }
 
         public void Report(Span span)
         {
