@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using OpenTracing;
 using Petabridge.Tracing.Zipkin.Util;
+using Phobos.Tracing.Zipkin;
 
 namespace Petabridge.Tracing.Zipkin
 {
@@ -22,10 +23,10 @@ namespace Petabridge.Tracing.Zipkin
 
         private readonly IZipkinTracer _tracer;
         private bool _enableDebug;
+        private bool _forceIncludeInSample;
         private bool _ignoreActive;
         private Dictionary<string, string> _initialTags;
         private List<SpanReference> _references;
-        private bool _forceIncludeInSample;
         private bool _shared;
         private SpanKind? _spanKind;
         private DateTimeOffset? _start;
@@ -33,17 +34,24 @@ namespace Petabridge.Tracing.Zipkin
         public SpanBuilder(IZipkinTracer tracer, string operationName)
         {
             _tracer = tracer;
-            _operationName = operationName;        }
+            _operationName = operationName;
+        }
 
         public IZipkinSpanBuilder AsChildOf(ISpanContext parent)
         {
             return AddReference(References.ChildOf, parent);
         }
 
+        ISpanBuilder ISpanBuilder.AsChildOf(ISpanContext parent)
+        {
+            return AsChildOf(parent);
+        }
+
         ISpanBuilder ISpanBuilder.AsChildOf(ISpan parent)
         {
             return AsChildOf(parent);
         }
+
 
         ISpanBuilder ISpanBuilder.AddReference(string referenceType, ISpanContext referencedContext)
         {
@@ -80,21 +88,9 @@ namespace Petabridge.Tracing.Zipkin
             return WithStartTimestamp(timestamp);
         }
 
-        ISpanBuilder ISpanBuilder.AsChildOf(ISpanContext parent)
-        {
-            return AsChildOf(parent);
-        }
-
         public IZipkinSpanBuilder AsChildOf(ISpan parent)
         {
             return AsChildOf(parent.Context);
-        }
-
-        public IZipkinSpanBuilder AddReference(string referenceType, ISpanContext referencedContext)
-        {
-            if (_references == null) _references = new List<SpanReference>();
-            _references.Add(new SpanReference(referenceType, referencedContext));
-            return this;
         }
 
         public IZipkinSpanBuilder IgnoreActiveSpan()
@@ -141,7 +137,7 @@ namespace Petabridge.Tracing.Zipkin
             return Start();
         }
 
-        public Span Start()
+        public IZipkinSpan Start()
         {
             if (_start == null)
                 _start = _tracer.TimeProvider.Now;
@@ -154,13 +150,18 @@ namespace Petabridge.Tracing.Zipkin
             else if (!activeSpanContext.IsEmpty())
                 parentContext = (SpanContext) activeSpanContext;
 
-            // make a sampling decision
-            var includedInSample = _forceIncludeInSample || _tracer.Sampler.IncludeInSample(_operationName);
+            // make a sampling decision (all child spans are included in the sample)
+
+            var includedInSample = !parentContext.IsEmpty() || _forceIncludeInSample ||
+                                   _tracer.Sampler.IncludeInSample(_operationName);
+
+            if (_tracer.Sampler.Sampling && !includedInSample)
+                return NoOpSpan.Instance;
 
             return new Span(_tracer, _operationName,
                 new SpanContext(parentContext.IsEmpty() ? _tracer.IdProvider.NextTraceId() : parentContext.TraceId,
                     _tracer.IdProvider.NextSpanId(),
-                    parentContext?.SpanId, _enableDebug, includedInSample, _shared), _start.Value, _spanKind);
+                    parentContext?.SpanId, _enableDebug, _tracer.Sampler.Sampling, _shared), _start.Value, _spanKind);
         }
 
         public IZipkinSpanBuilder WithSpanKind(SpanKind spanKind)
@@ -178,6 +179,13 @@ namespace Petabridge.Tracing.Zipkin
         public IZipkinSpanBuilder ForceIncludeInSample(bool includeInSample = true)
         {
             _forceIncludeInSample = includeInSample;
+            return this;
+        }
+
+        public IZipkinSpanBuilder AddReference(string referenceType, ISpanContext referencedContext)
+        {
+            if (_references == null) _references = new List<SpanReference>();
+            _references.Add(new SpanReference(referenceType, referencedContext));
             return this;
         }
 

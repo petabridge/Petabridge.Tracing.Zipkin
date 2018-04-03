@@ -15,6 +15,11 @@ namespace Petabridge.Tracing.Zipkin
     public interface ITraceSampler
     {
         /// <summary>
+        ///     If <c>true</c>, indicates that we actually are excluding some samples and running a real sampling process.
+        /// </summary>
+        bool Sampling { get; }
+
+        /// <summary>
         ///     Determines whether or not to include the next <see cref="Span" /> (which hasn't yet been created)
         ///     in the sample or not.
         /// </summary>

@@ -1,11 +1,17 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="ProbabilisticSampler.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using Akka.Util;
 
 namespace Petabridge.Tracing.Zipkin.Sampling
 {
     /// <inheritdoc />
     /// <summary>
-    /// Samples <see cref="T:OpenTracing.ISpan" /> instances based on a probabilistic distribution using random numbers.
+    ///     Samples <see cref="T:OpenTracing.ISpan" /> instances based on a probabilistic distribution using random numbers.
     /// </summary>
     public sealed class ProbabilisticSampler : ITraceSampler
     {
@@ -15,10 +21,11 @@ namespace Petabridge.Tracing.Zipkin.Sampling
                 throw new ArgumentOutOfRangeException(nameof(sampleRate),
                     $"Sample rate must be in [0.0, 1.0]. Was [{sampleRate}]");
             SampleRate = sampleRate;
+            Sampling = sampleRate < 1.0d;
         }
 
         /// <summary>
-        /// A value between 0.0 (exclude everything) and 1.0 (include everything)
+        ///     A value between 0.0 (exclude everything) and 1.0 (include everything)
         /// </summary>
         public double SampleRate { get; }
 
@@ -26,5 +33,7 @@ namespace Petabridge.Tracing.Zipkin.Sampling
         {
             return ThreadLocalRandom.Current.NextDouble() <= SampleRate;
         }
+
+        public bool Sampling { get; }
     }
 }

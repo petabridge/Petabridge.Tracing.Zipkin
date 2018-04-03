@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using OpenTracing;
+using Petabridge.Tracing.Zipkin;
 
 namespace Phobos.Tracing.Zipkin
 {
@@ -15,7 +16,7 @@ namespace Phobos.Tracing.Zipkin
     ///     INTERNAL API.
     ///     Used when there's no scope available.
     /// </summary>
-    public sealed class NoOpSpan : ISpan
+    public sealed class NoOpSpan : IZipkinSpan
     {
         public static readonly NoOpSpan Instance = new NoOpSpan();
 
@@ -87,5 +88,10 @@ namespace Phobos.Tracing.Zipkin
         }
 
         public ISpanContext Context => NoOpSpanContext.Instance;
+        public IZipkinSpanContext TypedContext => NoOpSpanContext.Instance;
+        public bool Debug => TypedContext.Debug;
+        public bool Shared => TypedContext.Shared;
+        public bool Sampled => TypedContext.Sampled;
+        public SpanKind? SpanKind => null;
     }
 }

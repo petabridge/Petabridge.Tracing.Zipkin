@@ -5,14 +5,14 @@
 // -----------------------------------------------------------------------
 
 using System.Collections.Generic;
-using OpenTracing;
+using Petabridge.Tracing.Zipkin;
 
 namespace Phobos.Tracing.Zipkin
 {
     /// <summary>
     ///     Used when there's no active span context.
     /// </summary>
-    public sealed class NoOpSpanContext : ISpanContext
+    public sealed class NoOpSpanContext : IZipkinSpanContext
     {
         public static readonly NoOpSpanContext Instance = new NoOpSpanContext();
 
@@ -26,5 +26,17 @@ namespace Phobos.Tracing.Zipkin
         {
             return Empty;
         }
+
+        public bool Equals(IZipkinSpanContext other)
+        {
+            return ReferenceEquals(other, Instance);
+        }
+
+        public TraceId TraceId => new TraceId(0, 0);
+        public long SpanId => 0;
+        public long? ParentId => null;
+        public bool Debug => true;
+        public bool Sampled => false;
+        public bool Shared => true;
     }
 }

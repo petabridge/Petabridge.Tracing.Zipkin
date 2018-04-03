@@ -75,7 +75,7 @@ namespace Petabridge.Tracing.Zipkin
         public IScopeManager ScopeManager { get; set; }
 
         /// <summary>
-        /// Used to determine which <see cref="Span"/> instances are included in the sample and which are not.
+        ///     Used to determine which <see cref="Span" /> instances are included in the sample and which are not.
         /// </summary>
         public ITraceSampler Sampler { get; set; }
 

@@ -30,8 +30,8 @@ namespace Petabridge.Tracing.Zipkin
         ISpanIdProvider IdProvider { get; }
 
         /// <summary>
-        /// Strategy used for determining which <see cref="Span"/> instances are included in the sample
-        /// and which are not.
+        ///     Strategy used for determining which <see cref="Span" /> instances are included in the sample
+        ///     and which are not.
         /// </summary>
         ITraceSampler Sampler { get; }
 

@@ -18,8 +18,6 @@ namespace Petabridge.Tracing.Zipkin
 
         new IZipkinSpanBuilder AsChildOf(ISpan parent);
 
-        new IZipkinSpanBuilder AddReference(string referenceType, ISpanContext referencedContext);
-
         new IZipkinSpanBuilder IgnoreActiveSpan();
 
         new IZipkinSpanBuilder WithTag(string key, string value);
@@ -32,22 +30,26 @@ namespace Petabridge.Tracing.Zipkin
 
         new IZipkinSpanBuilder WithStartTimestamp(DateTimeOffset timestamp);
 
-        new Span Start();
+        new IZipkinSpan Start();
 
         IZipkinSpanBuilder WithSpanKind(SpanKind spanKind);
 
         /// <summary>
-        /// Sets debug mode to enabled for this particular <see cref="ISpan"/>.
+        ///     Sets debug mode to enabled for this particular <see cref="ISpan" />.
         /// </summary>
         /// <param name="debugOn"><c>true</c> if debug mode will be enabled. <c>false</c> otherwise.</param>
         /// <returns>The current span builder instance.</returns>
         IZipkinSpanBuilder SetDebugMode(bool debugOn);
 
         /// <summary>
-        /// Forces the current <see cref="ISpan"/> to be included in the sample regardless of what the <see cref="IZipkinTracer.Sampler"/>
-        /// decides.
+        ///     Forces the current <see cref="ISpan" /> to be included in the sample regardless of what the
+        ///     <see cref="IZipkinTracer.Sampler" />
+        ///     decides.
         /// </summary>
-        /// <param name="includeInSample"><c>true</c> if the <see cref="ISpan"/> will be included in the sample. <c>false</c> otherwise.</param>
+        /// <param name="includeInSample">
+        ///     <c>true</c> if the <see cref="ISpan" /> will be included in the sample. <c>false</c>
+        ///     otherwise.
+        /// </param>
         /// <returns>The current span builder instance.</returns>
         IZipkinSpanBuilder ForceIncludeInSample(bool includeInSample = true);
     }
