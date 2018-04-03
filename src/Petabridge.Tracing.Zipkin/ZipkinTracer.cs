@@ -9,6 +9,7 @@ using OpenTracing;
 using OpenTracing.Propagation;
 using Petabridge.Tracing.Zipkin.Exceptions;
 using Petabridge.Tracing.Zipkin.Propagation;
+using Petabridge.Tracing.Zipkin.Sampling;
 using Petabridge.Tracing.Zipkin.Tracers.NoOp;
 using Petabridge.Tracing.Zipkin.Util;
 
@@ -30,6 +31,7 @@ namespace Petabridge.Tracing.Zipkin
             TimeProvider = options.TimeProvider ?? new DateTimeOffsetTimeProvider();
             ScopeManager = options.ScopeManager ?? NoOpScopeManager.Instance;
             IdProvider = options.IdProvider ?? ThreadLocalRngSpanIdProvider.TraceId128BitProvider;
+            Sampler = options.Sampler ?? NoSampler.Instance;
             Options = options;
         }
 
@@ -43,6 +45,7 @@ namespace Petabridge.Tracing.Zipkin
         public Endpoint LocalEndpoint { get; }
         public ITimeProvider TimeProvider { get; }
         public ISpanIdProvider IdProvider { get; }
+        public ITraceSampler Sampler { get; }
 
         public void Report(Span span)
         {

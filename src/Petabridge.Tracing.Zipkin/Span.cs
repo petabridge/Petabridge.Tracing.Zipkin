@@ -32,7 +32,7 @@ namespace Petabridge.Tracing.Zipkin
     ///     or causes other subsequent operations elsewhere inside the distributed system, these
     ///     spans can be connected together through a parent-child relationship.
     /// </summary>
-    public class Span : ISpan, IDisposable
+    public class Span : IZipkinSpan, IDisposable
     {
         public static readonly IReadOnlyDictionary<string, string> EmptyTags = new Dictionary<string, string>();
         public static readonly IReadOnlyList<Annotation> EmptyAnnotations = new Annotation[0];
@@ -83,34 +83,9 @@ namespace Petabridge.Tracing.Zipkin
             }
         }
 
-        /// <summary>
-        ///     Optional. The type of span for this operation. Defaults to <c>null</c>.
-        /// </summary>
-        public SpanKind? SpanKind { get; private set; }
-
         public IReadOnlyList<Annotation> Annotations => _annotations ?? EmptyAnnotations;
 
         public IReadOnlyDictionary<string, string> Tags => _tags ?? EmptyTags;
-
-        /// <summary>
-        ///     For people who aren't fond of boxing.
-        /// </summary>
-        public SpanContext TypedContext { get; }
-
-        /// <summary>
-        ///     Indicates if the <see cref="Span" /> is being used to during debugging.
-        /// </summary>
-        public bool Debug => TypedContext.Debug;
-
-        /// <summary>
-        ///     Indicates if the current <see cref="Span" /> is shared among many other traces.
-        /// </summary>
-        public bool Shared => TypedContext.Shared;
-
-        /// <summary>
-        ///     Indicates if the current <see cref="Span" /> is part of sampling.
-        /// </summary>
-        public bool Sampled => TypedContext.Sampled;
 
         /// <summary>
         ///     The local <see cref="Endpoint" />
@@ -126,6 +101,31 @@ namespace Petabridge.Tracing.Zipkin
         {
             Finish();
         }
+
+        /// <summary>
+        ///     Optional. The type of span for this operation. Defaults to <c>null</c>.
+        /// </summary>
+        public SpanKind? SpanKind { get; private set; }
+
+        /// <summary>
+        ///     For people who aren't fond of boxing.
+        /// </summary>
+        public IZipkinSpanContext TypedContext { get; }
+
+        /// <summary>
+        ///     Indicates if the <see cref="Span" /> is being used to during debugging.
+        /// </summary>
+        public bool Debug => TypedContext.Debug;
+
+        /// <summary>
+        ///     Indicates if the current <see cref="Span" /> is shared among many other traces.
+        /// </summary>
+        public bool Shared => TypedContext.Shared;
+
+        /// <summary>
+        ///     Indicates if the current <see cref="Span" /> is part of sampling.
+        /// </summary>
+        public bool Sampled => TypedContext.Sampled;
 
         public ISpan SetTag(string key, string value)
         {

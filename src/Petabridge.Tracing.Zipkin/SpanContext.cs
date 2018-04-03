@@ -6,14 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using OpenTracing;
 
 namespace Petabridge.Tracing.Zipkin
 {
     /// <summary>
     ///     Zipkin span context.
     /// </summary>
-    public sealed class SpanContext : ISpanContext, IEquatable<SpanContext>
+    public sealed class SpanContext : IZipkinSpanContext
     {
         public SpanContext(TraceId traceId, long spanId, long? parentId = null, bool debug = false,
             bool sampled = false, bool shared = false)
@@ -22,7 +21,7 @@ namespace Petabridge.Tracing.Zipkin
             SpanId = spanId;
             ParentId = parentId;
             Debug = debug;
-            Sampled = sampled;
+            Sampled = !Debug && sampled;
             Shared = shared;
         }
 
@@ -58,7 +57,7 @@ namespace Petabridge.Tracing.Zipkin
         /// </summary>
         public bool Shared { get; }
 
-        public bool Equals(SpanContext other)
+        public bool Equals(IZipkinSpanContext other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
