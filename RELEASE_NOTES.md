@@ -1,3 +1,6 @@
+#### 0.2.1 April 5 2018 ####
+* Fixed a bug that could occur during sampling where a `NoOpSpanContext` could accidentally be added as a parent under some circumstances. In these instances, we now filter these illegal span types out.
+
 #### 0.2.0 April 3 2018 ####
 * Added support for sampling inside Petabridge.Tracing.Zipkin.
 * Extracted `IZipkinSpan` and `IZipkinSpanContext` interfaces in order to make it easier to work with mocks and fakes during testing.
