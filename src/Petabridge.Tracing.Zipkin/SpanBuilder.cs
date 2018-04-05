@@ -184,6 +184,7 @@ namespace Petabridge.Tracing.Zipkin
 
         public IZipkinSpanBuilder AddReference(string referenceType, ISpanContext referencedContext)
         {
+            if (!referencedContext.IsZipkinSpan()) return this; // stop execution here
             if (_references == null) _references = new List<SpanReference>();
             _references.Add(new SpanReference(referenceType, referencedContext));
             return this;

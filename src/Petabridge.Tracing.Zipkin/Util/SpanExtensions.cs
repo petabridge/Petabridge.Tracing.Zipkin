@@ -23,5 +23,15 @@ namespace Petabridge.Tracing.Zipkin.Util
         {
             return context == null || context is NoOpSpanContext;
         }
+
+        /// <summary>
+        /// Determines if an <see cref="ISpanContext"/> is a valid <see cref="IZipkinSpanContext"/> or not.
+        /// </summary>
+        /// <param name="context">The span context.</param>
+        /// <returns><c>true</c> if the span is valid, <c>false</c> otherwise.</returns>
+        public static bool IsZipkinSpan(this ISpanContext context)
+        {
+            return !IsEmpty(context) && (context is IZipkinSpanContext);
+        }
     }
 }
