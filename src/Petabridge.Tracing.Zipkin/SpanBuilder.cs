@@ -161,7 +161,7 @@ namespace Petabridge.Tracing.Zipkin
             return new Span(_tracer, _operationName,
                 new SpanContext(parentContext.IsEmpty() ? _tracer.IdProvider.NextTraceId() : parentContext.TraceId,
                     _tracer.IdProvider.NextSpanId(),
-                    parentContext?.SpanId, _enableDebug, _tracer.Sampler.Sampling, _shared), _start.Value, _spanKind);
+                    parentContext?.SpanId, _enableDebug, _tracer.Sampler.Sampling, _shared), _start.Value, _spanKind, tags:_initialTags);
         }
 
         public IZipkinSpanBuilder WithSpanKind(SpanKind spanKind)

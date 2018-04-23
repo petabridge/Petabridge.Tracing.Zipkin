@@ -45,8 +45,8 @@ namespace Petabridge.Tracing.Zipkin
         private List<Annotation> _annotations;
         private Dictionary<string, string> _tags;
 
-        public Span(IZipkinTracer tracer, string operationName, SpanContext context, DateTimeOffset started,
-            SpanKind? kind = null, Endpoint localEndpoint = null)
+        public Span(IZipkinTracer tracer, string operationName, IZipkinSpanContext context, DateTimeOffset started,
+            SpanKind? kind = null, Endpoint localEndpoint = null, Dictionary<string, string> tags = null)
         {
             _tracer = tracer;
             OperationName = operationName;
@@ -54,6 +54,7 @@ namespace Petabridge.Tracing.Zipkin
             Started = started;
             SpanKind = kind;
             LocalEndpoint = localEndpoint ?? _tracer.LocalEndpoint;
+            _tags = tags;
         }
 
         /// <summary>
@@ -102,6 +103,7 @@ namespace Petabridge.Tracing.Zipkin
             Finish();
         }
 
+        /// <inheritdoc />
         /// <summary>
         ///     Optional. The type of span for this operation. Defaults to <c>null</c>.
         /// </summary>
@@ -112,18 +114,21 @@ namespace Petabridge.Tracing.Zipkin
         /// </summary>
         public IZipkinSpanContext TypedContext { get; }
 
+        /// <inheritdoc />
         /// <summary>
-        ///     Indicates if the <see cref="Span" /> is being used to during debugging.
+        ///     Indicates if the <see cref="T:Petabridge.Tracing.Zipkin.Span" /> is being used to during debugging.
         /// </summary>
         public bool Debug => TypedContext.Debug;
 
+        /// <inheritdoc />
         /// <summary>
-        ///     Indicates if the current <see cref="Span" /> is shared among many other traces.
+        ///     Indicates if the current <see cref="T:Petabridge.Tracing.Zipkin.Span" /> is shared among many other traces.
         /// </summary>
         public bool Shared => TypedContext.Shared;
 
+        /// <inheritdoc />
         /// <summary>
-        ///     Indicates if the current <see cref="Span" /> is part of sampling.
+        ///     Indicates if the current <see cref="T:Petabridge.Tracing.Zipkin.Span" /> is part of sampling.
         /// </summary>
         public bool Sampled => TypedContext.Sampled;
 
