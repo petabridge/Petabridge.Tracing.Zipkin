@@ -40,7 +40,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
             // give it a chance to cleanup
             _reporterActorRef.GracefulStop(TimeSpan.FromSeconds(5)).Wait();
 
-            // then optionall terminate ActorSystem
+            // then optionally terminate ActorSystem
             _ownedActorSystem?.Terminate().Wait();
         }
 
