@@ -66,8 +66,12 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
             }
         }
 
+#if !DEBUG
         [Fact(DisplayName = "Should be able to serialize simple span into a valid Zipkin-friendly JSON format.",
             Skip = "Weird environmental stuff on build server.")]
+#else // want to be able to run this spec locally
+        [Fact(DisplayName = "Should be able to serialize simple span into a valid Zipkin-friendly JSON format.")]
+#endif
         public void ShouldMapSingleSpanIntoValidJson()
         {
             var json = @"

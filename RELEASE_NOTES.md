@@ -1,3 +1,7 @@
+#### 0.2.2 April 23 2018 ####
+* Upgraded to [Akka.NET v1.3.6](https://github.com/akkadotnet/akka.net/releases/tag/v1.3.6)
+* [Fixed: Initial tags created by IZipkinSpanBuilder aren't actually passed to span](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/25)
+
 #### 0.2.1 April 5 2018 ####
 * Fixed a bug that could occur during sampling where a `NoOpSpanContext` could accidentally be added as a parent under some circumstances. In these instances, we now filter these illegal span types out.
 
