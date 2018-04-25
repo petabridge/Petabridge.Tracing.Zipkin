@@ -5,7 +5,7 @@
 // -----------------------------------------------------------------------
 
 using FluentAssertions;
-using Petabridge.Tracing.Zipkin.Tracers.NoOp;
+using Petabridge.Tracing.Zipkin.Tracers;
 using Petabridge.Tracing.Zipkin.Util;
 using Xunit;
 
@@ -13,10 +13,16 @@ namespace Petabridge.Tracing.Zipkin.Tests.Util
 {
     public class SpanExtensionsSpecs
     {
-        [Fact(DisplayName = "NoOpSpanContext.IsEmpty() should always be true")]
+        [Fact(DisplayName = "NoOp.Span.IsEmpty() should always be true")]
         public void NoOpSpanContextShouldBeEmpty()
         {
-            NoOpScopeManager.Instance.Active.Span.Context.IsEmpty().Should().BeTrue();
+            NoOp.Span.Context.IsEmpty().Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "NoOpZipkinSpanContext.IsEmpty() should always be true")]
+        public void NoOpZipkinSpanContextShouldBeEmpty()
+        {
+            NoOpZipkinSpanContext.Instance.IsEmpty().Should().BeTrue();
         }
 
         [Fact(DisplayName = "null.IsEmpty() shoudl always be true")]

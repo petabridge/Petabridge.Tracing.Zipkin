@@ -9,8 +9,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using OpenTracing;
+using Petabridge.Tracing.Zipkin.Tracers;
 using Petabridge.Tracing.Zipkin.Util;
-using Phobos.Tracing.Zipkin;
 
 namespace Petabridge.Tracing.Zipkin
 {
@@ -156,7 +156,7 @@ namespace Petabridge.Tracing.Zipkin
                                    _tracer.Sampler.IncludeInSample(_operationName);
 
             if (_tracer.Sampler.Sampling && !includedInSample)
-                return NoOpSpan.Instance;
+                return NoOpZipkinSpan.Instance;
 
             return new Span(_tracer, _operationName,
                 new SpanContext(parentContext.IsEmpty() ? _tracer.IdProvider.NextTraceId() : parentContext.TraceId,

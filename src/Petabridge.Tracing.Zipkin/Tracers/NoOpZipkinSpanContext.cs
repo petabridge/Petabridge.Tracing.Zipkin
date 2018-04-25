@@ -1,24 +1,24 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="NoOpSpanContext.cs" company="Petabridge, LLC">
+// <copyright file="NoOpZipkinSpanContext.cs" company="Petabridge, LLC">
 //      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
 using System.Collections.Generic;
-using Petabridge.Tracing.Zipkin;
 
-namespace Phobos.Tracing.Zipkin
+namespace Petabridge.Tracing.Zipkin.Tracers
 {
+    /// <inheritdoc />
     /// <summary>
     ///     Used when there's no active span context.
     /// </summary>
-    public sealed class NoOpSpanContext : IZipkinSpanContext
+    internal sealed class NoOpZipkinSpanContext : IZipkinSpanContext
     {
-        public static readonly NoOpSpanContext Instance = new NoOpSpanContext();
+        public static readonly NoOpZipkinSpanContext Instance = new NoOpZipkinSpanContext();
 
         public static readonly IEnumerable<KeyValuePair<string, string>> Empty = new Dictionary<string, string>();
 
-        private NoOpSpanContext()
+        private NoOpZipkinSpanContext()
         {
         }
 
