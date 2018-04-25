@@ -8,12 +8,9 @@
   </PropertyGroup>
 
 
-  <ItemGroup>
-    <Compile Remove="Scopes\**" />
-    <EmbeddedResource Remove="Scopes\**" />
-    <None Remove="Scopes\**" />
-  </ItemGroup>
-
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\Petabridge.Tracing.Zipkin.xml</DocumentationFile>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Akka" Version="1.3.6" />
