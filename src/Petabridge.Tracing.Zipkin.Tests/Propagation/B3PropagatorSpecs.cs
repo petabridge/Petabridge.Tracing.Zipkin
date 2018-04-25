@@ -5,13 +5,11 @@
 // -----------------------------------------------------------------------
 
 using System.Collections.Generic;
-using FluentAssertions;
 using FsCheck;
 using FsCheck.Xunit;
 using OpenTracing.Propagation;
 using Petabridge.Tracing.Zipkin.Propagation;
 using Petabridge.Tracing.Zipkin.Tracers;
-using Xunit;
 
 namespace Petabridge.Tracing.Zipkin.Tests.Propagation
 {
@@ -21,7 +19,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
 
         public B3PropagatorSpecs()
         {
-            Tracer = new MockZipkinTracer(propagtor:new B3Propagator());
+            Tracer = new MockZipkinTracer(propagtor: new B3Propagator());
         }
 
         [Property(DisplayName = "Should be able to extract and inject spans via B3 headers")]
@@ -48,11 +46,14 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
 
             Tracer.Inject(context, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));
             var extracted =
-                (SpanContext)Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
+                (SpanContext) Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
 
-            return (context.Shared == extracted.Shared).Label($"Shared settings should match. Expected [{context.Shared}] but found [{extracted.Shared}]")
-                .And((context.Debug == extracted.Debug).Label($"Debug settings should match. Expected [{context.Debug}] but found [{extracted.Debug}]"))
-                .And((context.Sampled == extracted.Sampled).Label($"Sampled settings should match. Expected [{context.Sampled}] but found [{extracted.Sampled}]"));
+            return (context.Shared == extracted.Shared)
+                .Label($"Shared settings should match. Expected [{context.Shared}] but found [{extracted.Shared}]")
+                .And((context.Debug == extracted.Debug).Label(
+                    $"Debug settings should match. Expected [{context.Debug}] but found [{extracted.Debug}]"))
+                .And((context.Sampled == extracted.Sampled).Label(
+                    $"Sampled settings should match. Expected [{context.Sampled}] but found [{extracted.Sampled}]"));
         }
     }
 }
