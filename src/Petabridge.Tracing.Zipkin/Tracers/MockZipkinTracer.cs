@@ -80,7 +80,7 @@ namespace Petabridge.Tracing.Zipkin.Tracers
         }
 
         public IScopeManager ScopeManager { get; }
-        public ISpan ActiveSpan => NoOp.Span;
+        public ISpan ActiveSpan => ScopeManager.Active?.Span;
 
         public void Dispose()
         {
