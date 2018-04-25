@@ -100,6 +100,11 @@ namespace Petabridge.Tracing.Zipkin
         }
 
         public IScopeManager ScopeManager { get; }
-        public ISpan ActiveSpan => ScopeManager.Active.Span;
+
+        /*
+         * Need a null check here since some ScopeManager implementations
+         * may have the ActiveSpan initially set to null.
+         */
+        public ISpan ActiveSpan => ScopeManager.Active?.Span;
     }
 }
