@@ -1,26 +1,20 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="NoOpSpan.cs" company="Petabridge, LLC">
-//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
-// </copyright>
-// -----------------------------------------------------------------------
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using OpenTracing;
-using Petabridge.Tracing.Zipkin;
 
-namespace Phobos.Tracing.Zipkin
+namespace Petabridge.Tracing.Zipkin.Tracers
 {
     /// <inheritdoc />
     /// <summary>
     ///     INTERNAL API.
     ///     Used when there's no scope available.
     /// </summary>
-    public sealed class NoOpSpan : IZipkinSpan
+    public sealed class NoOpZipkinSpan : IZipkinSpan
     {
-        public static readonly NoOpSpan Instance = new NoOpSpan();
+        public static readonly NoOpZipkinSpan Instance = new NoOpZipkinSpan();
 
-        private NoOpSpan()
+        private NoOpZipkinSpan()
         {
         }
 
@@ -87,8 +81,8 @@ namespace Phobos.Tracing.Zipkin
         {
         }
 
-        public ISpanContext Context => NoOpSpanContext.Instance;
-        public IZipkinSpanContext TypedContext => NoOpSpanContext.Instance;
+        public ISpanContext Context => NoOpZipkinSpanContext.Instance;
+        public IZipkinSpanContext TypedContext => NoOpZipkinSpanContext.Instance;
         public bool Debug => TypedContext.Debug;
         public bool Shared => TypedContext.Shared;
         public bool Sampled => TypedContext.Sampled;

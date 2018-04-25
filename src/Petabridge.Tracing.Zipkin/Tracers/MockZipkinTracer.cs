@@ -10,7 +10,6 @@ using OpenTracing.Propagation;
 using Petabridge.Tracing.Zipkin.Exceptions;
 using Petabridge.Tracing.Zipkin.Propagation;
 using Petabridge.Tracing.Zipkin.Sampling;
-using Petabridge.Tracing.Zipkin.Tracers.NoOp;
 using Petabridge.Tracing.Zipkin.Util;
 
 namespace Petabridge.Tracing.Zipkin.Tracers
@@ -29,7 +28,7 @@ namespace Petabridge.Tracing.Zipkin.Tracers
             LocalEndpoint = localEndpoint ?? Endpoint.Testing;
             TimeProvider = timeProvider ?? new DateTimeOffsetTimeProvider();
             IdProvider = idProvider ?? ThreadLocalRngSpanIdProvider.TraceId128BitProvider;
-            ScopeManager = scopeManager ?? NoOpScopeManager.Instance;
+            ScopeManager = scopeManager ?? NoOp.ScopeManager;
             _propagator = propagtor ?? new B3Propagator();
             Sampler = sampler ?? NoSampler.Instance;
             CollectedSpans = new ConcurrentQueue<Span>();
@@ -81,7 +80,7 @@ namespace Petabridge.Tracing.Zipkin.Tracers
         }
 
         public IScopeManager ScopeManager { get; }
-        public ISpan ActiveSpan => ScopeManager.Active.Span;
+        public ISpan ActiveSpan => ScopeManager.Active?.Span;
 
         public void Dispose()
         {

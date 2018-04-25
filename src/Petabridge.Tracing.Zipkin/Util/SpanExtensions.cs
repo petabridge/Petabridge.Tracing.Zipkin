@@ -5,7 +5,7 @@
 // -----------------------------------------------------------------------
 
 using OpenTracing;
-using Phobos.Tracing.Zipkin;
+using Petabridge.Tracing.Zipkin.Tracers;
 
 namespace Petabridge.Tracing.Zipkin.Util
 {
@@ -21,7 +21,7 @@ namespace Petabridge.Tracing.Zipkin.Util
         /// <returns><c>true</c> if the span is empty, <c>false</c> otherwise.</returns>
         public static bool IsEmpty(this ISpanContext context)
         {
-            return context == null || context is NoOpSpanContext;
+            return context == null || NoOp.Span.Context.Equals(context) || Equals(NoOpZipkinSpanContext.Instance, context);
         }
 
         /// <summary>

@@ -6,7 +6,6 @@
 
 using FluentAssertions;
 using Petabridge.Tracing.Zipkin.Tracers;
-using Phobos.Tracing.Zipkin;
 using Xunit;
 
 namespace Petabridge.Tracing.Zipkin.Tests
@@ -81,10 +80,10 @@ namespace Petabridge.Tracing.Zipkin.Tests
             innerSpan.Debug.Should().BeTrue();
         }
 
-        [Fact(DisplayName = "If a NoOpSpanContext is added as a reference to a valid span, should just discard and not throw error")]
+        [Fact(DisplayName = "If a NoOpZipkinSpanContext is added as a reference to a valid span, should just discard and not throw error")]
         public void SamplingBugFixShouldNotThrowExceptionNoOpSpanContextAddedAsReference()
         {
-            var span1 = NoOpSpan.Instance;
+            var span1 = NoOpZipkinSpan.Instance;
             var span2 = Tracer.BuildSpan("foo").AsChildOf(span1).Start();
 
             // should safely ignore the span
