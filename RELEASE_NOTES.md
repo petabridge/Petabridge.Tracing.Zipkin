@@ -1,3 +1,6 @@
+#### 0.2.3 April 24 2018 ####
+* [Adding support for external `IScopeManager` implementations to work inside `IZipkinSpanBuilder`](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/32)
+
 #### 0.2.2 April 23 2018 ####
 * Upgraded to [Akka.NET v1.3.6](https://github.com/akkadotnet/akka.net/releases/tag/v1.3.6)
 * [Fixed: Initial tags created by IZipkinSpanBuilder aren't actually passed to span](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/25)

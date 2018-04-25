@@ -2,9 +2,8 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2018 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.2.2</VersionPrefix>
-    <PackageReleaseNotes>Upgraded to [Akka.NET v1.3.6](https://github.com/akkadotnet/akka.net/releases/tag/v1.3.6)
-[Fixed: Initial tags created by IZipkinSpanBuilder aren't actually passed to span](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/25)</PackageReleaseNotes>
+    <VersionPrefix>0.2.3</VersionPrefix>
+    <PackageReleaseNotes>[Adding support for external `IScopeManager` implementations to work inside `IZipkinSpanBuilder`](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/32)</PackageReleaseNotes>
     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
     <PackageProjectUrl>
       https://github.com/petabridge/Petabridge.Tracing.Zipkin
