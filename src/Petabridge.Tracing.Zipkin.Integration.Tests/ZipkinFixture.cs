@@ -1,8 +1,12 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="ZipkinFixture.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using Akka.Util;
 using Docker.DotNet;
@@ -13,9 +17,9 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
 {
     public class ZipkinFixture : IAsyncLifetime
     {
-        private DockerClient _client;
-        private readonly string _zipkinContainerName = $"zipkin-{Guid.NewGuid():N}";
         private const string ZipkinImageName = "openzipkin/zipkin";
+        private readonly string _zipkinContainerName = $"zipkin-{Guid.NewGuid():N}";
+        private DockerClient _client;
 
         public string ZipkinUrl { get; private set; }
 
@@ -23,26 +27,19 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
         {
             DockerClientConfiguration config;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
                 config = new DockerClientConfiguration(new Uri("unix:///var/run/docker.sock"));
-            }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
                 config = new DockerClientConfiguration(new Uri("npipe://./pipe/docker_engine"));
-            }
             else
-            {
                 throw new NotSupportedException($"Unsupported OS [{RuntimeInformation.OSDescription}]");
-            }
 
             _client = config.CreateClient();
 
-            var images = await _client.Images.ListImagesAsync(new ImagesListParameters { MatchName = ZipkinImageName });
+            var images = await _client.Images.ListImagesAsync(new ImagesListParameters {MatchName = ZipkinImageName});
             if (images.Count == 0)
-            {
-                // No image found. Pulling latest ..
-                await _client.Images.CreateImageAsync(new ImagesCreateParameters { FromImage = ZipkinImageName, Tag = "latest" }, null, new Progress<JSONMessage>());
-            }
+                await _client.Images.CreateImageAsync(
+                    new ImagesCreateParameters {FromImage = ZipkinImageName, Tag = "latest"}, null,
+                    new Progress<JSONMessage>());
 
             var zipkinHttpPort = ThreadLocalRandom.Current.Next(9000, 10000);
 
@@ -71,7 +68,7 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
             });
 
             // start the container
-            await _client.Containers.StartContainerAsync(_zipkinContainerName, new ContainerStartParameters() { });
+            await _client.Containers.StartContainerAsync(_zipkinContainerName, new ContainerStartParameters());
             ZipkinUrl = $"localhost:{zipkinHttpPort}";
             await Task.Delay(TimeSpan.FromSeconds(5));
         }
@@ -80,9 +77,9 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
         {
             if (_client != null)
             {
-                await _client.Containers.StopContainerAsync(_zipkinContainerName, new ContainerStopParameters() { });
+                await _client.Containers.StopContainerAsync(_zipkinContainerName, new ContainerStopParameters());
                 await _client.Containers.RemoveContainerAsync(_zipkinContainerName,
-                    new ContainerRemoveParameters() {Force = true});
+                    new ContainerRemoveParameters {Force = true});
                 _client.Dispose();
             }
         }
