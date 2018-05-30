@@ -70,7 +70,7 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
             // start the container
             await _client.Containers.StartContainerAsync(_zipkinContainerName, new ContainerStartParameters());
             ZipkinUrl = $"localhost:{zipkinHttpPort}";
-            await Task.Delay(TimeSpan.FromSeconds(5));
+            await Task.Delay(TimeSpan.FromSeconds(20));
         }
 
         public async Task DisposeAsync()

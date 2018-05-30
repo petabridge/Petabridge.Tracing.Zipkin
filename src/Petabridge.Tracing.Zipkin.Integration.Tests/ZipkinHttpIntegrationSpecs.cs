@@ -5,12 +5,14 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Akka.TestKit.Xunit2;
 using Akka.Util.Internal;
 using FluentAssertions;
 using OpenTracing.Util;
+using Petabridge.Tracing.Zipkin.Integration.Tests.Serialization;
 using Petabridge.Tracing.Zipkin.Reporting.Http;
 using Xunit;
 using Xunit.Abstractions;
@@ -24,10 +26,13 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
             _appName = Sys.Name + ZipkinAppCounter.IncrementAndGet();
             Tracer = new ZipkinTracer(new ZipkinTracerOptions(
                 new Endpoint(_appName),
-                ZipkinHttpSpanReporter.Create(new ZipkinHttpReportingOptions($"http://{fixture.ZipkinUrl}"), Sys)){ ScopeManager = new AsyncLocalScopeManager()});
+                ZipkinHttpSpanReporter.Create(new ZipkinHttpReportingOptions($"http://{fixture.ZipkinUrl}"), Sys))
+            {
+                ScopeManager = new AsyncLocalScopeManager()
+            });
 
             _httpBaseUri = new Uri($"http://{fixture.ZipkinUrl}/");
-            _zipkinClient = new HttpClient {};
+            _zipkinClient = new HttpClient();
         }
 
         private readonly Uri _httpBaseUri;
@@ -62,9 +67,17 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
 
             var fullUri = new Uri(_httpBaseUri, $"api/v2/trace/{traceId}/");
             var traceResp =
-                await _zipkinClient.GetStringAsync(fullUri);
+                await _zipkinClient.GetAsync(fullUri);
 
-            traceResp.Length.Should().BeGreaterThan(0);
+            traceResp.IsSuccessStatusCode.Should().BeTrue();
+
+            var json = await traceResp.Content.ReadAsStringAsync();
+            var traces = ZipkinDeserializer.Deserialize(json);
+
+            traces.Count.Should().Be(2);
+            var barSpan = traces.Single(x => x.name.Equals("bar"));
+            var fooSpan = traces.Single(x => x.name.Equals("foo"));
+            fooSpan.parentId.Should().Be(barSpan.id);
         }
     }
 }
