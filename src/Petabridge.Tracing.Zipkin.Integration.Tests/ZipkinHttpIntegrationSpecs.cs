@@ -9,6 +9,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Akka.TestKit.Xunit2;
 using Akka.Util.Internal;
+using FluentAssertions;
+using OpenTracing.Util;
 using Petabridge.Tracing.Zipkin.Reporting.Http;
 using Xunit;
 using Xunit.Abstractions;
@@ -22,11 +24,13 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
             _appName = Sys.Name + ZipkinAppCounter.IncrementAndGet();
             Tracer = new ZipkinTracer(new ZipkinTracerOptions(
                 new Endpoint(_appName),
-                ZipkinHttpSpanReporter.Create(new ZipkinHttpReportingOptions(fixture.ZipkinUrl), Sys)));
+                ZipkinHttpSpanReporter.Create(new ZipkinHttpReportingOptions($"http://{fixture.ZipkinUrl}"), Sys)){ ScopeManager = new AsyncLocalScopeManager()});
 
-            _zipkinClient = new HttpClient {BaseAddress = new Uri($"http://{fixture.ZipkinUrl}")};
+            _httpBaseUri = new Uri($"http://{fixture.ZipkinUrl}/");
+            _zipkinClient = new HttpClient {};
         }
 
+        private readonly Uri _httpBaseUri;
         private readonly HttpClient _zipkinClient;
         private readonly string _appName;
         private static readonly AtomicCounter ZipkinAppCounter = new AtomicCounter(0);
@@ -56,8 +60,11 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
 
             await Task.Delay(1000); // give it some time to get uploaded
 
+            var fullUri = new Uri(_httpBaseUri, $"api/v2/trace/{traceId}/");
             var traceResp =
-                await _zipkinClient.GetStringAsync($"api/v2/trace/{traceId}");
+                await _zipkinClient.GetStringAsync(fullUri);
+
+            traceResp.Length.Should().BeGreaterThan(0);
         }
     }
 }
