@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using OpenTracing;
+using OpenTracing.Tag;
 
 namespace Petabridge.Tracing.Zipkin.Tracers
 {
@@ -34,6 +35,36 @@ namespace Petabridge.Tracing.Zipkin.Tracers
         }
 
         public ISpan SetTag(string key, double value)
+        {
+            return this;
+        }
+
+        public ISpan SetTag(BooleanTag tag, bool value)
+        {
+            return this;
+        }
+
+        public ISpan SetTag(IntOrStringTag tag, string value)
+        {
+            return this;
+        }
+
+        public ISpan SetTag(IntTag tag, int value)
+        {
+            return this;
+        }
+
+        public ISpan SetTag(StringTag tag, string value)
+        {
+            return this;
+        }
+
+        public ISpan Log(IEnumerable<KeyValuePair<string, object>> fields)
+        {
+            return this;
+        }
+
+        public ISpan Log(DateTimeOffset timestamp, IEnumerable<KeyValuePair<string, object>> fields)
         {
             return this;
         }

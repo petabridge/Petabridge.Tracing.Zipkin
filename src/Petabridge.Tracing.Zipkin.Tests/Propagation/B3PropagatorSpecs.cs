@@ -27,7 +27,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
             bool debug)
         {
             var traceId = new TraceId(traceIdHigh, traceIdLow);
-            var context = new SpanContext(traceId, spanId, parentId, debug);
+            var context = new SpanContext(traceId, spanId, parentId?.ToString("x16"), debug);
             var carrier = new Dictionary<string, string>();
 
             Tracer.Inject(context, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));

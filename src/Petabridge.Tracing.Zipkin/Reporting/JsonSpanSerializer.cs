@@ -83,14 +83,14 @@ namespace Petabridge.Tracing.Zipkin.Reporting
 
             // meta-data
             writer.WritePropertyName(TraceId);
-            writer.WriteValue(span.TypedContext.TraceId.ToString());
+            writer.WriteValue(span.TypedContext.TraceId);
             writer.WritePropertyName(SpanId);
-            var spanId = span.TypedContext.SpanId.ToString("x16");
+            var spanId = span.TypedContext.SpanId;
             writer.WriteValue(spanId);
-            if (span.TypedContext.ParentId.HasValue)
+            if (!string.IsNullOrEmpty(span.TypedContext.ParentId))
             {
                 writer.WritePropertyName(ParentId);
-                writer.WriteValue(span.TypedContext.ParentId.Value.ToString("x16"));
+                writer.WriteValue(span.TypedContext.ParentId);
             }
 
             writer.WritePropertyName(OperationName);

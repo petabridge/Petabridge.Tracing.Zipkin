@@ -204,8 +204,9 @@ namespace Petabridge.Tracing.Zipkin
             if (_tracer.Sampler.Sampling && !includedInSample)
                 return NoOpZipkinSpan.Instance;
 
+
             return new Span(_tracer, _operationName,
-                new SpanContext(parentContext.IsEmpty() ? _tracer.IdProvider.NextTraceId() : parentContext.TraceId,
+                new SpanContext(parentContext.IsEmpty() ? _tracer.IdProvider.NextTraceId() : parentContext.ZipkinTraceId,
                     _tracer.IdProvider.NextSpanId(),
                     parentContext?.SpanId, _enableDebug, _tracer.Sampler.Sampling, _shared), _start.Value, _spanKind, tags:_initialTags);
         }
@@ -268,8 +269,8 @@ namespace Petabridge.Tracing.Zipkin
 
             public override bool Equals(object obj)
             {
-                if (ReferenceEquals(null, obj)) return false;
-                return obj is SpanReference && Equals((SpanReference) obj);
+                if (obj is null) return false;
+                return obj is SpanReference reference && Equals(reference);
             }
 
             public override int GetHashCode()
