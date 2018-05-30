@@ -6,6 +6,7 @@
 
 using System;
 using OpenTracing;
+using OpenTracing.Tag;
 
 namespace Petabridge.Tracing.Zipkin
 {
@@ -27,6 +28,13 @@ namespace Petabridge.Tracing.Zipkin
         new IZipkinSpanBuilder WithTag(string key, int value);
 
         new IZipkinSpanBuilder WithTag(string key, double value);
+        new IZipkinSpanBuilder WithTag(BooleanTag tag, bool value);
+
+        new IZipkinSpanBuilder WithTag(IntOrStringTag tag, string value);
+
+        new IZipkinSpanBuilder WithTag(IntTag tag, int value);
+
+        new IZipkinSpanBuilder WithTag(StringTag tag, string value);
 
         new IZipkinSpanBuilder WithStartTimestamp(DateTimeOffset timestamp);
 

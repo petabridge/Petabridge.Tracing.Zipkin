@@ -27,10 +27,10 @@ namespace Petabridge.Tracing.Zipkin.Propagation
 
         public void Inject(SpanContext context, ITextMap carrier)
         {
-            carrier.Set(B3TraceId, context.TraceId.ToString());
-            carrier.Set(B3SpanId, context.SpanId.ToString("x16"));
+            carrier.Set(B3TraceId, context.TraceId);
+            carrier.Set(B3SpanId, context.SpanId);
             if (context.ParentId != null)
-                carrier.Set(B3ParentId, context.ParentId.Value.ToString("x16"));
+                carrier.Set(B3ParentId, context.ParentId);
 
             if (context.Debug)
             {
@@ -86,7 +86,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
                         break;
                 }
 
-            return new SpanContext(traceId, spanId, parentId, debug, sampled, shared);
+            return new SpanContext(traceId, spanId, parentId?.ToString("x16"), debug, sampled, shared);
         }
     }
 }

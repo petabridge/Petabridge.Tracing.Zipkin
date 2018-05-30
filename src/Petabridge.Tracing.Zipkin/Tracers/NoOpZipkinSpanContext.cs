@@ -32,9 +32,10 @@ namespace Petabridge.Tracing.Zipkin.Tracers
             return ReferenceEquals(other, Instance);
         }
 
-        public TraceId TraceId => new TraceId(0, 0);
-        public long SpanId => 0;
-        public long? ParentId => null;
+        public TraceId ZipkinTraceId => new TraceId(0, 0);
+        public string TraceId => ZipkinTraceId.ToString();
+        public string SpanId => "0";
+        public string ParentId => null;
         public bool Debug => true;
         public bool Sampled => false;
         public bool Shared => true;

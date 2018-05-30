@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using OpenTracing;
+using OpenTracing.Tag;
 
 namespace Petabridge.Tracing.Zipkin
 {
@@ -154,6 +155,36 @@ namespace Petabridge.Tracing.Zipkin
             return SetTag(key, Convert.ToString(value, CultureInfo.InvariantCulture));
         }
 
+        public ISpan SetTag(BooleanTag tag, bool value)
+        {
+            return SetTag(tag.Key, value);
+        }
+
+        public ISpan SetTag(IntOrStringTag tag, string value)
+        {
+            return SetTag(tag.Key, value);
+        }
+
+        public ISpan SetTag(IntTag tag, int value)
+        {
+            return SetTag(tag.Key, value);
+        }
+
+        public ISpan SetTag(StringTag tag, string value)
+        {
+            return SetTag(tag.Key, value);
+        }
+
+        public ISpan Log(IEnumerable<KeyValuePair<string, object>> fields)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISpan Log(DateTimeOffset timestamp, IEnumerable<KeyValuePair<string, object>> fields)
+        {
+            throw new NotImplementedException();
+        }
+
         public ISpan Log(IDictionary<string, object> fields)
         {
             return Log(_tracer.TimeProvider.Now, MergeFields(fields));
@@ -227,7 +258,7 @@ namespace Petabridge.Tracing.Zipkin
             return this;
         }
 
-        private static string MergeFields(IDictionary<string, object> fields)
+        private static string MergeFields(IEnumerable<KeyValuePair<string, object>> fields)
         {
             return string.Join(" ", fields.Select(entry => entry.Key + ":" + entry.Value));
         }

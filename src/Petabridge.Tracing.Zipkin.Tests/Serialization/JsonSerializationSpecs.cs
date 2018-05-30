@@ -173,7 +173,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
             var endTime = startTime.AddMilliseconds(10);
             var expectedBytes = Encoding.UTF8.GetBytes(json);
 
-            var parentId = 11210001;
+            var parentId = 11210001.ToString("x16");
 
             var span = new Span(Tracer, "op1",
                     new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), -7118946577185884628,
