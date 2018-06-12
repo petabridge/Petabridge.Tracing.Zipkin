@@ -14,10 +14,17 @@ namespace Petabridge.Tracing.Zipkin
     /// </summary>
     public sealed class SpanContext : IZipkinSpanContext
     {
-        public SpanContext(TraceId traceId, long spanId, long? parentId = null, bool debug = false,
+        public SpanContext(TraceId traceId, long spanId, string parentId = null, bool debug = false,
+            bool sampled = false, bool shared = false) 
+            : this(traceId, spanId.ToString("x16"), parentId, 
+                debug, sampled, shared)
+        {
+        }
+
+        public SpanContext(TraceId traceId, string spanId, string parentId = null, bool debug = false,
             bool sampled = false, bool shared = false)
         {
-            TraceId = traceId;
+            ZipkinTraceId = traceId;
             SpanId = spanId;
             ParentId = parentId;
             Debug = debug;
@@ -25,22 +32,26 @@ namespace Petabridge.Tracing.Zipkin
             Shared = shared;
         }
 
+        /// <inheritdoc />
         /// <summary>
         ///     The trace ID. Intended to be shared across spans for
         ///     a single logical trace.
         /// </summary>
-        public TraceId TraceId { get; }
+        public TraceId ZipkinTraceId { get; }
+
+        /// <inheritdoc />
+        public string TraceId => ZipkinTraceId.ToString();
 
         /// <summary>
         ///     The span ID. Used to identify a single atomic operation that is being
         ///     tracked as part of an ongoing trace.
         /// </summary>
-        public long SpanId { get; }
+        public string SpanId { get; }
 
         /// <summary>
         ///     Optional. Identify of the parent span if there is one.
         /// </summary>
-        public long? ParentId { get; }
+        public string ParentId { get; }
 
         /// <summary>
         ///     Indicates if this is a Debug trace or not.
@@ -71,7 +82,7 @@ namespace Petabridge.Tracing.Zipkin
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             return obj is SpanContext && Equals((SpanContext) obj);
         }
@@ -80,7 +91,7 @@ namespace Petabridge.Tracing.Zipkin
         {
             unchecked
             {
-                var hashCode = TraceId.GetHashCode();
+                var hashCode = ZipkinTraceId.GetHashCode();
                 hashCode = (hashCode * 397) ^ SpanId.GetHashCode();
                 hashCode = (hashCode * 397) ^ ParentId.GetHashCode();
                 return hashCode;

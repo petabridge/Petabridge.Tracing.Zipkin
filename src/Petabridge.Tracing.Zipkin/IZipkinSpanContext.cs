@@ -19,18 +19,12 @@ namespace Petabridge.Tracing.Zipkin
         ///     The trace ID. Intended to be shared across spans for
         ///     a single logical trace.
         /// </summary>
-        TraceId TraceId { get; }
-
-        /// <summary>
-        ///     The span ID. Used to identify a single atomic operation that is being
-        ///     tracked as part of an ongoing trace.
-        /// </summary>
-        long SpanId { get; }
+        TraceId ZipkinTraceId { get; }
 
         /// <summary>
         ///     Optional. Identify of the parent span if there is one.
         /// </summary>
-        long? ParentId { get; }
+        string ParentId { get; }
 
         /// <summary>
         ///     Indicates if this is a Debug trace or not.
