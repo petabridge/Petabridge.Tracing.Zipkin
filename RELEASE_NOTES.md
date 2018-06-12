@@ -1,3 +1,8 @@
+
+#### 0.3.0 June 12 2018 ####
+* [Upgraded to Akka.NET v1.3.8](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/42)
+* [Upgraded to OpenTracing v0.1.2](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/38) - this is a major change that involves some breaking API changes.
+
 #### 0.2.3 April 24 2018 ####
 * [Adding support for external `IScopeManager` implementations to work inside `IZipkinSpanBuilder`](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/32)
 
