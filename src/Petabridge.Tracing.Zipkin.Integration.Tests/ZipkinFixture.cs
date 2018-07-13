@@ -39,7 +39,12 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
             if (images.Count == 0)
                 await _client.Images.CreateImageAsync(
                     new ImagesCreateParameters {FromImage = ZipkinImageName, Tag = "latest"}, null,
-                    new Progress<JSONMessage>());
+                    new Progress<JSONMessage>(message =>
+                    {
+                        Console.WriteLine(!string.IsNullOrEmpty(message.ErrorMessage)
+                            ? message.ErrorMessage
+                            : $"{message.ID} {message.Status} {message.ProgressMessage}");
+                    }));
 
             var zipkinHttpPort = ThreadLocalRandom.Current.Next(9000, 10000);
 
