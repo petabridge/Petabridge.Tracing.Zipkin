@@ -2,8 +2,9 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2018 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.2.3</VersionPrefix>
-    <PackageReleaseNotes>[Adding support for external `IScopeManager` implementations to work inside `IZipkinSpanBuilder`](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/32)</PackageReleaseNotes>
+    <VersionPrefix>0.3.0</VersionPrefix>
+    <PackageReleaseNotes>[Upgraded to Akka.NET v1.3.8](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/42)
+[Upgraded to OpenTracing v0.1.2](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/38) - this is a major change that involves some breaking API changes.</PackageReleaseNotes>
     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
     <PackageProjectUrl>
       https://github.com/petabridge/Petabridge.Tracing.Zipkin
@@ -15,7 +16,7 @@
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
-    <XunitVersion>2.3.0</XunitVersion>
-    <TestSdkVersion>15.3.0</TestSdkVersion>
+    <XunitVersion>2.3.1</XunitVersion>
+    <TestSdkVersion>15.7.2</TestSdkVersion>
   </PropertyGroup>
 </Project>
