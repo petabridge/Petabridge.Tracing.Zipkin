@@ -185,16 +185,6 @@ namespace Petabridge.Tracing.Zipkin
             throw new NotImplementedException();
         }
 
-        public ISpan Log(IDictionary<string, object> fields)
-        {
-            return Log(_tracer.TimeProvider.Now, MergeFields(fields));
-        }
-
-        public ISpan Log(DateTimeOffset timestamp, IDictionary<string, object> fields)
-        {
-            return Log(timestamp, MergeFields(fields));
-        }
-
         public ISpan Log(string @event)
         {
             return Log(_tracer.TimeProvider.Now, @event);
@@ -240,6 +230,16 @@ namespace Petabridge.Tracing.Zipkin
         ///     For OpenTracing compatibility.
         /// </summary>
         public ISpanContext Context => TypedContext;
+
+        public ISpan Log(IDictionary<string, object> fields)
+        {
+            return Log(_tracer.TimeProvider.Now, MergeFields(fields));
+        }
+
+        public ISpan Log(DateTimeOffset timestamp, IDictionary<string, object> fields)
+        {
+            return Log(timestamp, MergeFields(fields));
+        }
 
         /// <summary>
         ///     Sets the <see cref="RemoteEndpoint" /> for this span.

@@ -13,7 +13,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{96A3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Petabridge.Tracing.Zipkin.SimpleDemo", "src\Petabridge.Tracing.Zipkin.SimpleDemo\Petabridge.Tracing.Zipkin.SimpleDemo.csproj", "{BC8D1A16-C540-4E57-A87C-4A9C66D51635}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Petabridge.Tracing.Zipkin.Integration.Tests", "src\Petabridge.Tracing.Zipkin.Integration.Tests\Petabridge.Tracing.Zipkin.Integration.Tests.csproj", "{D60BD0FB-F2EC-45A5-96A1-D18BB61A971B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Petabridge.Tracing.Zipkin.Integration.Tests", "src\Petabridge.Tracing.Zipkin.Integration.Tests\Petabridge.Tracing.Zipkin.Integration.Tests.csproj", "{D60BD0FB-F2EC-45A5-96A1-D18BB61A971B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{ECC52415-EE57-4A3D-9C76-B095EB5B3093}"
+	ProjectSection(SolutionItems) = preProject
+		build.cmd = build.cmd
+		build.fsx = build.fsx
+		build.ps1 = build.ps1
+		build.sh = build.sh
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

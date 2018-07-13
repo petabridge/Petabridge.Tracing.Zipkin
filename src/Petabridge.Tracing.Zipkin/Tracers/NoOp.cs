@@ -1,11 +1,17 @@
-﻿using OpenTracing;
+﻿// -----------------------------------------------------------------------
+// <copyright file="NoOp.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using OpenTracing;
 using OpenTracing.Noop;
 
 namespace Petabridge.Tracing.Zipkin.Tracers
 {
     /// <summary>
-    /// Taps into the OpenTracing.NoOpTracer primitives,
-    /// which aren't publicly accessible right now as of OpenTracing v0.11
+    ///     Taps into the OpenTracing.NoOpTracer primitives,
+    ///     which aren't publicly accessible right now as of OpenTracing v0.11
     /// </summary>
     public static class NoOp
     {

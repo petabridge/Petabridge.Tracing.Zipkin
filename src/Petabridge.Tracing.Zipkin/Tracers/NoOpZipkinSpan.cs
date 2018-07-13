@@ -1,6 +1,11 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="NoOpZipkinSpan.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
-using System.Text;
 using OpenTracing;
 using OpenTracing.Tag;
 
@@ -69,16 +74,6 @@ namespace Petabridge.Tracing.Zipkin.Tracers
             return this;
         }
 
-        public ISpan Log(IDictionary<string, object> fields)
-        {
-            return this;
-        }
-
-        public ISpan Log(DateTimeOffset timestamp, IDictionary<string, object> fields)
-        {
-            return this;
-        }
-
         public ISpan Log(string @event)
         {
             return this;
@@ -118,5 +113,15 @@ namespace Petabridge.Tracing.Zipkin.Tracers
         public bool Shared => TypedContext.Shared;
         public bool Sampled => TypedContext.Sampled;
         public SpanKind? SpanKind => null;
+
+        public ISpan Log(IDictionary<string, object> fields)
+        {
+            return this;
+        }
+
+        public ISpan Log(DateTimeOffset timestamp, IDictionary<string, object> fields)
+        {
+            return this;
+        }
     }
 }

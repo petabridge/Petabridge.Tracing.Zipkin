@@ -19,6 +19,17 @@ namespace Petabridge.Tracing.Zipkin.Tests
 
         protected readonly MockZipkinTracer Tracer;
 
+        [Fact(DisplayName =
+            "If a NoOpZipkinSpanContext is added as a reference to a valid span, should just discard and not throw error")]
+        public void SamplingBugFixShouldNotThrowExceptionNoOpSpanContextAddedAsReference()
+        {
+            var span1 = NoOpZipkinSpan.Instance;
+            var span2 = Tracer.BuildSpan("foo").AsChildOf(span1).Start();
+
+            // should safely ignore the span
+            span2.TypedContext.ParentId.Should().BeNull();
+        }
+
         [Fact(DisplayName = "Should be able to create child spans")]
         public void ShouldCreateChildSpansWithSameTraceId()
         {
@@ -78,16 +89,6 @@ namespace Petabridge.Tracing.Zipkin.Tests
 
             Tracer.CollectedSpans.TryDequeue(out var innerSpan);
             innerSpan.Debug.Should().BeTrue();
-        }
-
-        [Fact(DisplayName = "If a NoOpZipkinSpanContext is added as a reference to a valid span, should just discard and not throw error")]
-        public void SamplingBugFixShouldNotThrowExceptionNoOpSpanContextAddedAsReference()
-        {
-            var span1 = NoOpZipkinSpan.Instance;
-            var span2 = Tracer.BuildSpan("foo").AsChildOf(span1).Start();
-
-            // should safely ignore the span
-            span2.TypedContext.ParentId.Should().BeNull();
         }
     }
 }
