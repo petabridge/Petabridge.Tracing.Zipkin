@@ -1,3 +1,7 @@
+#### 0.3.1 July 13 2018 ####
+* [Added `ExternalSampling`](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/46) - which allows the driver to accept sampling decisions made outside of the driver itself.
+* [Added NBench performance specifications](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/47) and [Dockerized integration tests](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/41).
+
 
 #### 0.3.0 June 12 2018 ####
 * [Upgraded to Akka.NET v1.3.8](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/42)
