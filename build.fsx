@@ -11,11 +11,6 @@ open Fake.DocFxHelper
 
 // Information about the project for Nuget and Assembly info files
 let product = "Petabridge.Tracing.Zipkin"
-let authors = [ "Your name here" ]
-let copyright = "Copyright © 2017"
-let company = "Your name here"
-let description = "Your description here"
-let tags = ["";]
 let configuration = "Release"
 
 // Read release notes and version
@@ -98,6 +93,7 @@ Target "RunTests" (fun _ ->
     let projects = 
         match (isWindows) with 
         | true -> !! "./src/**/*.Tests.csproj"
+                  -- "./src/**/*.Integration.Tests.csproj" // Zipkin containers can't run on Windows VMs
         | _ -> !! "./src/**/*.Tests.csproj" // if you need to filter specs for Linux vs. Windows, do it here
 
     let runSingleProject project =
