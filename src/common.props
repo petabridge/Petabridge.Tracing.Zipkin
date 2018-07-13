@@ -2,9 +2,9 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2018 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.3.0</VersionPrefix>
-    <PackageReleaseNotes>[Upgraded to Akka.NET v1.3.8](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/42)
-[Upgraded to OpenTracing v0.1.2](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/38) - this is a major change that involves some breaking API changes.</PackageReleaseNotes>
+    <VersionPrefix>0.3.1</VersionPrefix>
+    <PackageReleaseNotes>[Added `ExternalSampling`](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/46) - which allows the driver to accept sampling decisions made outside of the driver itself.
+[Added NBench performance specifications](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/47) and [Dockerized integration tests](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/41).</PackageReleaseNotes>
     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
     <PackageProjectUrl>
       https://github.com/petabridge/Petabridge.Tracing.Zipkin
