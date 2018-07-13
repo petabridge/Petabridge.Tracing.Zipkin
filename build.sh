@@ -12,7 +12,7 @@ FAKE_VERSION=4.61.2
 FAKE_EXE=$TOOLS_DIR/FAKE/tools/FAKE.exe
 DOTNET_EXE=$SCRIPT_DIR/.dotnet/dotnet
 DOTNET_VERSION=2.0.0
-DOTNET_INSTALLER_URL=https://raw.githubusercontent.com/dotnet/cli/2.0.0/scripts/obtain/dotnet-install.sh
+DOTNET_INSTALLER_URL=https://raw.githubusercontent.com/dotnet/cli/v2.0.0/scripts/obtain/dotnet-install.sh
 # Define default arguments.
 TARGET="Default"
 CONFIGURATION="Release"
