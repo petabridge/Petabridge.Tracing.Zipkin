@@ -15,8 +15,8 @@ namespace Petabridge.Tracing.Zipkin
     public sealed class SpanContext : IZipkinSpanContext
     {
         public SpanContext(TraceId traceId, long spanId, string parentId = null, bool debug = false,
-            bool sampled = false, bool shared = false) 
-            : this(traceId, spanId.ToString("x16"), parentId, 
+            bool sampled = false, bool shared = false)
+            : this(traceId, spanId.ToString("x16"), parentId,
                 debug, sampled, shared)
         {
         }

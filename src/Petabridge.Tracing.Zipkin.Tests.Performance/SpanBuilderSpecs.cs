@@ -4,9 +4,6 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using NBench;
-using Petabridge.Tracing.Zipkin.Tracers;
-
 namespace Petabridge.Tracing.Zipkin.Tests.Performance
 {
     public class SpanBuilderSpecs
@@ -33,7 +30,6 @@ namespace Petabridge.Tracing.Zipkin.Tests.Performance
             for (var i = 0; i < SpanCount; i++)
                 using (_mockTracer.BuildSpan("test1").WithTag("foo", "bar").StartActive())
                 {
-                   
                 }
 
             _opsCounter.Increment(SpanCount);

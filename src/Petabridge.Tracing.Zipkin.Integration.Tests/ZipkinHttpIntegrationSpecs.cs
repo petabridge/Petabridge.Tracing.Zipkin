@@ -60,7 +60,7 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
                     active2.Span.Log("This is a nested span");
                 }
 
-                traceId = active.Span.Context.AsInstanceOf<IZipkinSpanContext>().TraceId.ToString();
+                traceId = active.Span.Context.AsInstanceOf<IZipkinSpanContext>().TraceId;
             }
 
             await Task.Delay(1000); // give it some time to get uploaded
