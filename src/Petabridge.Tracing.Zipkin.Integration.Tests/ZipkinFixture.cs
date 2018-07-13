@@ -27,7 +27,7 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
         {
             DockerClientConfiguration config;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                config = new DockerClientConfiguration(new Uri("unix:///var/run/docker.sock"));
+                config = new DockerClientConfiguration(new Uri("unix://var/run/docker.sock"));
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 config = new DockerClientConfiguration(new Uri("npipe://./pipe/docker_engine"));
             else
