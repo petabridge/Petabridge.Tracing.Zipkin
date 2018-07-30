@@ -2,9 +2,8 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2018 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.3.1</VersionPrefix>
-    <PackageReleaseNotes>[Added `ExternalSampling`](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/46) - which allows the driver to accept sampling decisions made outside of the driver itself.
-[Added NBench performance specifications](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/47) and [Dockerized integration tests](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/41).</PackageReleaseNotes>
+    <VersionPrefix>0.3.2</VersionPrefix>
+    <PackageReleaseNotes>[Implemented some missing OpenTracing v0.1.2 APIs](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/51).</PackageReleaseNotes>
     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
     <PackageProjectUrl>
       https://github.com/petabridge/Petabridge.Tracing.Zipkin
