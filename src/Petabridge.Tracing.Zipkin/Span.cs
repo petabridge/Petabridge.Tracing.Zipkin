@@ -177,12 +177,12 @@ namespace Petabridge.Tracing.Zipkin
 
         public ISpan Log(IEnumerable<KeyValuePair<string, object>> fields)
         {
-            throw new NotImplementedException();
+            return Log(_tracer.TimeProvider.Now, MergeFields(fields));
         }
 
         public ISpan Log(DateTimeOffset timestamp, IEnumerable<KeyValuePair<string, object>> fields)
         {
-            throw new NotImplementedException();
+            return Log(timestamp, MergeFields(fields));
         }
 
         public ISpan Log(IDictionary<string, object> fields)
