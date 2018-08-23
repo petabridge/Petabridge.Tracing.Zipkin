@@ -128,8 +128,8 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
 
         [Fact(
             DisplayName =
-                "Should be able to serialize a span with a defined parent into a valid Zipkin-friendly JSON format.",
-            Skip = "Weird environmental stuff on build server.")]
+                "Should be able to serialize a span with a defined parent into a valid Zipkin-friendly JSON format."
+           )]
         public void ShouldMapSpanWithparentIntoValidJson()
         {
             var json = @"
