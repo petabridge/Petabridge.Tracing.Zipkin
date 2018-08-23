@@ -69,7 +69,7 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
             var traceResp =
                 await _zipkinClient.GetAsync(fullUri);
 
-            traceResp.IsSuccessStatusCode.Should().BeTrue();
+            traceResp.IsSuccessStatusCode.Should().BeTrue($"Expected success status code, but instead found [{traceResp.StatusCode}][{traceResp.ReasonPhrase}]");
 
             var json = await traceResp.Content.ReadAsStringAsync();
             var traces = ZipkinDeserializer.Deserialize(json);
