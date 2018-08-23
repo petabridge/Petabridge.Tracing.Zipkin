@@ -27,7 +27,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
             bool debug)
         {
             var traceId = new TraceId(traceIdHigh, traceIdLow);
-            var context = new SpanContext(traceId, spanId, parentId?.ToString("x16"), debug);
+            var context = new SpanContext(traceId, spanId.ToString("x16"), parentId?.ToString("x16"), debug);
             var carrier = new Dictionary<string, string>();
 
             Tracer.Inject(context, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));
@@ -41,7 +41,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
         public Property ShouldSupportSamplingStatusViaB3(bool debug, bool sampled)
         {
             var traceId = Tracer.IdProvider.NextTraceId();
-            var context = new SpanContext(traceId, Tracer.IdProvider.NextSpanId(), null, debug, sampled);
+            var context = new SpanContext(traceId, Tracer.IdProvider.NextSpanId().ToString("x16"), null, debug, sampled);
             var carrier = new Dictionary<string, string>();
 
             Tracer.Inject(context, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));

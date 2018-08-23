@@ -14,6 +14,9 @@ namespace Petabridge.Tracing.Zipkin
     /// </summary>
     public sealed class SpanContext : IZipkinSpanContext
     {
+        [Obsolete("As of Petabridge.Tracing.Zipkin v0.3.0, we now support OpenTracing v0.12 and all drivers " +
+                  "are required to use strings as span and trace ids. Please use the string-based overload " +
+                  "of this constructor instead.")]
         public SpanContext(TraceId traceId, long spanId, string parentId = null, bool debug = false,
             bool sampled = false, bool shared = false) 
             : this(traceId, spanId.ToString("x16"), parentId, 
