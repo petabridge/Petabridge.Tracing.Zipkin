@@ -110,5 +110,11 @@ namespace Petabridge.Tracing.Zipkin
         {
             return !Equals(left, right);
         }
+
+        public override string ToString()
+        {
+            return $"(ZipkinSpanContext: TraceId={TraceId}, SpanId={SpanId}, ParentId={ParentId}," +
+                   $"Sampled={Sampled}, Debug={Debug}, Shared={Shared})";
+        }
     }
 }
