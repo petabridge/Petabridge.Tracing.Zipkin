@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
-    <PackageReference Include="NBench" Version="1.2.1" />
+    <PackageReference Include="NBench" Version="1.2.2" />
     <DotNetCliToolReference Include="dotnet-nbench" Version="1.2.1" />
   </ItemGroup>
 
