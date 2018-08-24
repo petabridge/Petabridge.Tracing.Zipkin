@@ -1,0 +1,35 @@
+﻿[
+    {
+        "traceId": "6bebc46d026c79765d147587ca919c35",
+        "id": "9d346bce4bda362c",
+        "parentId": "0000000000ab0d11",
+        "name": "op1",
+        "timestamp": 1515784334000000,
+        "duration": 10000,
+        "debug": true,
+        "kind": "CLIENT",
+        "localEndpoint": {
+            "serviceName": "actorsystem",
+            "ipv4": "127.0.0.1",
+            "ipv6": "127.0.0.1",
+            "port": 8008
+        },
+        "remoteEndpoint": {
+            "serviceName": "actorsystem",
+            "ipv4": "127.0.0.1",
+            "ipv6": "127.0.0.1",
+            "port": 8009
+        },
+        "tags": {
+            "foo1": "bar",
+            "numberOfPets": "2",
+            "timeInChair": "long"
+        },
+        "annotations": [
+            {
+                "timestamp": 1515784334001000,
+                "value": "foo"
+            }
+        ]
+    }
+]

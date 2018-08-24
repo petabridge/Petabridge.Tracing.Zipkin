@@ -5,7 +5,14 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.IO;
 using System.Text;
+#if !NETCOREAPP2_0
+using ApprovalTests.Namers;
+using ApprovalTests;
+using ApprovalTests.Reporters;
+using ApprovalTests.Utilities;
+#endif
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using Petabridge.Tracing.Zipkin.Reporting;
@@ -187,5 +194,56 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
 
             VerifySerialization(new JsonSpanSerializer(), expectedBytes, (Span) span, Assert);
         }
+
+#if !NETCOREAPP2_0
+        [UseReporter(typeof(DiffReporter))]
+        [Fact(DisplayName = "ApprovalTest: Span with parent")]
+        public void JsonApprovalSpecWithParent()
+        {
+            var startTime = new DateTimeOffset(new DateTime(2018, 1, 12, 13, 12, 14));
+            var endTime = startTime.AddMilliseconds(10);
+            var parentId = 11210001.ToString("x16");
+
+            var span = new Span(Tracer, "op1",
+                    new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), -7118946577185884628,
+                        parentId,
+                        true),
+                    startTime, SpanKind.CLIENT)
+                .SetRemoteEndpoint(new Endpoint("actorsystem", "127.0.0.1", 8009)).SetTag("foo1", "bar")
+                .SetTag("numberOfPets", 2)
+                .SetTag("timeInChair", "long").Log(startTime.AddMilliseconds(1), "foo");
+            span.Finish(endTime);
+
+            var serializer = new JsonSpanSerializer();
+            var stream = new MemoryStream();
+            serializer.Serialize(stream, new[]{ (Span)span });
+            var actualOutput = Encoding.UTF8.GetString(stream.ToArray());
+            Approvals.VerifyJson(actualOutput);
+        }
+
+        [UseReporter(typeof(DiffReporter))]
+        [Fact(DisplayName = "ApprovalTest: Simple span")]
+        public void JsonApprovalSpecWithSimpleSpan()
+        {
+            var startTime = new DateTimeOffset(new DateTime(2018, 1, 12, 13, 12, 14));
+            var endTime = startTime.AddMilliseconds(10);
+
+            var span = new Span(Tracer, "op1",
+                    new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), -7118946577185884628, null,
+                        true),
+                    startTime, SpanKind.CLIENT)
+                .SetRemoteEndpoint(new Endpoint("actorsystem", "127.0.0.1", 8009)).SetTag("foo1", "bar")
+                .SetTag("numberOfPets", 2)
+                .SetTag("timeInChair", "long").Log(startTime.AddMilliseconds(1), "foo");
+            span.Finish(endTime);
+
+            var serializer = new JsonSpanSerializer();
+            var stream = new MemoryStream();
+            serializer.Serialize(stream, new[] { (Span)span });
+            var actualOutput = Encoding.UTF8.GetString(stream.ToArray());
+            Approvals.VerifyJson(actualOutput);
+        }
+#endif
     }
+
 }
