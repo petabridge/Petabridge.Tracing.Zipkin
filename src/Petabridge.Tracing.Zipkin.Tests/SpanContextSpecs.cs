@@ -15,7 +15,7 @@ namespace Petabridge.Tracing.Zipkin.Tests
         public void SpanContextSampledShouldAlwaysBeFalseWhenDebugEnabled()
         {
             // explicitly set both DEBUG and SAMPLED to true
-            var spanContext = new SpanContext(new TraceId(90, 0), 1, null, true, true);
+            var spanContext = new SpanContext(new TraceId(90, 0), "1", null, true, true);
             spanContext.Debug.Should().BeTrue();
             spanContext.Sampled.Should().BeFalse();
         }
