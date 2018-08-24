@@ -7,9 +7,7 @@
 
   <ItemGroup>
     <None Remove="JsonSerializationSpec.JsonApprovalSpecWithParent.approved.json" />
-    <None Remove="JsonSerializationSpec.JsonApprovalSpecWithParent.approved.txt" />
     <None Remove="JsonSerializationSpec.JsonApprovalSpecWithSimpleSpan.approved.json" />
-    <None Remove="JsonSerializationSpec.JsonApprovalSpecWithSimpleSpan.approved.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,15 +15,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="JsonSerializationSpec.JsonApprovalSpecWithSimpleSpan.approved.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="JsonSerializationSpec.JsonApprovalSpecWithSimpleSpan.approved.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="JsonSerializationSpec.JsonApprovalSpecWithParent.approved.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
