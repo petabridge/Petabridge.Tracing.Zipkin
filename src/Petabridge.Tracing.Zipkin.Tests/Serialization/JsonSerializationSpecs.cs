@@ -196,7 +196,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
         }
 
 #if !NETCOREAPP2_0
-        [UseReporter(typeof(DiffReporter))]
+        [UseReporter(typeof(DiffReporter), typeof(XUnit2Reporter))]
         [Fact(DisplayName = "ApprovalTest: Span with parent")]
         public void JsonApprovalSpecWithParent()
         {
@@ -221,7 +221,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
             Approvals.VerifyJson(actualOutput);
         }
 
-        [UseReporter(typeof(DiffReporter))]
+        [UseReporter(typeof(DiffReporter), typeof(XUnit2Reporter))]
         [Fact(DisplayName = "ApprovalTest: Simple span")]
         public void JsonApprovalSpecWithSimpleSpan()
         {
