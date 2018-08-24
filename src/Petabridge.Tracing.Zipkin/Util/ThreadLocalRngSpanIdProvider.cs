@@ -32,14 +32,19 @@ namespace Petabridge.Tracing.Zipkin.Util
         public TraceId NextTraceId()
         {
             if (Use128Bit)
-                return new TraceId(NextSpanId(), NextSpanId());
-            return new TraceId(NextSpanId());
+                return new TraceId(NextSpanIdLong(), NextSpanIdLong());
+            return new TraceId(NextSpanIdLong());
         }
 
-        public long NextSpanId()
+        public long NextSpanIdLong()
         {
             Rng.Value.NextBytes(Buffers.Value);
             return BitConverter.ToInt64(Buffers.Value, 0);
+        }
+
+        public string NextSpanId()
+        {
+            return NextSpanIdLong().ToString("x16");
         }
     }
 }

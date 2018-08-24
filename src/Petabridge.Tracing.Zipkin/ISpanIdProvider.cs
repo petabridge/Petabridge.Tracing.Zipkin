@@ -23,9 +23,9 @@ namespace Petabridge.Tracing.Zipkin
         TraceId NextTraceId();
 
         /// <summary>
-        ///     Generates a new unique identifier for a span.
+        /// Generates a new unique span id.
         /// </summary>
-        /// <returns>A new, hoepfully unique trace.</returns>
-        long NextSpanId();
+        /// <returns>A new span id.</returns>
+        string NextSpanId();
     }
 }
