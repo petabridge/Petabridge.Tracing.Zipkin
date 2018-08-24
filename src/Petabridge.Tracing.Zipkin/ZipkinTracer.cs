@@ -81,7 +81,8 @@ namespace Petabridge.Tracing.Zipkin
             if ((format == BuiltinFormats.TextMap || format == BuiltinFormats.HttpHeaders) &&
                 carrier is ITextMap textMap)
             {
-                _propagator.Inject((SpanContext) spanContext, textMap);
+                if (spanContext is SpanContext zipkinContext)
+                    _propagator.Inject(zipkinContext, textMap);
                 return;
             }
 

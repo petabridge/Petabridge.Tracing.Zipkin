@@ -9,7 +9,9 @@ using FluentAssertions;
 using FsCheck;
 using FsCheck.Xunit;
 using OpenTracing.Propagation;
+using OpenTracing.Util;
 using Petabridge.Tracing.Zipkin.Propagation;
+using Petabridge.Tracing.Zipkin.Reporting.NoOp;
 using Petabridge.Tracing.Zipkin.Tracers;
 using Xunit;
 
@@ -59,7 +61,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
         }
 
         /// <summary>
-        /// Fix for https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/55
+        /// Verify for https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/55
         /// </summary>
         [Fact(DisplayName = "B3Propagator should not extract SpanContext when none found")]
         public void ShouldNotExtractAnyTraceIdWhenNoneFound()
@@ -70,6 +72,27 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
                 (SpanContext)Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
 
             extracted.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Verify fix for https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/56
+        /// </summary>
+        [Fact(DisplayName = "Bugfix for issue 56 - Propagator should not throw when attempting to inject non-Zipkin context.")]
+        public void BugFix56NonZipkingContextShouldNotThrowUponInjectionAttempt()
+        {
+            // uses the MockZipkinTracer
+            var carrier = new Dictionary<string, string>();
+            Tracer.Inject(NoOpZipkinSpanContext.Instance, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));
+            carrier.Count.Should().Be(0);
+
+            // uses the real Zipkin tracer with a No-Op reporter
+            var testTracer = new ZipkinTracer(new ZipkinTracerOptions(
+                new Endpoint("test"), new NoOpReporter())
+            {
+                ScopeManager = new AsyncLocalScopeManager()
+            });
+            testTracer.Inject(NoOpZipkinSpanContext.Instance, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));
+            carrier.Count.Should().Be(0);
         }
     }
 }
