@@ -31,7 +31,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Performance
 
             // create a reasonably complex span
             var span = new Span(_mockTracer, "op1",
-                    new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), -7118946577185884628, null,
+                    new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), "-7118946577185884628", null,
                         true),
                     startTime, SpanKind.CLIENT)
                 .SetRemoteEndpoint(new Endpoint("actorsystem", "127.0.0.1", 8009)).SetTag("foo1", "bar")

@@ -30,7 +30,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
             var expectedStr = Encoding.UTF8.GetString(expected).Trim();
             var actualObj = JArray.Parse(actualStr).Children<JObject>();
             var expectedObj = JArray
-                .Parse(expectedStr, new JsonLoadSettings {LineInfoHandling = LineInfoHandling.Ignore})
+                .Parse(expectedStr, new JsonLoadSettings { LineInfoHandling = LineInfoHandling.Ignore })
                 .Children<JObject>();
             var enum1 = actualObj.GetEnumerator();
             var enum2 = expectedObj.GetEnumerator();
@@ -115,7 +115,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
             var expectedBytes = Encoding.UTF8.GetBytes(json);
 
             var span = new Span(Tracer, "op1",
-                    new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), -7118946577185884628, null,
+                    new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), (-7118946577185884628).ToString("x16"), null,
                         true),
                     startTime, SpanKind.CLIENT)
                 .SetRemoteEndpoint(new Endpoint("actorsystem", "127.0.0.1", 8009)).SetTag("foo1", "bar")
@@ -123,14 +123,15 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
                 .SetTag("timeInChair", "long").Log(startTime.AddMilliseconds(1), "foo");
             span.Finish(endTime);
 
-            VerifySerialization(new JsonSpanSerializer(), expectedBytes, (Span) span, Assert);
+            VerifySerialization(new JsonSpanSerializer(), expectedBytes, (Span)span, Assert);
         }
 
         [Fact(
             DisplayName =
                 "Should be able to serialize a span with a defined parent into a valid Zipkin-friendly JSON format.",
-            Skip = "Weird environmental stuff on build server.")]
-        public void ShouldMapSpanWithparentIntoValidJson()
+            Skip = "Weird environmental stuff on build server."
+           )]
+        public void ShouldMapSpanWithParentIntoValidJson()
         {
             var json = @"
                 [
@@ -176,7 +177,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
             var parentId = 11210001.ToString("x16");
 
             var span = new Span(Tracer, "op1",
-                    new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), -7118946577185884628,
+                    new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), (-7118946577185884628).ToString("x16"),
                         parentId,
                         true),
                     startTime, SpanKind.CLIENT)
@@ -185,7 +186,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
                 .SetTag("timeInChair", "long").Log(startTime.AddMilliseconds(1), "foo");
             span.Finish(endTime);
 
-            VerifySerialization(new JsonSpanSerializer(), expectedBytes, (Span) span, Assert);
+            VerifySerialization(new JsonSpanSerializer(), expectedBytes, (Span)span, Assert);
         }
     }
 }
