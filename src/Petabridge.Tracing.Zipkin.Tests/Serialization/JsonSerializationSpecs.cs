@@ -3,11 +3,12 @@
 //      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
-
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 #if !NETCOREAPP2_0
+using ApprovalTests.Core;
 using ApprovalTests.Namers;
 using ApprovalTests;
 using ApprovalTests.Reporters;
@@ -196,7 +197,6 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
         }
 
 #if !NETCOREAPP2_0
-        [UseReporter(typeof(FrameworkAssertReporter))]
         [Fact(DisplayName = "ApprovalTest: Span with parent")]
         public void JsonApprovalSpecWithParent()
         {
@@ -221,7 +221,6 @@ namespace Petabridge.Tracing.Zipkin.Tests.Serialization
             Approvals.VerifyJson(actualOutput);
         }
 
-        [UseReporter(typeof(FrameworkAssertReporter))]
         [Fact(DisplayName = "ApprovalTest: Simple span")]
         public void JsonApprovalSpecWithSimpleSpan()
         {
