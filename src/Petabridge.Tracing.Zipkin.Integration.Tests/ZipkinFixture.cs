@@ -23,7 +23,7 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
 
         public string ZipkinUrl { get; private set; }
 
-        public async Task InitializeAsync()
+        public ZipkinFixture()
         {
             DockerClientConfiguration config;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -34,7 +34,10 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
                 throw new NotSupportedException($"Unsupported OS [{RuntimeInformation.OSDescription}]");
 
             _client = config.CreateClient();
+        }
 
+        public async Task InitializeAsync()
+        {
             var images = await _client.Images.ListImagesAsync(new ImagesListParameters {MatchName = ZipkinImageName});
             if (images.Count == 0)
                 await _client.Images.CreateImageAsync(

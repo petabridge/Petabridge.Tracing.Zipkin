@@ -18,7 +18,7 @@ using Petabridge.Tracing.Zipkin.Reporting.NoOp;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Petabridge.Tracing.Zipkin.Integration.Tests
+namespace Petabridge.Tracing.Zipkin.Integration.Tests.Http
 {
     public class ZipkinHttpIntegrationSpecs : TestKit, IClassFixture<ZipkinFixture>
     {
