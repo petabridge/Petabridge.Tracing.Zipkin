@@ -1,10 +1,9 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="B3Propagator.cs" company="Petabridge, LLC">
-//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System.Globalization;
 using OpenTracing.Propagation;
 using Petabridge.Tracing.Zipkin.Exceptions;
 
@@ -80,7 +79,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
                         break;
                 }
 
-            if(traceId != null && spanId != null) // don't care of ParentId is null or not
+            if (traceId != null && spanId != null) // don't care of ParentId is null or not
                 return new SpanContext(traceId.Value, spanId, parentId, debug, sampled, shared);
             return null;
         }

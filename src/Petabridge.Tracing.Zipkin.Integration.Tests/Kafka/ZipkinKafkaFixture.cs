@@ -1,11 +1,14 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="ZipkinKafkaFixture.cs" company="Petabridge, LLC">
+//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Akka.Util;
-using Docker.DotNet;
 using Docker.DotNet.Models;
-using Xunit;
 
 namespace Petabridge.Tracing.Zipkin.Integration.Tests.Kafka
 {
@@ -29,7 +32,8 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Kafka
             /*
              * Use the internal Docker port for the binding here, not the host-visible port mapping.
              */
-            ZipkinUrl = await StartZipkinContainer(new[]{ KafkaContainerName }, new[]{$"KAFKA_BOOTSTRAP_SERVERS={KafkaContainerName}:9092" });
+            ZipkinUrl = await StartZipkinContainer(new[] {KafkaContainerName},
+                new[] {$"KAFKA_BOOTSTRAP_SERVERS={KafkaContainerName}:9092"});
             await Task.Delay(TimeSpan.FromSeconds(20));
         }
 
@@ -103,14 +107,14 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Kafka
         {
             if (_client != null)
             {
-                var stop1 =  _client.Containers.StopContainerAsync(_zipkinContainerName, new ContainerStopParameters());
+                var stop1 = _client.Containers.StopContainerAsync(_zipkinContainerName, new ContainerStopParameters());
                 var stop2 = _client.Containers.StopContainerAsync(KafkaContainerName, new ContainerStopParameters());
                 await Task.WhenAll(stop1, stop2);
 
                 var remove1 = _client.Containers.RemoveContainerAsync(_zipkinContainerName,
-                    new ContainerRemoveParameters { Force = true });
+                    new ContainerRemoveParameters {Force = true});
                 var remove2 = _client.Containers.RemoveContainerAsync(KafkaContainerName,
-                    new ContainerRemoveParameters { Force = true });
+                    new ContainerRemoveParameters {Force = true});
                 await Task.WhenAll(remove1, remove2);
 
                 _client.Dispose();

@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="B3PropagatorSpecs.cs" company="Petabridge, LLC">
-//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -19,12 +19,12 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
 {
     public class B3PropagatorSpecs
     {
-        public readonly MockZipkinTracer Tracer;
-
         public B3PropagatorSpecs()
         {
             Tracer = new MockZipkinTracer(propagtor: new B3Propagator());
         }
+
+        public readonly MockZipkinTracer Tracer;
 
         [Property(DisplayName = "Should be able to extract and inject spans via B3 headers")]
         public Property ShouldExtractAndInjectSpansViaB3(long traceIdHigh, long traceIdLow, long spanId, long? parentId,
@@ -61,28 +61,16 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
         }
 
         /// <summary>
-        /// Verify for https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/55
+        ///     Verify fix for https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/56
         /// </summary>
-        [Fact(DisplayName = "B3Propagator should not extract SpanContext when none found")]
-        public void ShouldNotExtractAnyTraceIdWhenNoneFound()
-        {
-            // pass in an empty carrier
-            var carrier = new Dictionary<string, string>();
-            var extracted =
-                (SpanContext)Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
-
-            extracted.Should().BeNull();
-        }
-
-        /// <summary>
-        /// Verify fix for https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/56
-        /// </summary>
-        [Fact(DisplayName = "Bugfix for issue 56 - Propagator should not throw when attempting to inject non-Zipkin context.")]
+        [Fact(DisplayName =
+            "Bugfix for issue 56 - Propagator should not throw when attempting to inject non-Zipkin context.")]
         public void BugFix56NonZipkingContextShouldNotThrowUponInjectionAttempt()
         {
             // uses the MockZipkinTracer
             var carrier = new Dictionary<string, string>();
-            Tracer.Inject(NoOpZipkinSpanContext.Instance, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));
+            Tracer.Inject(NoOpZipkinSpanContext.Instance, BuiltinFormats.HttpHeaders,
+                new TextMapInjectAdapter(carrier));
             carrier.Count.Should().Be(0);
 
             // uses the real Zipkin tracer with a No-Op reporter
@@ -91,8 +79,23 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
             {
                 ScopeManager = new AsyncLocalScopeManager()
             });
-            testTracer.Inject(NoOpZipkinSpanContext.Instance, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));
+            testTracer.Inject(NoOpZipkinSpanContext.Instance, BuiltinFormats.HttpHeaders,
+                new TextMapInjectAdapter(carrier));
             carrier.Count.Should().Be(0);
+        }
+
+        /// <summary>
+        ///     Verify for https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/55
+        /// </summary>
+        [Fact(DisplayName = "B3Propagator should not extract SpanContext when none found")]
+        public void ShouldNotExtractAnyTraceIdWhenNoneFound()
+        {
+            // pass in an empty carrier
+            var carrier = new Dictionary<string, string>();
+            var extracted =
+                (SpanContext) Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
+
+            extracted.Should().BeNull();
         }
     }
 }

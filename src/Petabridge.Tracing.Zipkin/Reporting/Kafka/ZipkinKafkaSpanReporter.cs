@@ -1,15 +1,19 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="ZipkinKafkaSpanReporter.cs" company="Petabridge, LLC">
+//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
-using System.Text;
 using Akka.Actor;
 using Akka.Configuration;
 using Akka.Util.Internal;
-using Confluent.Kafka;
 
 namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
 {
     /// <summary>
-    /// Kafka <see cref="Producer"/> span reporter implementation.
+    ///     Kafka <see cref="Producer" /> span reporter implementation.
     /// </summary>
     public sealed class ZipkinKafkaSpanReporter : ISpanReporter
     {
@@ -52,7 +56,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
         public static ZipkinKafkaSpanReporter Create(string kafkaBrokerEndpoint,
             ActorSystem actorSystem = null)
         {
-            return Create(new []{ kafkaBrokerEndpoint }, actorSystem);
+            return Create(new[] {kafkaBrokerEndpoint}, actorSystem);
         }
 
         /// <summary>
@@ -79,7 +83,8 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
         ///     reporting engine.
         /// </param>
         /// <returns></returns>
-        public static ZipkinKafkaSpanReporter Create(ZipkinKafkaReportingOptions options, ActorSystem actorSystem = null)
+        public static ZipkinKafkaSpanReporter Create(ZipkinKafkaReportingOptions options,
+            ActorSystem actorSystem = null)
         {
             // force this component to explode if the end-user screwed up the URI somehow.
             var weOwnActorSystem = false;
@@ -94,7 +99,8 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
             // spawn as a System actor, so in the event of being in a non-owned system our traces get shut down
             // only after all of the user-defined actors have terminated.
             var zipkinActor = actorSystem.AsInstanceOf<ExtendedActorSystem>().SystemActorOf(
-                Props.Create(() => new KafkaReportingActor(options)), $"zipkin-tracing-kafka-{NameCounter.GetAndIncrement()}");
+                Props.Create(() => new KafkaReportingActor(options)),
+                $"zipkin-tracing-kafka-{NameCounter.GetAndIncrement()}");
 
             return new ZipkinKafkaSpanReporter(zipkinActor, weOwnActorSystem ? actorSystem : null);
         }

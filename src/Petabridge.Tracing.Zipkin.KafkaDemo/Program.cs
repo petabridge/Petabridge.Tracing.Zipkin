@@ -1,14 +1,22 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="Program.cs" company="Petabridge, LLC">
+//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using Petabridge.Tracing.Zipkin.Reporting.Kafka;
 
 namespace Petabridge.Tracing.Zipkin.KafkaDemo
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var url = "http://localhost:9411";
-            var tracer = new ZipkinTracer(new ZipkinTracerOptions(new Endpoint("AaronsAppKafka"), ZipkinKafkaSpanReporter.Create(new ZipkinKafkaReportingOptions(new[]{ "localhost:19092" }, debugLogging:true))));
+            var tracer = new ZipkinTracer(new ZipkinTracerOptions(new Endpoint("AaronsAppKafka"),
+                ZipkinKafkaSpanReporter.Create(new ZipkinKafkaReportingOptions(new[] {"localhost:19092"},
+                    debugLogging: true))));
             Console.WriteLine("Connected to Zipkin at {0}", url);
             Console.WriteLine("Type some gibberish and press enter to create a trace!");
             Console.WriteLine("Type '/exit to quit.");

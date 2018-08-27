@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------
 // <copyright file="ZipkinHttpIntegrationSpecs.cs" company="Petabridge, LLC">
-//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -63,10 +63,10 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Http
 
             using (var parentScope = testTracer.BuildSpan("parent").StartActive())
             {
-                parentSpan = (Span)parentScope.Span;
+                parentSpan = (Span) parentScope.Span;
                 using (var childScope = testTracer.BuildSpan("child").StartActive())
                 {
-                    childSpan = (Span)childScope.Span;
+                    childSpan = (Span) childScope.Span;
                 }
 
                 traceId = parentSpan.TypedContext.TraceId;
@@ -77,7 +77,8 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Http
             childSpan.TypedContext.ParentId.Should().Be(parentSpan.Context.SpanId);
 
             // create an HTTP reporting engine
-            var httpReporter = new ZipkinHttpApiTransmitter(_zipkinClient, ZipkinHttpApiTransmitter.GetFullZipkinUri(_httpBaseUri.AbsoluteUri));
+            var httpReporter = new ZipkinHttpApiTransmitter(_zipkinClient,
+                ZipkinHttpApiTransmitter.GetFullZipkinUri(_httpBaseUri.AbsoluteUri));
 
             // manually transmit data to Zipkin for parent span
             var resp1 = await httpReporter.TransmitSpans(new[] {parentSpan}, TimeSpan.FromSeconds(3));
@@ -93,7 +94,6 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Http
             HttpResponseMessage traceResp = null;
             var retries = 3;
             for (var i = 1; i <= retries; i++)
-            {
                 try
                 {
                     await Task.Delay(1000); // give it some time to get uploaded
@@ -109,7 +109,6 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Http
                     if (i == retries)
                         throw;
                 }
-            }
 
             var json = await traceResp.Content.ReadAsStringAsync();
             var traces = ZipkinDeserializer.Deserialize(json);
@@ -130,14 +129,13 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Http
                     active2.Span.Log("This is a nested span");
                 }
 
-                traceId = active.Span.Context.AsInstanceOf<IZipkinSpanContext>().TraceId.ToString();
+                traceId = active.Span.Context.AsInstanceOf<IZipkinSpanContext>().TraceId;
             }
 
             var fullUri = new Uri(_httpBaseUri, $"api/v2/trace/{traceId}/");
             HttpResponseMessage traceResp = null;
             var retries = 3;
             for (var i = 1; i <= retries; i++)
-            {
                 try
                 {
                     await Task.Delay(1000); // give it some time to get uploaded
@@ -148,14 +146,12 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Http
                         .BeTrue(
                             $"Expected success status code, but instead found [{traceResp.StatusCode}][{traceResp.ReasonPhrase}]");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     if (i == retries)
                         throw;
                 }
-            }
-            
-            
+
 
             var json = await traceResp.Content.ReadAsStringAsync();
             var traces = ZipkinDeserializer.Deserialize(json);

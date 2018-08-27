@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="ZipkinHttpApiTransmitter.cs" company="Petabridge, LLC">
-//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.IO;
 
 namespace Petabridge.Tracing.Zipkin.Reporting.Http
 {
@@ -42,7 +41,8 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
 
         public async Task<HttpResponseMessage> TransmitSpans(IEnumerable<Span> spans, TimeSpan timeout)
         {
-            using (var stream = SerializationStreamManager.StreamManager.GetStream("Petabridge.Tracing.Zipkin.HttpTransmitter"))
+            using (var stream =
+                SerializationStreamManager.StreamManager.GetStream("Petabridge.Tracing.Zipkin.HttpTransmitter"))
             {
                 _serializer.Serialize(stream, spans);
                 var cts = new CancellationTokenSource(timeout);
