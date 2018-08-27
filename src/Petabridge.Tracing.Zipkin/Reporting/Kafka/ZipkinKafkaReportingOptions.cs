@@ -12,7 +12,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
         public const int DefaultBatchSize = 30;
         public static readonly TimeSpan DefaultReportingInterval = TimeSpan.FromMilliseconds(100);
 
-        public ZipkinKafkaReportingOptions(string topicName, IReadOnlyList<string> bootstrapServers, 
+        public ZipkinKafkaReportingOptions(IReadOnlyList<string> bootstrapServers, string topicName = DefaultKafkaTopicName,
             int maximumBatchSize = DefaultBatchSize, TimeSpan? maxBatchInterval = null, 
             bool debugLogging = false, bool errorLogging = true)
         {
@@ -22,6 +22,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
             MaxBatchInterval = maxBatchInterval ?? DefaultReportingInterval;
             DebugLogging = debugLogging;
             ErrorLogging = errorLogging;
+            Serializer = new JsonSpanSerializer();
         }
 
         /// <summary>
@@ -62,6 +63,12 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
         ///     Enables error logging via the Akka.NET logging channels. Defaults to <c>true</c>.
         /// </summary>
         public bool ErrorLogging { get; }
+
+        /// <summary>
+        /// The serializer used for encoding <see cref="Span"/> instances on the wire.
+        /// Defaults to <see cref="JsonSpanSerializer"/>
+        /// </summary>
+        public ISpanSerializer Serializer { get; set; }
 
         /// <summary>
         /// Creates a configuration object in the style expected by the Confluent.Kafka driver.

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using Akka.Actor;
 using Akka.Event;
@@ -18,15 +19,14 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
         private readonly ILoggingAdapter _log = Context.GetLogger();
 
         private readonly ZipkinKafkaReportingOptions _options;
-        private readonly ISpanSerializer _serializer;
         private ICancelable _batchTransimissionTimer;
 
         private KafkaTransmitter _kafkaProducer;
 
-        public KafkaReportingActor(ZipkinKafkaReportingOptions options, ISpanSerializer serializer)
+        public KafkaReportingActor(ZipkinKafkaReportingOptions options)
         {
+            Contract.Assert(options.Serializer != null);
             _options = options;
-            _serializer = serializer;
             PendingMessages = new List<Span>(_options.MaximumBatchSize);
 
             Batching();
@@ -53,8 +53,12 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
             {
                 if (msg.Error.HasError && _log.IsErrorEnabled)
                 {
-                    _log.Error("Error [{0}][{1}] occurred while uploading Spans to Kafka endpoints [{2}]", msg.Error.Code, msg.Error.Reason,
-                        string.Join(",", _options.BootstrapServers));
+                    _log.Error("Error [{0}][{1}] occurred while uploading spans [{3} bytes] to Kafka endpoints [{2}] for topic [{4}]", msg.Error.Code, msg.Error.Reason,
+                        string.Join(",", _options.BootstrapServers), msg.Value.Length, msg.Topic);
+                }
+                else if(_log.IsDebugEnabled)
+                {
+                    _log.Debug("Successfully posted spans [{0} bytes] to Kafka for topic [{1}]", msg.Value.Length, msg.Topic);
                 }
             });
 
@@ -88,7 +92,12 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
             RescheduleBatchTransmission();
             _kafkaProducer = new KafkaTransmitter(_options.TopicName, 
                 new Producer<Null, byte[]>(_options.ToDriverConfig(), 
-                new NullSerializer(), new ByteArraySerializer()), _serializer);
+                new NullSerializer(), new ByteArraySerializer()), _options.Serializer);
+
+            if (_options.DebugLogging)
+            {
+                _log.Debug("Connected to Kafka at [{0}] on topic [{1}] for Zipkin", string.Join(",", _options.BootstrapServers), _options.TopicName);
+            }
         }
 
         protected override void PostStop()

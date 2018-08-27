@@ -17,9 +17,9 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
 {
     public class ZipkinFixture : IAsyncLifetime
     {
-        private const string ZipkinImageName = "openzipkin/zipkin";
-        private readonly string _zipkinContainerName = $"zipkin-{Guid.NewGuid():N}";
-        private DockerClient _client;
+        protected const string ZipkinImageName = "openzipkin/zipkin";
+        protected readonly string _zipkinContainerName = $"zipkin-{Guid.NewGuid():N}";
+        protected DockerClient _client;
 
         public string ZipkinUrl { get; private set; }
 
