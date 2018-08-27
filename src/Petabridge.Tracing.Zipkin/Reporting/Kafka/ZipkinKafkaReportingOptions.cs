@@ -78,7 +78,8 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
         {
             return new Dictionary<string, object>
             {
-                { "bootstrap.servers", string.Join(",", BootstrapServers) }
+                { "bootstrap.servers", string.Join(",", BootstrapServers) },
+                { "request.required.acks", "0" } // don't wait for broker to send ACKs back (it's just trace data)
             };
         }
     }
