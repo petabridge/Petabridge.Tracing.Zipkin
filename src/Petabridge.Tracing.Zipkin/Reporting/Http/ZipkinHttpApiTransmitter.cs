@@ -28,11 +28,6 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
         /// </summary>
         public const string SpanPostUriPath = "api/v2/spans";
 
-        /// <summary>
-        ///     Only need one of these globally, and it's thread-safe. The streams it accesses internally are inherently not safe.
-        /// </summary>
-        private static readonly RecyclableMemoryStreamManager StreamManager = new RecyclableMemoryStreamManager();
-
         private readonly HttpClient _client;
 
         private readonly ISpanSerializer _serializer = new JsonSpanSerializer();
@@ -47,7 +42,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
 
         public async Task<HttpResponseMessage> TransmitSpans(IEnumerable<Span> spans, TimeSpan timeout)
         {
-            using (var stream = StreamManager.GetStream("Petabridge.Tracing.Zipkin.HttpTransmitter"))
+            using (var stream = SerializationStreamManager.StreamManager.GetStream("Petabridge.Tracing.Zipkin.HttpTransmitter"))
             {
                 _serializer.Serialize(stream, spans);
                 var cts = new CancellationTokenSource(timeout);

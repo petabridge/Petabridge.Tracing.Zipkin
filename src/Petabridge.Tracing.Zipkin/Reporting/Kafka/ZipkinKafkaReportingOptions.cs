@@ -7,12 +7,12 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
     /// <summary>
     /// All of the options used to configure <see cref="Span"/> reporting via Kafka.
     /// </summary>
-    public sealed class ZipkingKafkaReportingOptions
+    public sealed class ZipkinKafkaReportingOptions
     {
         public const int DefaultBatchSize = 30;
         public static readonly TimeSpan DefaultReportingInterval = TimeSpan.FromMilliseconds(100);
 
-        public ZipkingKafkaReportingOptions(string topicName, IReadOnlyList<string> bootstrapServers, 
+        public ZipkinKafkaReportingOptions(string topicName, IReadOnlyList<string> bootstrapServers, 
             int maximumBatchSize = DefaultBatchSize, TimeSpan? maxBatchInterval = null, 
             bool debugLogging = false, bool errorLogging = true)
         {
@@ -62,5 +62,17 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
         ///     Enables error logging via the Akka.NET logging channels. Defaults to <c>true</c>.
         /// </summary>
         public bool ErrorLogging { get; }
+
+        /// <summary>
+        /// Creates a configuration object in the style expected by the Confluent.Kafka driver.
+        /// </summary>
+        /// <returns>A new dictionary instance each time.</returns>
+        public IReadOnlyDictionary<string, object> ToDriverConfig()
+        {
+            return new Dictionary<string, object>
+            {
+                { "bootstrap.servers", string.Join(",", BootstrapServers) }
+            };
+        }
     }
 }
