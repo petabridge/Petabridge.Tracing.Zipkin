@@ -8,7 +8,7 @@ namespace Petabridge.Tracing.Zipkin.KafkaDemo
         static void Main(string[] args)
         {
             var url = "http://localhost:9411";
-            var tracer = new ZipkinTracer(new ZipkinTracerOptions(new Endpoint("AaronsAppKafka"), ZipkinKafkaSpanReporter.Create(new ZipkinKafkaReportingOptions(new[]{ "localhost:9092" }, debugLogging:true))));
+            var tracer = new ZipkinTracer(new ZipkinTracerOptions(new Endpoint("AaronsAppKafka"), ZipkinKafkaSpanReporter.Create(new ZipkinKafkaReportingOptions(new[]{ "localhost:19092" }, debugLogging:true))));
             Console.WriteLine("Connected to Zipkin at {0}", url);
             Console.WriteLine("Type some gibberish and press enter to create a trace!");
             Console.WriteLine("Type '/exit to quit.");

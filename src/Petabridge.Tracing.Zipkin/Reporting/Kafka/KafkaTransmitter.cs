@@ -28,7 +28,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
             {
                 _serializer.Serialize(stream, spans);
                 var outboundBytes = stream.ToArray();
-                return await _producer.ProduceAsync(_topicName, null, outboundBytes, false).ConfigureAwait(false);
+                return await _producer.ProduceAsync(_topicName, null, outboundBytes).ConfigureAwait(false);
             }
         }
 

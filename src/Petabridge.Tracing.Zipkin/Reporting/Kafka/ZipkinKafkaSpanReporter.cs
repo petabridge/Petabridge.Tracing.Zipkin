@@ -43,6 +43,36 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
         /// <summary>
         ///     Performs all of the setup and initialization needed to get the Zipkin Kafka reporting engine up and running.
         /// </summary>
+        /// <param name="kafkaBrokerEndpoint">A single kafka broker endpoint.</param>
+        /// <param name="actorSystem">
+        ///     Optional. If using Akka.NET, you can hook your own <see cref="ActorSystem" /> into our
+        ///     reporting engine.
+        /// </param>
+        /// <returns></returns>
+        public static ZipkinKafkaSpanReporter Create(string kafkaBrokerEndpoint,
+            ActorSystem actorSystem = null)
+        {
+            return Create(new []{ kafkaBrokerEndpoint }, actorSystem);
+        }
+
+        /// <summary>
+        ///     Performs all of the setup and initialization needed to get the Zipkin Kafka reporting engine up and running.
+        /// </summary>
+        /// <param name="kafkaBrokerEndpoints">A list of kafka broker endpoints.</param>
+        /// <param name="actorSystem">
+        ///     Optional. If using Akka.NET, you can hook your own <see cref="ActorSystem" /> into our
+        ///     reporting engine.
+        /// </param>
+        /// <returns></returns>
+        public static ZipkinKafkaSpanReporter Create(IReadOnlyList<string> kafkaBrokerEndpoints,
+            ActorSystem actorSystem = null)
+        {
+            return Create(new ZipkinKafkaReportingOptions(kafkaBrokerEndpoints), actorSystem);
+        }
+
+        /// <summary>
+        ///     Performs all of the setup and initialization needed to get the Zipkin Kafka reporting engine up and running.
+        /// </summary>
         /// <param name="options">The set of options for configuring timeouts and batch sizes.</param>
         /// <param name="actorSystem">
         ///     Optional. If using Akka.NET, you can hook your own <see cref="ActorSystem" /> into our

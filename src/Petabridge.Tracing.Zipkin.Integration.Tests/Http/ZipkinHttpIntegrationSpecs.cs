@@ -117,7 +117,7 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Http
             traces.Count.Should().Be(2);
         }
 
-        [Fact(DisplayName = "End2End: Should be able to post Trace to Zipkin")]
+        [Fact(DisplayName = "End2End: Should be able to post Trace to Zipkin via HTTP")]
         public async Task ShouldPostTraceToZipkin()
         {
             string traceId;
