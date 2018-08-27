@@ -9,6 +9,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using Akka.Actor;
 using Akka.Event;
+using Confluent.Kafka;
+using Confluent.Kafka.Serialization;
 using Phobos.Actor.Common;
 
 namespace Petabridge.Tracing.Zipkin.Reporting.Kafka

@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 
 namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
 {
