@@ -20,11 +20,17 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Kafka
 
         public int KafkaExternalPort { get; private set; }
 
+        public int KafkaZooKeeperPort { get; private set; }
+
         public override async Task InitializeAsync()
         {
             KafkaUri = await StartKafka();
+
+            /*
+             * Use the internal Docker port for the binding here, not the host-visible port mapping.
+             */
             ZipkinUrl = await StartZipkinContainer(new[]{ KafkaContainerName }, new[]{$"KAFKA_BOOTSTRAP_SERVERS={KafkaContainerName}:9092" });
-            await Task.Delay(TimeSpan.FromSeconds(30));
+            await Task.Delay(TimeSpan.FromSeconds(20));
         }
 
         private async Task<string> StartKafka()
@@ -41,7 +47,8 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Kafka
                     }));
 
             KafkaInternalPort = ThreadLocalRandom.Current.Next(7000, 9000);
-            KafkaExternalPort = ThreadLocalRandom.Current.Next(19000, 20000);
+            KafkaExternalPort = 19092; //ThreadLocalRandom.Current.Next(19000, 20000);
+            KafkaZooKeeperPort = ThreadLocalRandom.Current.Next(2000, 2999);
 
             // create the container
             await _client.Containers.CreateContainerAsync(new CreateContainerParameters
@@ -70,6 +77,16 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Kafka
                                 new PortBinding
                                 {
                                     HostPort = $"{KafkaInternalPort}"
+                                }
+                            }
+                        },
+                        {
+                            "2181/tcp",
+                            new List<PortBinding>
+                            {
+                                new PortBinding
+                                {
+                                    HostPort = $"{KafkaZooKeeperPort}"
                                 }
                             }
                         }

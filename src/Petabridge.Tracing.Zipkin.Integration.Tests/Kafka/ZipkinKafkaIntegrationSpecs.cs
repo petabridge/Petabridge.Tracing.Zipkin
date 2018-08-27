@@ -46,9 +46,6 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Kafka
         [Fact(DisplayName = "End2End: Should be able to post Trace to Zipkin via Kafka")]
         public async Task ShouldPostTraceToZipkin()
         {
-            
-
-            
             HttpResponseMessage traceResp = null;
             var retries = 3;
             for (var i = 1; i <= retries; i++)
