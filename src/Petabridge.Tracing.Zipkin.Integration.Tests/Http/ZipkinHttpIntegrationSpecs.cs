@@ -18,7 +18,7 @@ using Petabridge.Tracing.Zipkin.Reporting.NoOp;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Petabridge.Tracing.Zipkin.Integration.Tests
+namespace Petabridge.Tracing.Zipkin.Integration.Tests.Http
 {
     public class ZipkinHttpIntegrationSpecs : TestKit, IClassFixture<ZipkinFixture>
     {
@@ -117,7 +117,7 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
             traces.Count.Should().Be(2);
         }
 
-        [Fact(DisplayName = "End2End: Should be able to post Trace to Zipkin")]
+        [Fact(DisplayName = "End2End: Should be able to post Trace to Zipkin via HTTP")]
         public async Task ShouldPostTraceToZipkin()
         {
             string traceId;
