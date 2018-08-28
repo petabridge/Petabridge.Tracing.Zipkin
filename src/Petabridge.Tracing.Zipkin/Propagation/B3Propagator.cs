@@ -1,10 +1,9 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="B3Propagator.cs" company="Petabridge, LLC">
-//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System.Globalization;
 using OpenTracing.Propagation;
 using Petabridge.Tracing.Zipkin.Exceptions;
 
@@ -49,9 +48,9 @@ namespace Petabridge.Tracing.Zipkin.Propagation
 
         public SpanContext Extract(ITextMap carrier)
         {
-            var traceId = default(TraceId);
-            long spanId = 0;
-            long? parentId = null;
+            TraceId? traceId = null;
+            string spanId = null;
+            string parentId = null;
             var debug = false;
             var sampled = false;
             const bool shared = false;
@@ -59,22 +58,16 @@ namespace Petabridge.Tracing.Zipkin.Propagation
                 switch (entry.Key)
                 {
                     case B3TraceId:
-                        if (!TraceId.TryParse(entry.Value, out traceId))
+                        if (!TraceId.TryParse(entry.Value, out var t))
                             throw new ZipkinFormatException(
                                 $"TraceId in format [{entry.Value}] is incompatible. Please use an X16 encoded 128bit or 64bit id.");
+                        traceId = t;
                         break;
                     case B3SpanId:
-                        if (!long.TryParse(entry.Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                            out spanId))
-                            throw new ZipkinFormatException(
-                                $"SpanId in format [{entry.Value}] is incompatible. Please use an X16 encoded 64bit id.");
+                        spanId = entry.Value;
                         break;
                     case B3ParentId:
-                        if (!long.TryParse(entry.Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                            out var p))
-                            throw new ZipkinFormatException(
-                                $"ParentId in format [{entry.Value}] is incompatible. Please use an X16 encoded 64bit id.");
-                        parentId = p;
+                        parentId = entry.Value;
                         break;
                     case B3Debug:
                         if (entry.Value.Equals("1"))
@@ -86,7 +79,9 @@ namespace Petabridge.Tracing.Zipkin.Propagation
                         break;
                 }
 
-            return new SpanContext(traceId, spanId, parentId?.ToString("x16"), debug, sampled, shared);
+            if (traceId != null && spanId != null) // don't care of ParentId is null or not
+                return new SpanContext(traceId.Value, spanId, parentId, debug, sampled, shared);
+            return null;
         }
     }
 }

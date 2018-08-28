@@ -1,3 +1,23 @@
+#### 0.4.0 August 28 2018 ###
+Added support for Zipkin's built-in Kafka span reporting capabilities, for users who are already considering operating at that kind of large scale.
+
+You can access the Kafka reporter via the following syntax:
+
+```
+var tracer = new ZipkinTracer(new ZipkinTracerOptions(new Endpoint("AaronsAppKafka"),
+                ZipkinKafkaSpanReporter.Create(new ZipkinKafkaReportingOptions(new[] {"localhost:19092"},
+                    debugLogging: true))));
+```
+
+The `ZipkinKafkaSpanReporter.Create` method will give you the ability to specify the Kafka endpoint, topic, and batching settings used by Petabridge.Tracing.Zipkin for reporting spans back to Zipkin via a Kafka topic. Normally, however, all you'll need to specify is just a set of endpoints for Kafka brokers - both Zipkin and the Petabridge.Tracing.Zipkin client use the "zipkin" topic by default.
+
+**Other Changes**
+Petabridge.Tracing.Zipkin also introduces the following changes:
+
+* [BugFix: calling ITracer.Inject with a NoOp span context causes cast exception](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/56)
+* [BugFix: B3Propagator.Extract always returns a span context even when one isn't present](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/55)
+* [Upgraded to use Akka.NET v1.3.9](https://github.com/akkadotnet/akka.net/releases/tag/v1.3.9)
+
 #### 0.3.2 July 30 2018 ####
 * [Implemented some missing OpenTracing v0.1.2 APIs](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/51).
 

@@ -17,13 +17,13 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
 {
     public class ZipkinFixture : IAsyncLifetime
     {
-        private const string ZipkinImageName = "openzipkin/zipkin";
-        private readonly string _zipkinContainerName = $"zipkin-{Guid.NewGuid():N}";
-        private DockerClient _client;
+        protected const string ZipkinImageName = "openzipkin/zipkin";
+        protected readonly string _zipkinContainerName = $"zipkin-{Guid.NewGuid():N}";
+        protected DockerClient _client;
 
-        public string ZipkinUrl { get; private set; }
+        public string ZipkinUrl { get; protected set; }
 
-        public async Task InitializeAsync()
+        public ZipkinFixture()
         {
             DockerClientConfiguration config;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -34,7 +34,16 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
                 throw new NotSupportedException($"Unsupported OS [{RuntimeInformation.OSDescription}]");
 
             _client = config.CreateClient();
+        }
 
+        public virtual async Task InitializeAsync()
+        {
+            ZipkinUrl = await StartZipkinContainer(null, null);
+            await Task.Delay(TimeSpan.FromSeconds(20));
+        }
+
+        protected async Task<string> StartZipkinContainer(string[] links, string[] environmentArgs)
+        {
             var images = await _client.Images.ListImagesAsync(new ImagesListParameters {MatchName = ZipkinImageName});
             if (images.Count == 0)
                 await _client.Images.CreateImageAsync(
@@ -68,17 +77,17 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
                                 }
                             }
                         }
-                    }
-                }
+                    },
+                    Links = links,
+                }, Env = environmentArgs
             });
 
             // start the container
             await _client.Containers.StartContainerAsync(_zipkinContainerName, new ContainerStartParameters());
-            ZipkinUrl = $"localhost:{zipkinHttpPort}";
-            await Task.Delay(TimeSpan.FromSeconds(20));
+            return $"localhost:{zipkinHttpPort}";
         }
 
-        public async Task DisposeAsync()
+        public virtual async Task DisposeAsync()
         {
             if (_client != null)
             {

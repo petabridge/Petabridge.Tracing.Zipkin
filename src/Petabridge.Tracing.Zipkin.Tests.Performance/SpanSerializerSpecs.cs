@@ -1,9 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// -----------------------------------------------------------------------
+// <copyright file="SpanSerializerSpecs.cs" company="Petabridge, LLC">
+//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NBench;
 using Petabridge.Tracing.Zipkin.Reporting;
 using Petabridge.Tracing.Zipkin.Tracers;
@@ -16,10 +18,12 @@ namespace Petabridge.Tracing.Zipkin.Tests.Performance
 
         public const int SpanCount = 100000;
 
-        private readonly MockZipkinTracer _mockTracer = new MockZipkinTracer(new Endpoint("actorsystem", "127.0.0.1", 8008));
+        private readonly MockZipkinTracer _mockTracer =
+            new MockZipkinTracer(new Endpoint("actorsystem", "127.0.0.1", 8008));
+
         private readonly ISpanSerializer _serializer = new JsonSpanSerializer();
-        private Span _testSpan;
         private Counter _opsCounter;
+        private Span _testSpan;
 
         [PerfSetup]
         public void Setup(BenchmarkContext context)
@@ -31,7 +35,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Performance
 
             // create a reasonably complex span
             var span = new Span(_mockTracer, "op1",
-                    new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), -7118946577185884628, null,
+                    new SpanContext(new TraceId(7776525154056436086, 6707114971141086261), "-7118946577185884628", null,
                         true),
                     startTime, SpanKind.CLIENT)
                 .SetRemoteEndpoint(new Endpoint("actorsystem", "127.0.0.1", 8009)).SetTag("foo1", "bar")
@@ -48,8 +52,10 @@ namespace Petabridge.Tracing.Zipkin.Tests.Performance
         public void SerializeSpans()
         {
             for (var i = 0; i < SpanCount; i++)
-                using(var mem = new MemoryStream())
-                _serializer.Serialize(mem, _testSpan);
+                using (var mem = new MemoryStream())
+                {
+                    _serializer.Serialize(mem, _testSpan);
+                }
 
             _opsCounter.Increment(SpanCount);
         }

@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="ZipkinTracer.cs" company="Petabridge, LLC">
-//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -81,7 +81,8 @@ namespace Petabridge.Tracing.Zipkin
             if ((format == BuiltinFormats.TextMap || format == BuiltinFormats.HttpHeaders) &&
                 carrier is ITextMap textMap)
             {
-                _propagator.Inject((SpanContext) spanContext, textMap);
+                if (spanContext is SpanContext zipkinContext)
+                    _propagator.Inject(zipkinContext, textMap);
                 return;
             }
 

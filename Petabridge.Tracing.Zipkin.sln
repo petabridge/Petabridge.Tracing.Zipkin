@@ -13,7 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{96A3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Petabridge.Tracing.Zipkin.SimpleDemo", "src\Petabridge.Tracing.Zipkin.SimpleDemo\Petabridge.Tracing.Zipkin.SimpleDemo.csproj", "{BC8D1A16-C540-4E57-A87C-4A9C66D51635}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Petabridge.Tracing.Zipkin.Integration.Tests", "src\Petabridge.Tracing.Zipkin.Integration.Tests\Petabridge.Tracing.Zipkin.Integration.Tests.csproj", "{D60BD0FB-F2EC-45A5-96A1-D18BB61A971B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Petabridge.Tracing.Zipkin.Integration.Tests", "src\Petabridge.Tracing.Zipkin.Integration.Tests\Petabridge.Tracing.Zipkin.Integration.Tests.csproj", "{D60BD0FB-F2EC-45A5-96A1-D18BB61A971B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Petabridge.Tracing.Zipkin.KafkaDemo", "src\Petabridge.Tracing.Zipkin.KafkaDemo\Petabridge.Tracing.Zipkin.KafkaDemo.csproj", "{73805042-B5ED-4E33-B169-78F5E4A97000}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,12 +43,17 @@ Global
 		{D60BD0FB-F2EC-45A5-96A1-D18BB61A971B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D60BD0FB-F2EC-45A5-96A1-D18BB61A971B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D60BD0FB-F2EC-45A5-96A1-D18BB61A971B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73805042-B5ED-4E33-B169-78F5E4A97000}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73805042-B5ED-4E33-B169-78F5E4A97000}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73805042-B5ED-4E33-B169-78F5E4A97000}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73805042-B5ED-4E33-B169-78F5E4A97000}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BC8D1A16-C540-4E57-A87C-4A9C66D51635} = {96A3EB74-1B21-4406-9634-4A9EC1D76873}
+		{73805042-B5ED-4E33-B169-78F5E4A97000} = {96A3EB74-1B21-4406-9634-4A9EC1D76873}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A1F1130E-F0D7-49A9-8CBE-B8604EEA79CB}
