@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// -----------------------------------------------------------------------
+// <copyright file="ZipkinKafkaIntegrationSpecs.cs" company="Petabridge, LLC">
+//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Akka.TestKit.Xunit2;
 using Akka.Util.Internal;
 using FluentAssertions;
 using OpenTracing.Util;
 using Petabridge.Tracing.Zipkin.Integration.Tests.Serialization;
-using Petabridge.Tracing.Zipkin.Reporting.Http;
 using Petabridge.Tracing.Zipkin.Reporting.Kafka;
 using Xunit;
 using Xunit.Abstractions;
@@ -64,7 +67,7 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Kafka
                         active2.Span.Log("This is a nested span");
                     }
 
-                    traceId = active.Span.Context.AsInstanceOf<IZipkinSpanContext>().TraceId.ToString();
+                    traceId = active.Span.Context.AsInstanceOf<IZipkinSpanContext>().TraceId;
                 }
 
                 var fullUri = new Uri(_httpBaseUri, $"api/v2/trace/{traceId}/");
@@ -85,7 +88,6 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Kafka
                         throw;
                 }
             }
-
 
 
             var json = await traceResp.Content.ReadAsStringAsync();
