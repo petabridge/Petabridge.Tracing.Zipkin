@@ -10,7 +10,6 @@ open Fake.DotNetCli
 open Fake.DocFxHelper
 
 // Information about the project for Nuget and Assembly info files
-let product = "Petabridge.Tracing.Zipkin"
 let configuration = "Release"
 
 // Read release notes and version
@@ -96,18 +95,21 @@ Target "RunTests" (fun _ ->
                   -- "./src/**/*.Integration.Tests.csproj" // Zipkin containers can't run on Windows VMs
         | _ -> !! "./src/**/*.Tests.csproj" // if you need to filter specs for Linux vs. Windows, do it here
 
+   
+
     let runSingleProject project =
         let arguments =
             match (hasTeamCity) with
-            | true -> (sprintf "xunit -c Release -nobuild -parallel none -teamcity -xml %s_xunit.xml" (outputTests @@ fileNameWithoutExt project))
-            | false -> (sprintf "xunit -c Release -nobuild -parallel none -xml %s_xunit.xml" (outputTests @@ fileNameWithoutExt project))
+            | true -> (sprintf "--no-build --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none -teamcity" (outputTests))
+            | false -> (sprintf "--no-build --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none" (outputTests))
 
-        let result = ExecProcess(fun info ->
-            info.FileName <- "dotnet"
-            info.WorkingDirectory <- (Directory.GetParent project).FullName
-            info.Arguments <- arguments) (TimeSpan.FromMinutes 30.0) 
-        
-        ResultHandling.failBuildIfXUnitReportedError TestRunnerErrorLevel.DontFailBuild result
+        DotNetCli.Test
+            (fun t -> 
+                { t with 
+                    Project = project
+                    Configuration = configuration
+                    AdditionalArgs = [arguments]
+                })
 
     projects |> Seq.iter (log)
     projects |> Seq.iter (runSingleProject)
