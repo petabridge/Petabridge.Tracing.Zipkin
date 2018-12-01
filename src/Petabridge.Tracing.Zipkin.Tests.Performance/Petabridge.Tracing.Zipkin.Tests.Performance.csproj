@@ -4,6 +4,8 @@
 
   <PropertyGroup>    
     <TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RuntimeFrameworkVersion>2.1.6</RuntimeFrameworkVersion>
   </PropertyGroup>
 
   <ItemGroup>

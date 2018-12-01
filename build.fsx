@@ -33,6 +33,8 @@ let outputPerfTests = __SOURCE_DIRECTORY__ @@ "PerfResults"
 let outputNuGet = output @@ "nuget"
 
 Target "Clean" (fun _ ->
+    ActivateFinalTarget "KillCreatedProcesses"
+
     CleanDir output
     CleanDir outputTests
     CleanDir outputPerfTests
@@ -200,6 +202,19 @@ Target "DocFx" (fun _ ->
                     DocFxJson = docsPath @@ "docfx.json" })
 )
 
+
+//--------------------------------------------------------------------------------
+// Final target: shut down `dotnet` build-server
+//--------------------------------------------------------------------------------  
+FinalTarget "KillCreatedProcesses" (fun _ ->
+    log "Shutting down dotnet build-server"
+    let result = ExecProcess(fun info -> 
+            info.FileName <- "dotnet"
+            info.WorkingDirectory <- __SOURCE_DIRECTORY__
+            info.Arguments <- "build-server shutdown") (System.TimeSpan.FromMinutes 2.0)
+    if result <> 0 then failwithf "dotnet build-server shutdown failed"
+)
+
 //--------------------------------------------------------------------------------
 // Help 
 //--------------------------------------------------------------------------------
@@ -232,13 +247,15 @@ Target "Nuget" DoNothing
 "Clean" ==> "RestorePackages" ==> "AssemblyInfo" ==> "Build" ==> "BuildRelease"
 
 // tests dependencies
+"Clean" ==> "RestorePackages" ==> "Build" ==> "RunTests"
+"Clean" ==> "RestorePackages" ==> "Build" ==> "NBench"
 
 // nuget dependencies
 "Clean" ==> "RestorePackages" ==> "Build" ==> "CreateNuget"
 "CreateNuget" ==> "PublishNuget" ==> "Nuget"
 
 // docs
-"BuildRelease" ==> "Docfx"
+"Clean" ==> "RestorePackages" ==> "BuildRelease" ==> "Docfx"
 
 // all
 "BuildRelease" ==> "All"
