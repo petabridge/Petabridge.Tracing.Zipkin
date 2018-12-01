@@ -3,7 +3,6 @@
 
 open System
 open System.IO
-open System.Text
 
 open Fake
 open Fake.DotNetCli
@@ -32,11 +31,6 @@ let output = __SOURCE_DIRECTORY__  @@ "bin"
 let outputTests = __SOURCE_DIRECTORY__ @@ "TestResults"
 let outputPerfTests = __SOURCE_DIRECTORY__ @@ "PerfResults"
 let outputNuGet = output @@ "nuget"
-
-// Copied from original NugetCreate target
-let nugetDir = output @@ "nuget"
-let workingDir = output @@ "build"
-let nugetExe = FullName @"./tools/nuget.exe"
 
 Target "Clean" (fun _ ->
     CleanDir output
