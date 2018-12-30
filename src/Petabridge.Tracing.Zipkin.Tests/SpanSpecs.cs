@@ -90,11 +90,5 @@ namespace Petabridge.Tracing.Zipkin.Tests
             Tracer.CollectedSpans.TryDequeue(out var innerSpan);
             innerSpan.Debug.Should().BeTrue();
         }
-
-        [Fact]
-        public void ShouldFail()
-        {
-            true.Should().BeFalse();
-        }
     }
 }
