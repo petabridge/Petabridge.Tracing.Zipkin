@@ -99,13 +99,15 @@ Target "RunTests" (fun _ ->
             | true -> (sprintf "--no-build --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none -teamcity" (outputTests))
             | false -> (sprintf "--no-build --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none" (outputTests))
 
-        DotNetCli.Test
+        let result = DotNetCli.Test
             (fun t -> 
                 { t with 
                     Project = project
                     Configuration = configuration
                     AdditionalArgs = [arguments]
                 })
+
+        ResultHandling.failBuildIfXUnitReportedError TestRunnerErrorLevel.DontFailBuild result
 
     projects |> Seq.iter (log)
     projects |> Seq.iter (runSingleProject)
