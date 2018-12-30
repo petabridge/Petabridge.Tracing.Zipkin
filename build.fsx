@@ -96,16 +96,15 @@ Target "RunTests" (fun _ ->
     let runSingleProject project =
         let arguments =
             match (hasTeamCity) with
-            | true -> (sprintf "--no-build --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none -teamcity" (outputTests))
-            | false -> (sprintf "--no-build --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none" (outputTests))
+            | true -> (sprintf "test -C Release --no-build --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none -teamcity" (outputTests))
+            | false -> (sprintf "test -C Release --no-build --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none" (outputTests))
 
-        DotNetCli.Test
-            (fun t -> 
-                { t with 
-                    Project = project
-                    Configuration = configuration
-                    AdditionalArgs = [arguments]
-                })
+        let result = ExecProcess(fun info ->
+            info.FileName <- "dotnet"
+            info.WorkingDirectory <- (Directory.GetParent project).FullName
+            info.Arguments <- arguments) (TimeSpan.FromMinutes 30.0) 
+        
+        ResultHandling.failBuildIfXUnitReportedError TestRunnerErrorLevel.DontFailBuild result  
 
     projects |> Seq.iter (log)
     projects |> Seq.iter (runSingleProject)
