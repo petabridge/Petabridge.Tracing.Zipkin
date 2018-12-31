@@ -97,5 +97,32 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
 
             extracted.Should().BeNull();
         }
+
+        [Fact(DisplayName = "B3Propagator should extract headers without case sensitivity")]
+        public void B3HeaderExtractionShouldBeCaseInsensitive()
+        {
+            var carrier = new Dictionary<string, string>();
+
+            
+            var traceId = Tracer.IdProvider.NextTraceId();
+            var spanId = Tracer.IdProvider.NextSpanId();
+            var parentId = Tracer.IdProvider.NextSpanId();
+
+            // all upper case
+            carrier[B3Propagator.B3TraceId.ToUpperInvariant()] = traceId.ToString();
+
+            // all upper case
+            carrier[B3Propagator.B3SpanId.ToLowerInvariant()] = spanId;
+
+            // mixed case
+            carrier["X-B3-ParentSPANid"] = parentId;
+
+            var extracted =
+                (SpanContext)Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
+
+            extracted.TraceId.Should().Be(traceId.ToString());
+            extracted.SpanId.Should().Be(spanId);
+            extracted.ParentId.Should().Be(parentId);
+        }
     }
 }

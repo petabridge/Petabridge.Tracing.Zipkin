@@ -18,11 +18,11 @@ namespace Petabridge.Tracing.Zipkin.Propagation
     /// </remarks>
     public sealed class B3Propagator : IPropagator<ITextMap>
     {
-        internal const string B3TraceId = "X-B3-TraceId";
-        internal const string B3SpanId = "X-B3-SpanId";
-        internal const string B3ParentId = "X-B3-ParentSpanId";
-        internal const string B3Sampled = "X-B3-Sampled";
-        internal const string B3Debug = "X-B3-Flags";
+        internal const string B3TraceId = "x-b3-traceid";
+        internal const string B3SpanId = "x-b3-spanid";
+        internal const string B3ParentId = "x-b3-parentspanid";
+        internal const string B3Sampled = "x-b3-sampled";
+        internal const string B3Debug = "x-b3-flags";
 
         public void Inject(SpanContext context, ITextMap carrier)
         {
@@ -55,7 +55,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
             var sampled = false;
             const bool shared = false;
             foreach (var entry in carrier)
-                switch (entry.Key)
+                switch (entry.Key.ToLowerInvariant())
                 {
                     case B3TraceId:
                         if (!TraceId.TryParse(entry.Value, out var t))
