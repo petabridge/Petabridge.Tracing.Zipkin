@@ -101,6 +101,7 @@ Target "RunTests" (fun _ ->
     let projects = 
         match (isWindows) with 
         | true -> !! "./src/**/*.Tests.csproj"
+                  -- "./src/**/*.Integration.Tests.csproj" // Zipkin containers can't run on Windows VMs
         | _ -> !! "./src/**/*.Tests.csproj" // if you need to filter specs for Linux vs. Windows, do it here
 
     let runSingleProject project =
