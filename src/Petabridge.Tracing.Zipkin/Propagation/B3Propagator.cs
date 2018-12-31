@@ -74,7 +74,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
                             debug = true;
                         break;
                     case B3Sampled:
-                        if (entry.Value.Equals("1"))
+                        if (entry.Value.Equals("1") || entry.Value.ToLowerInvariant().Equals("true")) // support older tracers https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/72
                             sampled = true;
                         break;
                 }
