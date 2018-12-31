@@ -65,7 +65,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
         /// </summary>
         [Fact(DisplayName =
             "Bugfix for issue 56 - Propagator should not throw when attempting to inject non-Zipkin context.")]
-        public void BugFix56NonZipkingContextShouldNotThrowUponInjectionAttempt()
+        public void BugFix56NonZipkinContextShouldNotThrowUponInjectionAttempt()
         {
             // uses the MockZipkinTracer
             var carrier = new Dictionary<string, string>();
@@ -98,6 +98,9 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
             extracted.Should().BeNull();
         }
 
+        /// <summary>
+        /// https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/71
+        /// </summary>
         [Fact(DisplayName = "B3Propagator should extract headers without case sensitivity")]
         public void B3HeaderExtractionShouldBeCaseInsensitive()
         {
@@ -123,6 +126,35 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
             extracted.TraceId.Should().Be(traceId.ToString());
             extracted.SpanId.Should().Be(spanId);
             extracted.ParentId.Should().Be(parentId);
+        }
+
+        /// <summary>
+        /// https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/72
+        /// </summary>
+        [Fact(DisplayName = "B3Propagator should tolerate 'true' value for X-B3-Sampled field")]
+        public void B3HeaderExtractionShouldTolerateTrueForSampled()
+        {
+            var traceId = Tracer.IdProvider.NextTraceId();
+            
+            // sampled is set to `true`
+            var context = new SpanContext(traceId, Tracer.IdProvider.NextSpanId(), Tracer.IdProvider.NextSpanId(), false, true);
+            var carrier = new Dictionary<string, string>();
+
+            Tracer.Inject(context, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));
+
+            // validate true case
+            carrier[B3Propagator.B3Sampled] = "true";
+            var extracted =
+                (SpanContext)Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
+
+            extracted.Sampled.Should().BeTrue();
+
+            // validate false case
+            carrier[B3Propagator.B3Sampled] = "false";
+            var extracted2 =
+                (SpanContext)Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
+
+            extracted2.Sampled.Should().BeFalse();
         }
     }
 }
