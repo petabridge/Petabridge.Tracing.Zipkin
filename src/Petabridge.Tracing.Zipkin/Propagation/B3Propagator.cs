@@ -9,20 +9,6 @@ using Petabridge.Tracing.Zipkin.Exceptions;
 
 namespace Petabridge.Tracing.Zipkin.Propagation
 {
-    /// <summary>
-    /// Used for parsing the B3 "single header" format
-    /// </summary>
-    /// <remarks>
-    /// See https://github.com/openzipkin/b3-propagation/issues/21 for rationale.
-    /// </remarks>
-    public sealed class B3SingleHeaderFormatter
-    {
-        /// <summary>
-        /// The maximum length of a fully specified B3 single length header
-        /// </summary>
-        public const int FORMAT_MAX_LENGTH = 32 + 1 + 16 + 3 + 16; // traceid128-spanid-1-parentid
-    }
-
     /// <inheritdoc />
     /// <summary>
     ///     Propagation system using B3 Headers supported by Zipkin
