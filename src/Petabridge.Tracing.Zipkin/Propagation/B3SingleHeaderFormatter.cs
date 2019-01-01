@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Text;
+using System.Threading;
 
 namespace Petabridge.Tracing.Zipkin.Propagation
 {
@@ -20,8 +21,15 @@ namespace Petabridge.Tracing.Zipkin.Propagation
         public static string WriteB3SingleFormat(SpanContext context)
         {
             var buffer = CHAR_ARRAY.Value;
-            int length = WriteB3SingleFormatHeader(context, buffer);
+            var length = WriteB3SingleFormatHeader(context, buffer);
             return new string(buffer, 0, length);
+        }
+
+        public static byte[] WriteB3SingleFormatAsBytes(SpanContext context)
+        {
+            var buffer = CHAR_ARRAY.Value;
+            var length = WriteB3SingleFormatHeader(context, buffer);
+            return Encoding.UTF8.GetBytes(buffer, 0, length);
         }
 
         private static int WriteB3SingleFormatHeader(SpanContext context, char[] result)
