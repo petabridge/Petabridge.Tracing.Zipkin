@@ -48,6 +48,16 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
             b3Header.Should().Be(Encoding.UTF8.GetString(WriteB3SingleFormatAsBytes(context)));
         }
 
+        [Fact(DisplayName = "Should write 64bit B3 single format header with a parent id and sampling")]
+        public void ShouldWriteB3SingleHeaderWithParentAndSampling()
+        {
+            var context = new SpanContext(new TraceId(1), 3, parentId:Tracer.IdProvider.NextSpanId(), sampled: true);
+
+            var b3Header = WriteB3SingleFormat(context);
+            b3Header.Should().Be(context.TraceId + "-" + context.SpanId + "-1-" + context.ParentId);
+            b3Header.Should().Be(Encoding.UTF8.GetString(WriteB3SingleFormatAsBytes(context)));
+        }
+
         [Fact(DisplayName = "Should write 128bit B3 single format header without sampling")]
         public void ShouldWriteB3SingleHeaderWithoutSampling128Bit()
         {
@@ -55,6 +65,26 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
 
             var b3Header = WriteB3SingleFormat(context);
             b3Header.Should().Be(context.TraceId + "-" + context.SpanId);
+            b3Header.Should().Be(Encoding.UTF8.GetString(WriteB3SingleFormatAsBytes(context)));
+        }
+
+        [Fact(DisplayName = "Should write 128bit B3 single format header with sampling")]
+        public void ShouldWriteB3SingleHeaderWithSampling128Bit()
+        {
+            var context = new SpanContext(new TraceId(1, 1), 3, sampled:true);
+
+            var b3Header = WriteB3SingleFormat(context);
+            b3Header.Should().Be(context.TraceId + "-" + context.SpanId + "-1");
+            b3Header.Should().Be(Encoding.UTF8.GetString(WriteB3SingleFormatAsBytes(context)));
+        }
+
+        [Fact(DisplayName = "Should write 128bit B3 single format header with sampling and parent id (max length)")]
+        public void ShouldWriteB3SingleHeaderWithSamplingAndParentId128Bit()
+        {
+            var context = new SpanContext(new TraceId(1, 1), 3, parentId: Tracer.IdProvider.NextSpanId(), sampled: true);
+
+            var b3Header = WriteB3SingleFormat(context);
+            b3Header.Should().Be(context.TraceId + "-" + context.SpanId + "-1-" + context.ParentId);
             b3Header.Should().Be(Encoding.UTF8.GetString(WriteB3SingleFormatAsBytes(context)));
         }
     }
