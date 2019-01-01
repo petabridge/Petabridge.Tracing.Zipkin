@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Threading;
 
 namespace Petabridge.Tracing.Zipkin.Propagation
@@ -34,7 +35,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
 
         private static int WriteB3SingleFormatHeader(SpanContext context, char[] result)
         {
-            int pos = 0;
+            var pos = 0;
             context.TraceId.CopyTo(0, result, pos, context.TraceId.Length);
             if (context.ZipkinTraceId.Is128Bit)
             {
@@ -59,6 +60,109 @@ namespace Petabridge.Tracing.Zipkin.Propagation
             }
 
             return pos;
+        }
+
+        public static SpanContext ParseB3SingleFormat(string b3)
+        {
+            // TODO: avoid allocation here
+            return ParseB3SingleFormat(b3.ToCharArray(), 0, b3.Length);
+        }
+
+        private static SpanContext ParseB3SingleFormat(char[] b3, int begin, int count)
+        {
+            if (count == 0)
+            {
+                return null;
+            }
+
+            var pos = begin;
+            if (pos + 1 == count) // sampling flags only
+            {
+                // TODO: add support for sampling flags only
+                return null;
+            }
+
+            // At this point we expect at least a traceid-spanid pair
+            if (count < 16 + 1 + 16)
+            {
+                throw new ArgumentOutOfRangeException(nameof(b3), $"Invalid input: truncated {new string(b3)}");
+            }
+            if (count > FORMAT_MAX_LENGTH)
+            {
+                throw new ArgumentOutOfRangeException(nameof(b3), $"Invalid input: too long {new string(b3)}");
+            }
+
+            string traceId = null;
+            if (b3[pos + 32] == '-')
+            {
+                traceId = new string(b3, pos, 32);
+                pos += 32;
+            }
+            else
+            {
+                traceId = new string(b3, 0, 16);
+                pos += 16;
+            }
+
+            TraceId trace;
+            if (!TraceId.TryParse(traceId, out trace))
+            {
+                throw new ArgumentOutOfRangeException("traceId", $"Invalid input: expected a 16 or 32 lower hex trace ID at offset 0 [{traceId}]");
+            }
+
+            if (!CheckHyphen(b3, pos++)) return null;
+
+            if (pos + 16 > count)
+            {
+                throw new ArgumentOutOfRangeException("spanId", $"Invalid input: expected a 16 span id at offset {pos}");
+            }
+
+            var spanId = new string(b3, pos, 16);
+            pos += 16; // spanid
+
+            var sampled = false;
+            var debug = false;
+            string parentId = null;
+            if (count > pos) // sampling flags or debug
+            {
+                if (count == pos + 1) // sampling flag didn't get included
+                {
+                    throw new ArgumentOutOfRangeException(nameof(b3), "Invalid input: truncated");
+                }
+
+                if (!CheckHyphen(b3, pos++)) return null;
+                var sampledField = b3[pos];
+                switch (sampledField)
+                {
+                    case 'd':
+                        debug = true;
+                        break;
+                    case '1':
+                        sampled = true;
+                        break;
+                    default:
+                        break;
+                }
+                pos++; // sampled field
+                if (!CheckHyphen(b3, pos++)) return null;
+                if (count > pos)
+                {
+                    //If we've made it here, there should be a parentId
+                    if (pos + 16 > count)
+                    {
+                        throw new ArgumentOutOfRangeException("parentId", $"Invalid input: expected a 16 parent id at offset {pos}");
+                    }
+                    parentId = new string(b3, pos, 16);
+                }
+            }
+
+            return new SpanContext(trace, spanId, parentId, debug, sampled);
+        }
+
+        static bool CheckHyphen(char[] b3, int pos)
+        {
+            if (b3[pos] == '-') return true;
+            return false;
         }
     }
 }
