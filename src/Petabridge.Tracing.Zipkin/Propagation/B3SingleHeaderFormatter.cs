@@ -131,20 +131,40 @@ namespace Petabridge.Tracing.Zipkin.Propagation
                 }
 
                 if (!CheckHyphen(b3, pos++)) return null;
-                var sampledField = b3[pos];
-                switch (sampledField)
+
+                var flagFound = false;
+                if (count > pos)
                 {
-                    case 'd':
-                        debug = true;
-                        break;
-                    case '1':
-                        sampled = true;
-                        break;
-                    default:
-                        break;
+                    var sampledField = b3[pos];
+                    switch (sampledField)
+                    {
+                        case 'd':
+                            debug = true;
+                            flagFound = true;
+                            break;
+                        case '1':
+                            sampled = true;
+                            flagFound = true;
+                            break;
+                        case '0':
+                            sampled = false;
+                            flagFound = true;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (flagFound)
+                    {
+                        pos++; // need to account for the flag
+                        if (!CheckHyphen(b3, pos++))
+                        {
+                            return new SpanContext(trace, spanId, null, debug, sampled);
+                        }
+                    }
                 }
-                pos++; // sampled field
-                if (!CheckHyphen(b3, pos++)) return null;
+
+
                 if (count > pos)
                 {
                     //If we've made it here, there should be a parentId
@@ -161,7 +181,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
 
         static bool CheckHyphen(char[] b3, int pos)
         {
-            if (b3[pos] == '-') return true;
+            if (b3.Length > pos && b3[pos] == '-') return true;
             return false;
         }
     }
