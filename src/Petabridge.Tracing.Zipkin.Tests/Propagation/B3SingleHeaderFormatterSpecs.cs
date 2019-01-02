@@ -61,7 +61,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
         [Fact(DisplayName = "Should write 64bit B3 single format header with a parent id only")]
         public void ShouldWriteB3SingleHeaderWithParentIdOnly()
         {
-            var context = new SpanContext(new TraceId(1), 3, parentId: Tracer.IdProvider.NextSpanId());
+            var context = new SpanContext(new TraceId(1), 3, parentId: "18974c44954cf23f");
 
             var b3Header = WriteB3SingleFormat(context);
             b3Header.Should().Be(context.TraceId + "-" + context.SpanId + "-" + context.ParentId);
@@ -164,7 +164,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
         [Fact(DisplayName = "Should parse 128bit B3 single format header with parentId only")]
         public void ShouldParseB3SingleHeaderParentIdOnly128Bit()
         {
-            var context = new SpanContext(new TraceId(1, 1), 3, parentId: Tracer.IdProvider.NextSpanId());
+            var context = new SpanContext(new TraceId(1, 1), 3, parentId: "1aae83b1d7e325ce");
 
             var b3Header = WriteB3SingleFormat(context);
             var b3HeaderParsed = ParseB3SingleFormat(b3Header);

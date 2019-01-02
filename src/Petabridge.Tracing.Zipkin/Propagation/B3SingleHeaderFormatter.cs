@@ -132,35 +132,28 @@ namespace Petabridge.Tracing.Zipkin.Propagation
 
                 if (!CheckHyphen(b3, pos++)) return null;
 
-                var flagFound = false;
-                if (count > pos)
+                if (CheckHyphen(b3, pos + 1) || pos + 1 == count)
                 {
                     var sampledField = b3[pos];
                     switch (sampledField)
                     {
                         case 'd':
                             debug = true;
-                            flagFound = true;
                             break;
                         case '1':
                             sampled = true;
-                            flagFound = true;
                             break;
                         case '0':
                             sampled = false;
-                            flagFound = true;
                             break;
                         default:
                             break;
                     }
 
-                    if (flagFound)
+                    pos++; // need to account for the flag
+                    if (!CheckHyphen(b3, pos++))
                     {
-                        pos++; // need to account for the flag
-                        if (!CheckHyphen(b3, pos++))
-                        {
-                            return new SpanContext(trace, spanId, null, debug, sampled);
-                        }
+                        return new SpanContext(trace, spanId, null, debug, sampled);
                     }
                 }
 

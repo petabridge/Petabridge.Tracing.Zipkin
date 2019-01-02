@@ -4,11 +4,36 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Linq;
 using OpenTracing.Propagation;
 using Petabridge.Tracing.Zipkin.Exceptions;
 
 namespace Petabridge.Tracing.Zipkin.Propagation
 {
+    /// <summary>
+    /// Implements the "single header" B3 propagation format
+    /// </summary>
+    /// <remarks>
+    /// See https://github.com/openzipkin/b3-propagation/issues/21 for full specification
+    /// </remarks>
+    public sealed class B3SinglePropagator : IPropagator<ITextMap>
+    {
+        internal const string B3SingleHeader = "b3";
+
+        public void Inject(SpanContext context, ITextMap carrier)
+        {
+           carrier.Set(B3SingleHeader, B3SingleHeaderFormatter.WriteB3SingleFormat(context));
+        }
+
+        public SpanContext Extract(ITextMap carrier)
+        {
+            var b3Entry = carrier.Any(x => x.Key.Equals(B3SingleHeader));
+            if (!b3Entry)
+                return null;
+            return B3SingleHeaderFormatter.ParseB3SingleFormat(carrier.Single(x => x.Key.Equals(B3SingleHeader)).Value);
+        }
+    }
+
     /// <inheritdoc />
     /// <summary>
     ///     Propagation system using B3 Headers supported by Zipkin
@@ -18,6 +43,27 @@ namespace Petabridge.Tracing.Zipkin.Propagation
     /// </remarks>
     public sealed class B3Propagator : IPropagator<ITextMap>
     {
+        private readonly B3SinglePropagator _singlePropagator = new B3SinglePropagator();
+        private readonly bool _useB3SingleHeader;
+
+        /// <inheritdoc />
+        /// <summary>
+        /// Default constructor for the B3 Propagator. Doesn't use single-header format by default.
+        /// </summary>
+        public B3Propagator() : this(false)
+        {
+            
+        }
+
+        /// <summary>
+        /// Creates a new instance of the B3 Propagator.
+        /// </summary>
+        /// <param name="useB3SingleHeader">When set to <c>true</c>, enables the propagator to use the B3 single header propagation.</param>
+        public B3Propagator(bool useB3SingleHeader)
+        {
+            _useB3SingleHeader = useB3SingleHeader;
+        }
+
         internal const string B3TraceId = "x-b3-traceid";
         internal const string B3SpanId = "x-b3-spanid";
         internal const string B3ParentId = "x-b3-parentspanid";
@@ -26,6 +72,12 @@ namespace Petabridge.Tracing.Zipkin.Propagation
 
         public void Inject(SpanContext context, ITextMap carrier)
         {
+            if (_useB3SingleHeader)
+            {
+                _singlePropagator.Inject(context, carrier);
+                return;
+            }
+
             carrier.Set(B3TraceId, context.TraceId);
             carrier.Set(B3SpanId, context.SpanId);
             if (context.ParentId != null)
@@ -48,6 +100,11 @@ namespace Petabridge.Tracing.Zipkin.Propagation
 
         public SpanContext Extract(ITextMap carrier)
         {
+            // try to extract the single B3 propagation value instead
+            var single = _singlePropagator.Extract(carrier);
+            if (single != null)
+                return single;
+
             TraceId? traceId = null;
             string spanId = null;
             string parentId = null;
