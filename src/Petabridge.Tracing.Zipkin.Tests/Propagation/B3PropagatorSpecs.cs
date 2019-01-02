@@ -199,5 +199,24 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
             var extracted = Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
             extracted.Should().Be(context);
         }
+
+        [Fact(DisplayName = "Should be able to override IPropagator implementation via ZipkinTracerOptions")]
+        public void ShouldOverridePropagatorViaZipkinTracerOptions()
+        {
+            var tracerOptions = new ZipkinTracerOptions(Endpoint.Testing, new NoOpReporter())
+            {
+                Propagator = new B3SingleHeaderPropagator()
+            };
+
+            var tracer = new ZipkinTracer(tracerOptions);
+
+            var traceId = Tracer.IdProvider.NextTraceId();
+
+            var context = new SpanContext(traceId, Tracer.IdProvider.NextSpanId(), Tracer.IdProvider.NextSpanId(), false, true);
+            var carrier = new Dictionary<string, string>();
+
+            tracer.Inject(context, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));
+            carrier.Count.Should().Be(1);
+        }
     }
 }

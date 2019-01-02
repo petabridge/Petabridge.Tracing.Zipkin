@@ -25,7 +25,7 @@ namespace Petabridge.Tracing.Zipkin
 
         public ZipkinTracer(ZipkinTracerOptions options)
         {
-            _propagator = new B3Propagator();
+            _propagator = options.Propagator ?? new B3Propagator();
             _reporter = options.Reporter;
             LocalEndpoint = options.LocalEndpoint;
             TimeProvider = options.TimeProvider ?? new DateTimeOffsetTimeProvider();
