@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="ZipkinFixture.cs" company="Petabridge, LLC">
-//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2019 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -21,8 +21,6 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
         protected readonly string _zipkinContainerName = $"zipkin-{Guid.NewGuid():N}";
         protected DockerClient _client;
 
-        public string ZipkinUrl { get; protected set; }
-
         public ZipkinFixture()
         {
             DockerClientConfiguration config;
@@ -36,10 +34,23 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
             _client = config.CreateClient();
         }
 
+        public string ZipkinUrl { get; protected set; }
+
         public virtual async Task InitializeAsync()
         {
             ZipkinUrl = await StartZipkinContainer(null, null);
             await Task.Delay(TimeSpan.FromSeconds(20));
+        }
+
+        public virtual async Task DisposeAsync()
+        {
+            if (_client != null)
+            {
+                await _client.Containers.StopContainerAsync(_zipkinContainerName, new ContainerStopParameters());
+                await _client.Containers.RemoveContainerAsync(_zipkinContainerName,
+                    new ContainerRemoveParameters {Force = true});
+                _client.Dispose();
+            }
         }
 
         protected async Task<string> StartZipkinContainer(string[] links, string[] environmentArgs)
@@ -78,24 +89,14 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
                             }
                         }
                     },
-                    Links = links,
-                }, Env = environmentArgs
+                    Links = links
+                },
+                Env = environmentArgs
             });
 
             // start the container
             await _client.Containers.StartContainerAsync(_zipkinContainerName, new ContainerStartParameters());
             return $"localhost:{zipkinHttpPort}";
-        }
-
-        public virtual async Task DisposeAsync()
-        {
-            if (_client != null)
-            {
-                await _client.Containers.StopContainerAsync(_zipkinContainerName, new ContainerStopParameters());
-                await _client.Containers.RemoveContainerAsync(_zipkinContainerName,
-                    new ContainerRemoveParameters {Force = true});
-                _client.Dispose();
-            }
         }
     }
 }
