@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="ZipkinTracerOptions.cs" company="Petabridge, LLC">
-//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2019 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -82,8 +82,8 @@ namespace Petabridge.Tracing.Zipkin
         public ITraceSampler Sampler { get; set; }
 
         /// <summary>
-        /// The OpenTracing <see cref="IPropagator{TCarrier}"/> used for injecting and extracing Zipkin context
-        /// across process boundaries. Defaults to <see cref="B3Propagator"/>.
+        ///     The OpenTracing <see cref="IPropagator{TCarrier}" /> used for injecting and extracing Zipkin context
+        ///     across process boundaries. Defaults to <see cref="B3Propagator" />.
         /// </summary>
         public IPropagator<ITextMap> Propagator { get; set; }
 

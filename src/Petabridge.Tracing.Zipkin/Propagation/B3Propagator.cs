@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="B3Propagator.cs" company="Petabridge, LLC">
-//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2019 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -11,10 +11,10 @@ using Petabridge.Tracing.Zipkin.Exceptions;
 namespace Petabridge.Tracing.Zipkin.Propagation
 {
     /// <summary>
-    /// Implements the "single header" B3 propagation format
+    ///     Implements the "single header" B3 propagation format
     /// </summary>
     /// <remarks>
-    /// See https://github.com/openzipkin/b3-propagation/issues/21 for full specification
+    ///     See https://github.com/openzipkin/b3-propagation/issues/21 for full specification
     /// </remarks>
     public sealed class B3SingleHeaderPropagator : IPropagator<ITextMap>
     {
@@ -22,7 +22,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
 
         public void Inject(SpanContext context, ITextMap carrier)
         {
-           carrier.Set(B3SingleHeader, B3SingleHeaderFormatter.WriteB3SingleFormat(context));
+            carrier.Set(B3SingleHeader, B3SingleHeaderFormatter.WriteB3SingleFormat(context));
         }
 
         public SpanContext Extract(ITextMap carrier)
@@ -43,32 +43,33 @@ namespace Petabridge.Tracing.Zipkin.Propagation
     /// </remarks>
     public sealed class B3Propagator : IPropagator<ITextMap>
     {
-        private readonly B3SingleHeaderPropagator _singleHeaderPropagator = new B3SingleHeaderPropagator();
-        private readonly bool _useB3SingleHeader;
-
-        /// <inheritdoc />
-        /// <summary>
-        /// Default constructor for the B3 Propagator. Doesn't use single-header format by default.
-        /// </summary>
-        public B3Propagator() : this(false)
-        {
-            
-        }
-
-        /// <summary>
-        /// Creates a new instance of the B3 Propagator.
-        /// </summary>
-        /// <param name="useB3SingleHeader">When set to <c>true</c>, enables the propagator to use the B3 single header propagation.</param>
-        public B3Propagator(bool useB3SingleHeader)
-        {
-            _useB3SingleHeader = useB3SingleHeader;
-        }
-
         internal const string B3TraceId = "x-b3-traceid";
         internal const string B3SpanId = "x-b3-spanid";
         internal const string B3ParentId = "x-b3-parentspanid";
         internal const string B3Sampled = "x-b3-sampled";
         internal const string B3Debug = "x-b3-flags";
+        private readonly B3SingleHeaderPropagator _singleHeaderPropagator = new B3SingleHeaderPropagator();
+        private readonly bool _useB3SingleHeader;
+
+        /// <inheritdoc />
+        /// <summary>
+        ///     Default constructor for the B3 Propagator. Doesn't use single-header format by default.
+        /// </summary>
+        public B3Propagator() : this(false)
+        {
+        }
+
+        /// <summary>
+        ///     Creates a new instance of the B3 Propagator.
+        /// </summary>
+        /// <param name="useB3SingleHeader">
+        ///     When set to <c>true</c>, enables the propagator to use the B3 single header
+        ///     propagation.
+        /// </param>
+        public B3Propagator(bool useB3SingleHeader)
+        {
+            _useB3SingleHeader = useB3SingleHeader;
+        }
 
         public void Inject(SpanContext context, ITextMap carrier)
         {
@@ -131,7 +132,8 @@ namespace Petabridge.Tracing.Zipkin.Propagation
                             debug = true;
                         break;
                     case B3Sampled:
-                        if (entry.Value.Equals("1") || entry.Value.ToLowerInvariant().Equals("true")) // support older tracers https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/72
+                        if (entry.Value.Equals("1") || entry.Value.ToLowerInvariant().Equals("true")
+                        ) // support older tracers https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/72
                             sampled = true;
                         break;
                 }

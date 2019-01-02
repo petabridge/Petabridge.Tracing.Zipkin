@@ -1,23 +1,30 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="B3SingleHeaderFormatter.cs" company="Petabridge, LLC">
+//      Copyright (C) 2015 - 2019 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.Text;
 using System.Threading;
 
 namespace Petabridge.Tracing.Zipkin.Propagation
 {
     /// <summary>
-    /// Used for parsing the B3 "single header" format
+    ///     Used for parsing the B3 "single header" format
     /// </summary>
     /// <remarks>
-    /// See https://github.com/openzipkin/b3-propagation/issues/21 for rationale.
+    ///     See https://github.com/openzipkin/b3-propagation/issues/21 for rationale.
     /// </remarks>
     public static class B3SingleHeaderFormatter
     {
         /// <summary>
-        /// The maximum length of a fully specified B3 single length header
+        ///     The maximum length of a fully specified B3 single length header
         /// </summary>
         public const int FORMAT_MAX_LENGTH = 32 + 1 + 16 + 3 + 16; // traceid128-spanid-1-parentid
 
-        private static readonly ThreadLocal<char[]> CHAR_ARRAY = new ThreadLocal<char[]>(() => new char[FORMAT_MAX_LENGTH]);
+        private static readonly ThreadLocal<char[]> CHAR_ARRAY =
+            new ThreadLocal<char[]>(() => new char[FORMAT_MAX_LENGTH]);
 
         public static string WriteB3SingleFormat(SpanContext context)
         {
@@ -38,9 +45,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
             var pos = 0;
             context.TraceId.CopyTo(0, result, pos, context.TraceId.Length);
             if (context.ZipkinTraceId.Is128Bit)
-            {
                 pos += 16;
-            }
             pos += 16;
             result[pos++] = '-';
             context.SpanId.CopyTo(0, result, pos, context.SpanId.Length);
@@ -71,26 +76,17 @@ namespace Petabridge.Tracing.Zipkin.Propagation
         private static SpanContext ParseB3SingleFormat(char[] b3, int begin, int count)
         {
             if (count == 0)
-            {
                 return null;
-            }
 
             var pos = begin;
             if (pos + 1 == count) // sampling flags only
-            {
-                // TODO: add support for sampling flags only
                 return null;
-            }
 
             // At this point we expect at least a traceid-spanid pair
             if (count < 16 + 1 + 16)
-            {
                 throw new ArgumentOutOfRangeException(nameof(b3), $"Invalid input: truncated {new string(b3)}");
-            }
             if (count > FORMAT_MAX_LENGTH)
-            {
                 throw new ArgumentOutOfRangeException(nameof(b3), $"Invalid input: too long {new string(b3)}");
-            }
 
             string traceId = null;
             if (b3[pos + 32] == '-')
@@ -106,16 +102,14 @@ namespace Petabridge.Tracing.Zipkin.Propagation
 
             TraceId trace;
             if (!TraceId.TryParse(traceId, out trace))
-            {
-                throw new ArgumentOutOfRangeException("traceId", $"Invalid input: expected a 16 or 32 lower hex trace ID at offset 0 [{traceId}]");
-            }
+                throw new ArgumentOutOfRangeException("traceId",
+                    $"Invalid input: expected a 16 or 32 lower hex trace ID at offset 0 [{traceId}]");
 
             if (!CheckHyphen(b3, pos++)) return null;
 
             if (pos + 16 > count)
-            {
-                throw new ArgumentOutOfRangeException("spanId", $"Invalid input: expected a 16 span id at offset {pos}");
-            }
+                throw new ArgumentOutOfRangeException("spanId",
+                    $"Invalid input: expected a 16 span id at offset {pos}");
 
             var spanId = new string(b3, pos, 16);
             pos += 16; // spanid
@@ -126,9 +120,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
             if (count > pos) // sampling flags or debug
             {
                 if (count == pos + 1) // sampling flag didn't get included
-                {
                     throw new ArgumentOutOfRangeException(nameof(b3), "Invalid input: truncated");
-                }
 
                 if (!CheckHyphen(b3, pos++)) return null;
 
@@ -152,9 +144,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
 
                     pos++; // need to account for the flag
                     if (!CheckHyphen(b3, pos++))
-                    {
                         return new SpanContext(trace, spanId, null, debug, sampled);
-                    }
                 }
 
 
@@ -162,9 +152,8 @@ namespace Petabridge.Tracing.Zipkin.Propagation
                 {
                     //If we've made it here, there should be a parentId
                     if (pos + 16 > count)
-                    {
-                        throw new ArgumentOutOfRangeException("parentId", $"Invalid input: expected a 16 parent id at offset {pos}");
-                    }
+                        throw new ArgumentOutOfRangeException("parentId",
+                            $"Invalid input: expected a 16 parent id at offset {pos}");
                     parentId = new string(b3, pos, 16);
                 }
             }
@@ -172,7 +161,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
             return new SpanContext(trace, spanId, parentId, debug, sampled);
         }
 
-        static bool CheckHyphen(char[] b3, int pos)
+        private static bool CheckHyphen(char[] b3, int pos)
         {
             if (b3.Length > pos && b3[pos] == '-') return true;
             return false;
