@@ -2,20 +2,22 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2018 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.4.0</VersionPrefix>
-    <PackageReleaseNotes>Added support for Zipkin's built-in Kafka span reporting capabilities, for users who are already considering operating at that kind of large scale.
-You can access the Kafka reporter via the following syntax:
+    <VersionPrefix>0.5.0</VersionPrefix>
+    <PackageReleaseNotes>Added support for the [new B3 "single header" propagation format](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/66), among other things.
+To use the new B3 "single header" format for outbound writes, you'll want to set the following property on the `ZipkinTracerOptions` class:
 ```
 var tracer = new ZipkinTracer(new ZipkinTracerOptions(new Endpoint("AaronsAppKafka"),
 ZipkinKafkaSpanReporter.Create(new ZipkinKafkaReportingOptions(new[] {"localhost:19092"},
-debugLogging: true))));
+debugLogging: true))){ Propagator = new B3Propagator(true)  });
 ```
-The `ZipkinKafkaSpanReporter.Create` method will give you the ability to specify the Kafka endpoint, topic, and batching settings used by Petabridge.Tracing.Zipkin for reporting spans back to Zipkin via a Kafka topic. Normally, however, all you'll need to specify is just a set of endpoints for Kafka brokers - both Zipkin and the Petabridge.Tracing.Zipkin client use the "zipkin" topic by default.
+The current `B3Propagator` implementation can automatically read and deserialize inbound single header format propagation by default.
 Other Changes**
 Petabridge.Tracing.Zipkin also introduces the following changes:
-[BugFix: calling ITracer.Inject with a NoOp span context causes cast exception](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/56)
-[BugFix: B3Propagator.Extract always returns a span context even when one isn't present](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/55)
-[Upgraded to use Akka.NET v1.3.9](https://github.com/akkadotnet/akka.net/releases/tag/v1.3.9)</PackageReleaseNotes>
+[Enhancement: Support for "true" value on sampling state](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/72)
+[Bugfix: B3 Propagation header extraction is case sensitive](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/71)
+[Upgraded to use Akka.NET v1.3.11](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/74)
+[Added strong-naming and code-signing](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/73)
+Click here to [see the full set of changes in Petabridge.Tracing.Zipkin v0.5.0](https://github.com/petabridge/Petabridge.Tracing.Zipkin/milestone/2).</PackageReleaseNotes>
     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
     <PackageProjectUrl>
       https://github.com/petabridge/Petabridge.Tracing.Zipkin
@@ -27,7 +29,9 @@ Petabridge.Tracing.Zipkin also introduces the following changes:
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
-    <XunitVersion>2.3.1</XunitVersion>
-    <TestSdkVersion>15.7.2</TestSdkVersion>
+    <AkkaVersion>1.3.11</AkkaVersion>
+    <XunitVersion>2.4.1</XunitVersion>
+    <NBenchVersion>1.2.2</NBenchVersion>
+    <TestSdkVersion>15.9.0</TestSdkVersion>
   </PropertyGroup>
 </Project>

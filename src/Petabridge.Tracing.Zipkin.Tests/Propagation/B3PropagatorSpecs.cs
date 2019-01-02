@@ -65,7 +65,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
         /// </summary>
         [Fact(DisplayName =
             "Bugfix for issue 56 - Propagator should not throw when attempting to inject non-Zipkin context.")]
-        public void BugFix56NonZipkingContextShouldNotThrowUponInjectionAttempt()
+        public void BugFix56NonZipkinContextShouldNotThrowUponInjectionAttempt()
         {
             // uses the MockZipkinTracer
             var carrier = new Dictionary<string, string>();
@@ -96,6 +96,127 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
                 (SpanContext) Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
 
             extracted.Should().BeNull();
+        }
+
+        /// <summary>
+        /// https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/71
+        /// </summary>
+        [Fact(DisplayName = "B3Propagator should extract headers without case sensitivity")]
+        public void B3HeaderExtractionShouldBeCaseInsensitive()
+        {
+            var carrier = new Dictionary<string, string>();
+
+            
+            var traceId = Tracer.IdProvider.NextTraceId();
+            var spanId = Tracer.IdProvider.NextSpanId();
+            var parentId = Tracer.IdProvider.NextSpanId();
+
+            // all upper case
+            carrier[B3Propagator.B3TraceId.ToUpperInvariant()] = traceId.ToString();
+
+            // all upper case
+            carrier[B3Propagator.B3SpanId.ToLowerInvariant()] = spanId;
+
+            // mixed case
+            carrier["X-B3-ParentSPANid"] = parentId;
+
+            var extracted =
+                (SpanContext)Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
+
+            extracted.TraceId.Should().Be(traceId.ToString());
+            extracted.SpanId.Should().Be(spanId);
+            extracted.ParentId.Should().Be(parentId);
+        }
+
+        /// <summary>
+        /// https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/72
+        /// </summary>
+        [Fact(DisplayName = "B3Propagator should tolerate 'true' value for X-B3-Sampled field")]
+        public void B3HeaderExtractionShouldTolerateTrueForSampled()
+        {
+            var traceId = Tracer.IdProvider.NextTraceId();
+            
+            // sampled is set to `true`
+            var context = new SpanContext(traceId, Tracer.IdProvider.NextSpanId(), Tracer.IdProvider.NextSpanId(), false, true);
+            var carrier = new Dictionary<string, string>();
+
+            Tracer.Inject(context, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));
+
+            // validate true case
+            carrier[B3Propagator.B3Sampled] = "true";
+            var extracted =
+                (SpanContext)Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
+
+            extracted.Sampled.Should().BeTrue();
+
+            // validate false case
+            carrier[B3Propagator.B3Sampled] = "false";
+            var extracted2 =
+                (SpanContext)Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
+
+            extracted2.Sampled.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/66
+        /// </summary>
+        [Fact(DisplayName = "B3Propagator should be able to parse single header format")]
+        public void B3HeaderExtractionShouldHandleSingleHeaderFormat()
+        {
+            var traceId = Tracer.IdProvider.NextTraceId();
+
+            var context = new SpanContext(traceId, Tracer.IdProvider.NextSpanId(), Tracer.IdProvider.NextSpanId(), false, true);
+            var carrier = new Dictionary<string, string>();
+
+            var b3SingleHeader = new B3SingleHeaderPropagator();
+            b3SingleHeader.Inject(context, new TextMapInjectAdapter(carrier));
+            
+            var extracted =
+                (SpanContext)Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
+
+            extracted.Should().Be(context);
+        }
+
+        /// <summary>
+        /// https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/66
+        /// </summary>
+        [Fact(DisplayName = "B3Propagator should be able to inject single header format")]
+        public void B3HeaderInjectionShouldHandleSingleHeaderFormat()
+        {
+            var traceId = Tracer.IdProvider.NextTraceId();
+
+            var context = new SpanContext(traceId, Tracer.IdProvider.NextSpanId(), Tracer.IdProvider.NextSpanId(), false, true);
+            var carrier = new Dictionary<string, string>();
+
+            // tracer2 will inject with single headers
+            var tracer2 = new MockZipkinTracer(propagtor:new B3Propagator(true));
+            tracer2.Inject(context, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));
+
+            // single header only
+            carrier.Count.Should().Be(1);
+
+            // tracer1 will still be able to read and extract single headers
+            var extracted = Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
+            extracted.Should().Be(context);
+        }
+
+        [Fact(DisplayName = "Should be able to override IPropagator implementation via ZipkinTracerOptions")]
+        public void ShouldOverridePropagatorViaZipkinTracerOptions()
+        {
+            var tracerOptions = new ZipkinTracerOptions(Endpoint.Testing, new NoOpReporter())
+            {
+                Propagator = new B3SingleHeaderPropagator()
+            };
+
+            var tracer = new ZipkinTracer(tracerOptions);
+
+            var traceId = Tracer.IdProvider.NextTraceId();
+
+            var context = new SpanContext(traceId, Tracer.IdProvider.NextSpanId(), Tracer.IdProvider.NextSpanId(), false, true);
+            var carrier = new Dictionary<string, string>();
+
+            tracer.Inject(context, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));
+            carrier.Count.Should().Be(1);
         }
     }
 }
