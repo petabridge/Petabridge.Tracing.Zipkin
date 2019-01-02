@@ -156,5 +156,48 @@ namespace Petabridge.Tracing.Zipkin.Tests.Propagation
 
             extracted2.Sampled.Should().BeFalse();
         }
+
+        /// <summary>
+        /// https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/66
+        /// </summary>
+        [Fact(DisplayName = "B3Propagator should be able to parse single header format")]
+        public void B3HeaderExtractionShouldHandleSingleHeaderFormat()
+        {
+            var traceId = Tracer.IdProvider.NextTraceId();
+
+            var context = new SpanContext(traceId, Tracer.IdProvider.NextSpanId(), Tracer.IdProvider.NextSpanId(), false, true);
+            var carrier = new Dictionary<string, string>();
+
+            var b3SingleHeader = new B3SingleHeaderPropagator();
+            b3SingleHeader.Inject(context, new TextMapInjectAdapter(carrier));
+            
+            var extracted =
+                (SpanContext)Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
+
+            extracted.Should().Be(context);
+        }
+
+        /// <summary>
+        /// https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/66
+        /// </summary>
+        [Fact(DisplayName = "B3Propagator should be able to inject single header format")]
+        public void B3HeaderInjectionShouldHandleSingleHeaderFormat()
+        {
+            var traceId = Tracer.IdProvider.NextTraceId();
+
+            var context = new SpanContext(traceId, Tracer.IdProvider.NextSpanId(), Tracer.IdProvider.NextSpanId(), false, true);
+            var carrier = new Dictionary<string, string>();
+
+            // tracer2 will inject with single headers
+            var tracer2 = new MockZipkinTracer(propagtor:new B3Propagator(true));
+            tracer2.Inject(context, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(carrier));
+
+            // single header only
+            carrier.Count.Should().Be(1);
+
+            // tracer1 will still be able to read and extract single headers
+            var extracted = Tracer.Extract(BuiltinFormats.HttpHeaders, new TextMapExtractAdapter(carrier));
+            extracted.Should().Be(context);
+        }
     }
 }

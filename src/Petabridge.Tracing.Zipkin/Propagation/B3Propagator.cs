@@ -16,7 +16,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
     /// <remarks>
     /// See https://github.com/openzipkin/b3-propagation/issues/21 for full specification
     /// </remarks>
-    public sealed class B3SinglePropagator : IPropagator<ITextMap>
+    public sealed class B3SingleHeaderPropagator : IPropagator<ITextMap>
     {
         internal const string B3SingleHeader = "b3";
 
@@ -43,7 +43,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
     /// </remarks>
     public sealed class B3Propagator : IPropagator<ITextMap>
     {
-        private readonly B3SinglePropagator _singlePropagator = new B3SinglePropagator();
+        private readonly B3SingleHeaderPropagator _singleHeaderPropagator = new B3SingleHeaderPropagator();
         private readonly bool _useB3SingleHeader;
 
         /// <inheritdoc />
@@ -74,7 +74,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
         {
             if (_useB3SingleHeader)
             {
-                _singlePropagator.Inject(context, carrier);
+                _singleHeaderPropagator.Inject(context, carrier);
                 return;
             }
 
@@ -101,7 +101,7 @@ namespace Petabridge.Tracing.Zipkin.Propagation
         public SpanContext Extract(ITextMap carrier)
         {
             // try to extract the single B3 propagation value instead
-            var single = _singlePropagator.Extract(carrier);
+            var single = _singleHeaderPropagator.Extract(carrier);
             if (single != null)
                 return single;
 
