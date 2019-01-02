@@ -1,3 +1,26 @@
+#### 0.5.0 January 1 2019 ###
+Added support for the [new B3 "single header" propagation format](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/66), among other things.
+
+To use the new B3 "single header" format for outbound writes, you'll want to set the following property on the `ZipkinTracerOptions` class:
+
+```
+var tracer = new ZipkinTracer(new ZipkinTracerOptions(new Endpoint("AaronsAppKafka"),
+                ZipkinKafkaSpanReporter.Create(new ZipkinKafkaReportingOptions(new[] {"localhost:19092"},
+                    debugLogging: true))){ Propagator = new B3Propagator(true)  });
+```
+
+The current `B3Propagator` implementation can automatically read and deserialize inbound single header format propagation by default.
+
+
+**Other Changes**
+Petabridge.Tracing.Zipkin also introduces the following changes:
+* [Enhancement: Support for "true" value on sampling state](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/72)
+* [Bugfix: B3 Propagation header extraction is case sensitive](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/71)
+* [Upgraded to use Akka.NET v1.3.11](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/74)
+* [Added strong-naming and code-signing](https://github.com/petabridge/Petabridge.Tracing.Zipkin/issues/73)
+
+Click here to [see the full set of changes in Petabridge.Tracing.Zipkin v0.5.0](https://github.com/petabridge/Petabridge.Tracing.Zipkin/milestone/2).
+
 #### 0.4.0 August 28 2018 ###
 Added support for Zipkin's built-in Kafka span reporting capabilities, for users who are already considering operating at that kind of large scale.
 
