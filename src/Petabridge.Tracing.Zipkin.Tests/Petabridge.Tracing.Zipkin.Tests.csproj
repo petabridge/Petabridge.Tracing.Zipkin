@@ -2,7 +2,9 @@
   <Import Project="..\common.props" />
 
   <PropertyGroup>    
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>    
+    <SignAssembly>true</SignAssembly>    
+    <AssemblyOriginatorKeyFile>Petabridge.Tracing.Zipkin.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
