@@ -5,7 +5,9 @@
 // -----------------------------------------------------------------------
 
 using OpenTracing;
+using OpenTracing.Propagation;
 using OpenTracing.Util;
+using Petabridge.Tracing.Zipkin.Propagation;
 using Petabridge.Tracing.Zipkin.Reporting.Http;
 
 namespace Petabridge.Tracing.Zipkin
@@ -78,6 +80,12 @@ namespace Petabridge.Tracing.Zipkin
         ///     Used to determine which <see cref="Span" /> instances are included in the sample and which are not.
         /// </summary>
         public ITraceSampler Sampler { get; set; }
+
+        /// <summary>
+        /// The OpenTracing <see cref="IPropagator{TCarrier}"/> used for injecting and extracing Zipkin context
+        /// across process boundaries. Defaults to <see cref="B3Propagator"/>.
+        /// </summary>
+        public IPropagator<ITextMap> Propagator { get; set; }
 
         /// <summary>
         ///     Toggles Zipkin's "debug" mode on or off.
