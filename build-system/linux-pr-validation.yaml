@@ -18,6 +18,5 @@ steps:
 - task: Bash@3
   displayName: 'FAKE Build'
   inputs:
-    targetType: ./
     filePath: build.sh
     arguments: all

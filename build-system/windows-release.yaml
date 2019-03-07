@@ -2,13 +2,23 @@
 # See https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema for reference
 
 pool:
-  vmImage: Hosted VS2017
+  vmImage: vs2017-win2016
   demands: Cmd
+
+trigger:
+  branches:
+    include:
+      - refs/tags/*
 
 variables:
   - group: signingSecrets
   - group: nugetKeys
-  - group: githubData
+  - name: githubConnectionName:
+    value: Petabridge
+  - name: projectName
+    value: Petabridge.Tracing.Zipkin
+  - name: githubRepositoryName
+    value: petabridge/Petabridge.Tracing.Zipkin
 
 steps:
 - task: BatchScript@1
