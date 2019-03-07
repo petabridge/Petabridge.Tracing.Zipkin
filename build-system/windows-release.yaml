@@ -13,7 +13,7 @@ trigger:
 variables:
   - group: signingSecrets
   - group: nugetKeys
-  - name: githubConnectionName:
+  - name: githubConnectionName
     value: Petabridge
   - name: projectName
     value: Petabridge.Tracing.Zipkin
