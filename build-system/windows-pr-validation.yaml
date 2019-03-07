@@ -2,13 +2,11 @@
 # See https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema for reference
 
 pool:
-  vmImage: Hosted VS2017
+  vmImage: vs2017-win2016
   demands: Cmd
 
-variables:
-
 pr:
-  autoCancel: boolean # indicates whether additional pushes to a PR should cancel in-progress runs for the same PR. Defaults to true
+  autoCancel: true # indicates whether additional pushes to a PR should cancel in-progress runs for the same PR. Defaults to true
   branches:
     include: [ dev, master ] # branch names which will trigger a build
 
