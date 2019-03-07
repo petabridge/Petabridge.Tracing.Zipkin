@@ -5,6 +5,11 @@ pool:
   vmImage: vs2017-win2016
   demands: Cmd
 
+trigger:
+  branches:
+    include:
+      - refs/tags/*
+
 variables:
   - group: signingSecrets
   - group: nugetKeys
