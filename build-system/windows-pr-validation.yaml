@@ -5,8 +5,6 @@ pool:
   vmImage: Hosted VS2017
   demands: Cmd
 
-variables:
-
 pr:
   autoCancel: true # indicates whether additional pushes to a PR should cancel in-progress runs for the same PR. Defaults to true
   branches:
