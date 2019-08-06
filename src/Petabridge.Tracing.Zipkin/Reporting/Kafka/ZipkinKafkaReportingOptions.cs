@@ -12,6 +12,11 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
     /// <summary>
     ///     All of the options used to configure <see cref="Span" /> reporting via Kafka.
     /// </summary>
+    /// <example>
+    /// var tracer = new ZipkinTracer(new ZipkinTracerOptions(new Endpoint("AppKafka"),
+    ///     ZipkinKafkaSpanReporter.Create(new ZipkinKafkaReportingOptions(new[] {"localhost:19092"},
+    ///     debugLogging: true))));
+    /// </example>
     public sealed class ZipkinKafkaReportingOptions
     {
         public const int DefaultBatchSize = 30;
@@ -58,7 +63,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
         public int MaximumBatchSize { get; }
 
         /// <summary>
-        ///     The maxium allowed time interval between batches.
+        ///     The maximum allowed time interval between batches.
         /// </summary>
         public TimeSpan MaxBatchInterval { get; }
 
