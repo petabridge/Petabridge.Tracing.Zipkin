@@ -5,8 +5,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>High performance, commercially supported, professional-grade .NET Standard driver for Zipkin. OpenTracing-compatible.</Description>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>Petabridge.Tracing.Zipkin.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
 
