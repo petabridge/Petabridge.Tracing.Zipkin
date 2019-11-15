@@ -15,7 +15,7 @@ variables:
   - group: signingSecrets
   - group: nugetKeys
   - name: githubConnectionName
-    value: Petabridge
+    value: PbReleaseNotes
   - name: projectName
     value: Petabridge.Tracing.Zipkin
   - name: githubRepositoryName
