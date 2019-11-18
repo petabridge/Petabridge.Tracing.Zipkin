@@ -90,7 +90,7 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Http
             resp2.IsSuccessStatusCode.Should().BeTrue(
                 $"Expected success status code, but instead found [{resp2.StatusCode}][{resp2.ReasonPhrase}]");
 
-            var fullUri = new Uri(_httpBaseUri, $"api/v2/trace/{traceId}/");
+            var fullUri = new Uri(_httpBaseUri, $"api/v2/trace/{traceId}");
             HttpResponseMessage traceResp = null;
             var retries = 3;
             for (var i = 1; i <= retries; i++)
@@ -132,7 +132,7 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Http
                 traceId = active.Span.Context.AsInstanceOf<IZipkinSpanContext>().TraceId;
             }
 
-            var fullUri = new Uri(_httpBaseUri, $"api/v2/trace/{traceId}/");
+            var fullUri = new Uri(_httpBaseUri, $"api/v2/trace/{traceId}");
             HttpResponseMessage traceResp = null;
             var retries = 3;
             for (var i = 1; i <= retries; i++)

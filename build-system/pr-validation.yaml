@@ -14,9 +14,17 @@ pr:
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
 jobs:
-- template: azure-pipeline.template.yaml
-  parameters:
-    name: Windows
-    vmImage: 'vs2017-win2016'
-    scriptFileName: build.cmd
-    scriptArgs: all
+  - template: azure-pipeline.template.yaml
+    parameters:
+      name: 'windows_pr'
+      displayName: 'Windows PR Validation'
+      vmImage: 'vs2017-win2016'
+      scriptFileName: build.cmd
+      scriptArgs: all
+  - template: azure-pipeline.template.yaml
+    parameters:
+      name: 'linux_pr'
+      displayName: 'Linux PR Validation'
+      vmImage: 'ubuntu-16.04'
+      scriptFileName: ./build.sh
+      scriptArgs: all

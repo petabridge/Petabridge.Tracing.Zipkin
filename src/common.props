@@ -2,9 +2,8 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2018 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.5.1</VersionPrefix>
-    <PackageReleaseNotes>Upgraded to Akka.NET v1.3.14.
-Disabled strong-naming from Petabridge.Tracing.Zipkin.</PackageReleaseNotes>
+    <VersionPrefix>0.5.2</VersionPrefix>
+    <PackageReleaseNotes>Upgraded all dependencies.</PackageReleaseNotes>
     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
     <PackageProjectUrl>
       https://github.com/petabridge/Petabridge.Tracing.Zipkin
@@ -16,9 +15,9 @@ Disabled strong-naming from Petabridge.Tracing.Zipkin.</PackageReleaseNotes>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
-    <AkkaVersion>1.3.14</AkkaVersion>
+    <AkkaVersion>1.3.16</AkkaVersion>
     <XunitVersion>2.4.1</XunitVersion>
     <NBenchVersion>1.2.2</NBenchVersion>
-    <TestSdkVersion>15.9.0</TestSdkVersion>
+    <TestSdkVersion>16.4.0</TestSdkVersion>
   </PropertyGroup>
 </Project>
