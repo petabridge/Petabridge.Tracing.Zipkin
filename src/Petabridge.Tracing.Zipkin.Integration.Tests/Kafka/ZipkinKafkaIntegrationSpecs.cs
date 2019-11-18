@@ -70,7 +70,7 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Kafka
                     traceId = active.Span.Context.AsInstanceOf<IZipkinSpanContext>().TraceId;
                 }
 
-                var fullUri = new Uri(_httpBaseUri, $"api/v2/trace/{traceId}/");
+                var fullUri = new Uri(_httpBaseUri, $"api/v2/trace/{traceId}");
 
                 try
                 {
