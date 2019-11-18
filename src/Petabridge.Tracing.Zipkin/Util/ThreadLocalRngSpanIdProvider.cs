@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="ThreadLocalRngSpanIdProvider.cs" company="Petabridge, LLC">
-//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2019 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -36,15 +36,15 @@ namespace Petabridge.Tracing.Zipkin.Util
             return new TraceId(NextSpanIdLong());
         }
 
+        public string NextSpanId()
+        {
+            return NextSpanIdLong().ToString("x16");
+        }
+
         public long NextSpanIdLong()
         {
             Rng.Value.NextBytes(Buffers.Value);
             return BitConverter.ToInt64(Buffers.Value, 0);
-        }
-
-        public string NextSpanId()
-        {
-            return NextSpanIdLong().ToString("x16");
         }
     }
 }

@@ -1,6 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// -----------------------------------------------------------------------
+// <copyright file="ExternalSamplingSpecs.cs" company="Petabridge, LLC">
+//      Copyright (C) 2015 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
 using FluentAssertions;
 using Petabridge.Tracing.Zipkin.Sampling;
 using Petabridge.Tracing.Zipkin.Tracers;
@@ -12,7 +15,7 @@ namespace Petabridge.Tracing.Zipkin.Tests.Sampling
     {
         public ExternalSamplingSpecs()
         {
-            Tracer = new MockZipkinTracer(sampler:ExternalSampling.Instance);
+            Tracer = new MockZipkinTracer(sampler: ExternalSampling.Instance);
         }
 
         protected readonly MockZipkinTracer Tracer;

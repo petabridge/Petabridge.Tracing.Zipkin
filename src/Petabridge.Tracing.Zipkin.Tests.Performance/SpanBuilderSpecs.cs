@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------
 // <copyright file="SpanBuilderSpecs.cs" company="Petabridge, LLC">
-//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2019 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -33,7 +33,6 @@ namespace Petabridge.Tracing.Zipkin.Tests.Performance
             for (var i = 0; i < SpanCount; i++)
                 using (_mockTracer.BuildSpan("test1").WithTag("foo", "bar").StartActive())
                 {
-                   
                 }
 
             _opsCounter.Increment(SpanCount);

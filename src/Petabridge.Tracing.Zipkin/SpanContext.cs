@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="SpanContext.cs" company="Petabridge, LLC">
-//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2019 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -18,8 +18,8 @@ namespace Petabridge.Tracing.Zipkin
                   "are required to use strings as span and trace ids. Please use the string-based overload " +
                   "of this constructor instead.")]
         public SpanContext(TraceId traceId, long spanId, string parentId = null, bool debug = false,
-            bool sampled = false, bool shared = false) 
-            : this(traceId, spanId.ToString("x16"), parentId, 
+            bool sampled = false, bool shared = false)
+            : this(traceId, spanId.ToString("x16"), parentId,
                 debug, sampled, shared)
         {
         }

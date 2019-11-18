@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="Span.cs" company="Petabridge, LLC">
-//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2019 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -185,16 +185,6 @@ namespace Petabridge.Tracing.Zipkin
             return Log(timestamp, MergeFields(fields));
         }
 
-        public ISpan Log(IDictionary<string, object> fields)
-        {
-            return Log(_tracer.TimeProvider.Now, MergeFields(fields));
-        }
-
-        public ISpan Log(DateTimeOffset timestamp, IDictionary<string, object> fields)
-        {
-            return Log(timestamp, MergeFields(fields));
-        }
-
         public ISpan Log(string @event)
         {
             return Log(_tracer.TimeProvider.Now, @event);
@@ -240,6 +230,16 @@ namespace Petabridge.Tracing.Zipkin
         ///     For OpenTracing compatibility.
         /// </summary>
         public ISpanContext Context => TypedContext;
+
+        public ISpan Log(IDictionary<string, object> fields)
+        {
+            return Log(_tracer.TimeProvider.Now, MergeFields(fields));
+        }
+
+        public ISpan Log(DateTimeOffset timestamp, IDictionary<string, object> fields)
+        {
+            return Log(timestamp, MergeFields(fields));
+        }
 
         /// <summary>
         ///     Sets the <see cref="RemoteEndpoint" /> for this span.
