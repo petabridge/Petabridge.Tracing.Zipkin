@@ -10,7 +10,6 @@ using System.Linq;
 using Akka.Actor;
 using Akka.Event;
 using Confluent.Kafka;
-using Confluent.Kafka.Serialization;
 using Phobos.Actor.Common;
 
 namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
@@ -58,16 +57,19 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
                     RescheduleBatchTransmission();
             });
 
-            Receive<Message<Null, byte[]>>(msg =>
+            Receive<DeliveryResult<Null, byte[]>>(result =>
             {
-                if (msg.Error.HasError && _log.IsErrorEnabled)
+                if (_log.IsDebugEnabled)
+                    _log.Debug("Successfully posted spans [{0} bytes] to Kafka for topic [{1}]", result.Message.Value.Length, result.Topic);
+            });
+            
+            Receive<ProduceException<Null, byte[]>>(ex =>
+            {
+                if (_log.IsErrorEnabled)
                     _log.Error(
                         "Error [{0}][{1}] occurred while uploading spans [{3} bytes] to Kafka endpoints [{2}] for topic [{4}]",
-                        msg.Error.Code, msg.Error.Reason,
-                        string.Join(",", _options.BootstrapServers), msg.Value.Length, msg.Topic);
-                else if (_log.IsDebugEnabled)
-                    _log.Debug("Successfully posted spans [{0} bytes] to Kafka for topic [{1}]", msg.Value.Length,
-                        msg.Topic);
+                        ex.Error.Code, ex.Error.Reason,
+                        string.Join(",", _options.BootstrapServers), ex.DeliveryResult.Message.Value.Length, ex.DeliveryResult.Topic);
             });
 
             // Indicates that one of our HTTP requests timed out
@@ -81,7 +83,8 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
 
         private void ExecuteDelivery()
         {
-            _kafkaProducer.TransmitSpans(PendingMessages).PipeTo(Self);
+            _kafkaProducer.TransmitSpans(PendingMessages)
+                .PipeTo(Self, failure: ex => ex as ProduceException<Null, byte[]>);
 
             PendingMessages.Clear();
             RescheduleBatchTransmission();
@@ -98,9 +101,10 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
         protected override void PreStart()
         {
             RescheduleBatchTransmission();
-            _kafkaProducer = new KafkaTransmitter(_options.TopicName,
-                new Producer<Null, byte[]>(_options.ToDriverConfig(),
-                    new NullSerializer(), new ByteArraySerializer()), _options.Serializer);
+            var producerBuilder = new ProducerBuilder<Null, byte[]>(_options.ToDriverConfig())
+                .SetKeySerializer(Serializers.Null)
+                .SetValueSerializer(Serializers.ByteArray);
+            _kafkaProducer = new KafkaTransmitter(_options.TopicName, producerBuilder.Build(), _options.Serializer);
 
             if (_options.DebugLogging)
                 _log.Debug("Connected to Kafka at [{0}] on topic [{1}] for Zipkin",
