@@ -87,9 +87,9 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
         ///     Creates a configuration object in the style expected by the Confluent.Kafka driver.
         /// </summary>
         /// <returns>A new dictionary instance each time.</returns>
-        public IReadOnlyDictionary<string, object> ToDriverConfig()
+        public IReadOnlyDictionary<string, string> ToDriverConfig()
         {
-            return new Dictionary<string, object>
+            return new Dictionary<string, string>
             {
                 {"bootstrap.servers", string.Join(",", BootstrapServers)},
                 {"request.required.acks", "0"} // don't wait for broker to send ACKs back (it's just trace data)

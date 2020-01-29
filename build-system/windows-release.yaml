@@ -9,6 +9,7 @@ trigger:
   branches:
     include:
       - refs/tags/*
+      
 pr: none
 
 variables:
@@ -26,7 +27,7 @@ steps:
   displayName: 'FAKE Build'
   inputs:
     filename: build.cmd
-    arguments: 'All SignClientUser=$(signingUsername) SignClientSecret=$(signingPassword) nugetpublishurl=https://api.nuget.org/v3/index.json nugetkey=$(nugetKey)'
+    arguments: 'nuget SignClientUser=$(signingUsername) SignClientSecret=$(signingPassword) nugetpublishurl=https://api.nuget.org/v3/index.json nugetkey=$(nugetKey)'
 
 - task: GitHubRelease@0
   displayName: 'GitHub release (create)'

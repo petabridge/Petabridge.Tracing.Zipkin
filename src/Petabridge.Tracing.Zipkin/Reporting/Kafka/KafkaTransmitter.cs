@@ -16,11 +16,11 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
     /// </summary>
     public sealed class KafkaTransmitter : IDisposable
     {
-        private readonly Producer<Null, byte[]> _producer;
+        private readonly IProducer<Null, byte[]> _producer;
         private readonly ISpanSerializer _serializer;
         private readonly string _topicName;
 
-        public KafkaTransmitter(string topicName, Producer<Null, byte[]> producer, ISpanSerializer serializer)
+        public KafkaTransmitter(string topicName, IProducer<Null, byte[]> producer, ISpanSerializer serializer)
         {
             _producer = producer;
             _serializer = serializer;
@@ -32,14 +32,13 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Kafka
             _producer?.Dispose();
         }
 
-        public async Task<Message<Null, byte[]>> TransmitSpans(IEnumerable<Span> spans)
+        public async Task<DeliveryResult<Null, byte[]>> TransmitSpans(IEnumerable<Span> spans)
         {
-            using (var stream =
-                SerializationStreamManager.StreamManager.GetStream("Petabridge.Tracing.Zipkin.KafkaTransmitter"))
+            using (var stream = SerializationStreamManager.StreamManager.GetStream("Petabridge.Tracing.Zipkin.KafkaTransmitter"))
             {
                 _serializer.Serialize(stream, spans);
                 var outboundBytes = stream.ToArray();
-                return await _producer.ProduceAsync(_topicName, null, outboundBytes).ConfigureAwait(false);
+                return await _producer.ProduceAsync(_topicName, new Message<Null, byte[]>() { Key = null, Value = outboundBytes }).ConfigureAwait(false);
             }
         }
     }
