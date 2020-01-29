@@ -228,7 +228,7 @@ Target "PublishNuget" (fun _ ->
     let projects = !! "./bin/nuget/*.nupkg" -- "./bin/nuget/*.symbols.nupkg"
     let apiKey = getBuildParamOrDefault "nugetkey" ""
     let source = getBuildParamOrDefault "nugetpublishurl" ""
-    let symbolSource = getBuildParamOrDefault "symbolspublishurl" ""
+    let symbolSource = source
     let shouldPublishSymbolsPackages = not (symbolSource = "")
 
     if (not (source = "") && not (apiKey = "") && shouldPublishSymbolsPackages) then
