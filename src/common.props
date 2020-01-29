@@ -2,8 +2,9 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2018 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.5.2</VersionPrefix>
-    <PackageReleaseNotes>Upgraded all dependencies.</PackageReleaseNotes>
+    <VersionPrefix>0.5.3</VersionPrefix>
+    <PackageReleaseNotes>Upgraded to latest Akka.NET, Kafka drivers.
+[OpenTracing: Using AsyncLocalScopeManager as a default tracer's ScopeManager](https://github.com/petabridge/Petabridge.Tracing.Zipkin/pull/131)</PackageReleaseNotes>
     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
     <PackageProjectUrl>
       https://github.com/petabridge/Petabridge.Tracing.Zipkin
