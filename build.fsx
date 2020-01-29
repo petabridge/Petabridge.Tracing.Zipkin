@@ -159,7 +159,7 @@ Target "SignPackages" (fun _ ->
     if(canSign) then
         log "Signing information is available."
         
-        let assemblies = !! (outputNuGet @@ "*.nupkg")
+        let assemblies = !! (outputNuGet @@ "*.*upkg")
 
         let signPath =
             let globalTool = tryFindFileOnPath "SignClient.exe"
