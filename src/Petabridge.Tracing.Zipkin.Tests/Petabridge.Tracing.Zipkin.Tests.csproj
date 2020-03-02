@@ -2,8 +2,17 @@
   <Import Project="..\common.props" />
 
   <PropertyGroup>    
-    <TargetFramework>netcoreapp2.1</TargetFramework>    
+    <TargetFrameworks>netcoreapp2.1;net461;</TargetFrameworks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="JsonSerializationSpec.JsonApprovalSpecWithParent.approved.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonSerializationSpec.JsonApprovalSpecWithSimpleSpan.approved.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Akka.TestKit.Xunit2" Version="$(AkkaVersion)" />
@@ -12,6 +21,10 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
     <PackageReference Include="xunit" Version="$(XunitVersion)" />
     <PackageReference Include="xunit.runner.visualstudio" Version="$(XunitVersion)" />
+  </ItemGroup>
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+    <PackageReference Include="ApprovalTests" Version="3.0.15" />
   </ItemGroup>
 
   <ItemGroup>
