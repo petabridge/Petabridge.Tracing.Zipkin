@@ -8,6 +8,7 @@ using System;
 using Akka.Actor;
 using Akka.Configuration;
 using Akka.Util.Internal;
+using Hocon;
 
 namespace Petabridge.Tracing.Zipkin.Reporting.Http
 {

@@ -128,27 +128,33 @@ Target "RunTests" (fun _ ->
     projects |> Seq.iter (runSingleProject)
 )
 
-Target "NBench" <| fun _ ->
-    let projects = 
-        match (isWindows) with 
-        | true -> !! "./src/**/*.Tests.Performance.csproj"
-        | _ -> !! "./src/**/*.Tests.Performance.csproj" // if you need to filter specs for Linux vs. Windows, do it here
+Target "NBench" (fun _ ->
+    ensureDirectory outputPerfTests
+    let nbenchTestAssemblies = !! "./src/**/*Tests.Performance.csproj" 
 
+    nbenchTestAssemblies |> Seq.iter(fun project -> 
+        let args = new StringBuilder()
+                |> append "run"
+                |> append "--no-build"
+                |> append "-c"
+                |> append configuration
+                |> append " -- "
+                |> append "--output"
+                |> append outputPerfTests
+                |> append "--concurrent" 
+                |> append "true"
+                |> append "--trace"
+                |> append "true"
+                |> append "--diagnostic"               
+                |> toText
 
-    let runSingleProject project =
-        let arguments =
-            match (hasTeamCity) with
-            | true -> (sprintf "nbench --nobuild --teamcity --concurrent true --trace true --output %s" (outputPerfTests))
-            | false -> (sprintf "nbench --nobuild --concurrent true --trace true --output %s" (outputPerfTests))
-
-        let result = ExecProcess(fun info ->
+        let result = ExecProcess(fun info -> 
             info.FileName <- "dotnet"
             info.WorkingDirectory <- (Directory.GetParent project).FullName
-            info.Arguments <- arguments) (TimeSpan.FromMinutes 30.0) 
-        
-        ResultHandling.failBuildIfXUnitReportedError TestRunnerErrorLevel.DontFailBuild result
-    
-    projects |> Seq.iter runSingleProject
+            info.Arguments <- args) (System.TimeSpan.FromMinutes 15.0) (* Reasonably long-running task. *)
+        if result <> 0 then failwithf "NBench.Runner failed. %s %s" "dotnet" args
+    )
+)
 
 
 //--------------------------------------------------------------------------------
@@ -159,7 +165,7 @@ Target "SignPackages" (fun _ ->
     if(canSign) then
         log "Signing information is available."
         
-        let assemblies = !! (outputNuGet @@ "*.nupkg")
+        let assemblies = !! (outputNuGet @@ "*.*upkg")
 
         let signPath =
             let globalTool = tryFindFileOnPath "SignClient.exe"
@@ -225,22 +231,13 @@ Target "CreateNuget" (fun _ ->
 )
 
 Target "PublishNuget" (fun _ ->
-    let projects = !! "./bin/nuget/*.nupkg" -- "./bin/nuget/*.symbols.nupkg"
+    let projects = !! "./bin/nuget/*.nupkg" 
     let apiKey = getBuildParamOrDefault "nugetkey" ""
     let source = getBuildParamOrDefault "nugetpublishurl" ""
-    let symbolSource = getBuildParamOrDefault "symbolspublishurl" ""
+    let symbolSource = source
     let shouldPublishSymbolsPackages = not (symbolSource = "")
 
     if (not (source = "") && not (apiKey = "") && shouldPublishSymbolsPackages) then
-        let runSingleProject project =
-            DotNetCli.RunCommand
-                (fun p -> 
-                    { p with 
-                        TimeOut = TimeSpan.FromMinutes 10. })
-                (sprintf "nuget push %s --api-key %s --source %s --symbol-source %s" project apiKey source symbolSource)
-
-        projects |> Seq.iter (runSingleProject)
-    else if (not (source = "") && not (apiKey = "") && not shouldPublishSymbolsPackages) then
         let runSingleProject project =
             DotNetCli.RunCommand
                 (fun p -> 
