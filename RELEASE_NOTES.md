@@ -1,2 +1,2 @@
-#### 0.6.0-beta1 January 29 2020 ###
-* Using Akka.NET v1.4.0-beta4 internally.
+#### 0.6.0-rc1 March 02 2020 ###
+* Using Akka.NET v1.4.0-rc1 internally.
