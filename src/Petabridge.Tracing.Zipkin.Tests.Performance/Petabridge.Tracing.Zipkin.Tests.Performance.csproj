@@ -3,15 +3,13 @@
 
 
   <PropertyGroup>    
-    <TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
-    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <RuntimeFrameworkVersion>2.1.6</RuntimeFrameworkVersion>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <TargetFramework>$(NetCoreTestVersion)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
     <PackageReference Include="NBench" Version="$(NBenchVersion)" />
-    <DotNetCliToolReference Include="dotnet-nbench" Version="$(NBenchVersion)" />
   </ItemGroup>
 
   <ItemGroup>
