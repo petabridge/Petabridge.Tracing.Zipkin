@@ -3,7 +3,7 @@
     <Copyright>Copyright © 2015-2020 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
     <VersionPrefix>0.6.0</VersionPrefix>
-    <PackageReleaseNotes>Using Akka.NET v1.4.0-rc1 internally.</PackageReleaseNotes>
+    <PackageReleaseNotes>Using Akka.NET v1.4.1 internally.</PackageReleaseNotes>
     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
     <PackageProjectUrl>
       https://github.com/petabridge/Petabridge.Tracing.Zipkin
@@ -15,7 +15,7 @@
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
-    <AkkaVersion>1.4.1-rc3</AkkaVersion>
+    <AkkaVersion>1.4.1</AkkaVersion>
     <XunitVersion>2.4.1</XunitVersion>
     <NBenchVersion>2.0.1</NBenchVersion>
     <TestSdkVersion>16.5.0</TestSdkVersion>
