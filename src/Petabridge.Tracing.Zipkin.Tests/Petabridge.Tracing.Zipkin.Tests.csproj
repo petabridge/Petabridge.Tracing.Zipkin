@@ -8,7 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Akka.TestKit.Xunit2" Version="$(AkkaVersion)" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="FsCheck.Xunit" Version="2.14.3" />
+    <PackageReference Include="FsCheck.Xunit" Version="2.14.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
     <PackageReference Include="xunit" Version="$(XunitVersion)" />
     <PackageReference Include="xunit.runner.visualstudio" Version="$(XunitVersion)" />
