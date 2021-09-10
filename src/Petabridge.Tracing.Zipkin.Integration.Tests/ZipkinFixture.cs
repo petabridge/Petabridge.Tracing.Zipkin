@@ -55,7 +55,14 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests
 
         protected async Task<string> StartZipkinContainer(string[] links, string[] environmentArgs)
         {
-            var images = await _client.Images.ListImagesAsync(new ImagesListParameters {MatchName = ZipkinImageName});
+            var images = await _client.Images.ListImagesAsync(new ImagesListParameters
+            {
+                Filters = new Dictionary<string, IDictionary<string, bool>>
+                {
+                    {"reference", new Dictionary<string, bool> {{ZipkinImageName, true}}}
+                }
+            });
+            
             if (images.Count == 0)
                 await _client.Images.CreateImageAsync(
                     new ImagesCreateParameters {FromImage = ZipkinImageName, Tag = "latest"}, null,

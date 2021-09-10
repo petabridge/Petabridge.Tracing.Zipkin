@@ -39,7 +39,14 @@ namespace Petabridge.Tracing.Zipkin.Integration.Tests.Kafka
 
         private async Task<string> StartKafka()
         {
-            var images = await _client.Images.ListImagesAsync(new ImagesListParameters {MatchName = KafkaImageName});
+            var images = await _client.Images.ListImagesAsync(new ImagesListParameters
+            {
+                Filters = new Dictionary<string, IDictionary<string, bool>>
+                {
+                    {"reference", new Dictionary<string, bool> {{KafkaImageName, true}}}
+                }
+            });
+
             if (images.Count == 0)
                 await _client.Images.CreateImageAsync(
                     new ImagesCreateParameters {FromImage = KafkaImageName, Tag = "latest"}, null,
