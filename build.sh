@@ -16,6 +16,7 @@ DOTNET_INSTALLER_URL=https://dot.net/v1/dotnet-install.sh
 DOTNET_CHANNEL=LTS;
 DOCFX_VERSION=2.49.0
 DOCFX_EXE=$TOOLS_DIR/docfx.console/tools/docfx.exe
+SIGN_CLI_VERSION=1.2.109
 
 # Define default arguments.
 TARGET="Default"
@@ -112,7 +113,7 @@ fi
 # INSTALL SignTool
 ###########################################################################
 if [ ! -f "$SIGNTOOL_EXE" ]; then
-    "$SCRIPT_DIR/.dotnet/dotnet" tool install SignClient --version 1.0.82 --tool-path "$SIGNCLIENT_DIR"
+    "$SCRIPT_DIR/.dotnet/dotnet" tool install SignClient --version $SIGN_CLI_VERSION --tool-path "$SIGNCLIENT_DIR"
     if [ $? -ne 0 ]; then
         echo "SignClient already installed."
     fi

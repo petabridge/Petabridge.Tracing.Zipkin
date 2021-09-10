@@ -37,6 +37,7 @@ $NugetVersion = "4.1.0";
 $NugetUrl = "https://dist.nuget.org/win-x86-commandline/v$NugetVersion/nuget.exe"
 $ProtobufVersion = "3.4.0"
 $DocfxVersion = "2.49.0"
+$SignClientVersion = "1.2.109";
 
 # Make sure tools folder exists
 $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
@@ -140,7 +141,7 @@ if (Get-Command signclient -ErrorAction SilentlyContinue) {
 else{
     $SignClientFolder = Join-Path $ToolPath "signclient"
     Write-Host "SignClient not found. Installing to ... $SignClientFolder"
-    dotnet tool install SignClient --version 1.0.82 --tool-path "$SignClientFolder"
+    dotnet tool install SignClient --version $SignClientVersion --tool-path "$SignClientFolder"
 }
 
 ###########################################################################
