@@ -1,0 +1,33 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "11:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: Akka.TestKit.Xunit2
+    versions:
+    - 1.4.16
+    - 1.4.17
+    - 1.4.18
+  - dependency-name: Akka
+    versions:
+    - 1.4.16
+    - 1.4.17
+    - 1.4.18
+  - dependency-name: Microsoft.IO.RecyclableMemoryStream
+    versions:
+    - 1.4.0
+    - 1.4.1
+  - dependency-name: FsCheck.Xunit
+    versions:
+    - 2.14.4
+    - 2.14.5
+    - 2.14.6
+    - 2.15.0
+    - 2.15.1
+  - dependency-name: Microsoft.NET.Test.Sdk
+    versions:
+    - 16.9.1
