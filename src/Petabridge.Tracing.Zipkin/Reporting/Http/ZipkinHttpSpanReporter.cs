@@ -19,7 +19,8 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
     {
         private static readonly AtomicCounter NameCounter = new AtomicCounter(0);
 
-        private static readonly Config NormalHocon = ConfigurationFactory.Empty;
+        private static readonly Config NormalHocon = ConfigurationFactory
+            .ParseString(@"akka.actor.internal-dispatcher.executor = ""default-executor""");
         private static readonly Config DebugHocon = ConfigurationFactory.ParseString(@"akka.loglevel = DEBUG");
         private readonly ActorSystem _ownedActorSystem; // if we own the ActorSystem, we have to kill it.
         private readonly IActorRef _reporterActorRef;
@@ -63,7 +64,7 @@ namespace Petabridge.Tracing.Zipkin.Reporting.Http
             {
                 weOwnActorSystem = true;
                 actorSystem = ActorSystem.Create("pbzipkin",
-                    options.DebugLogging ? DebugHocon : NormalHocon);
+                    options.DebugLogging ? DebugHocon.WithFallback(NormalHocon) : NormalHocon);
             }
 
             // spawn as a System actor, so in the event of being in a non-owned system our traces get shut down
