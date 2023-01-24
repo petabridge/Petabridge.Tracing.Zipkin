@@ -1,5 +1,7 @@
 # Petabridge.Tracing.Zipkin
 
+## UPDATE: January, 2023 - the [OpenTracing project](https://opentracing.io/) has now been superseded by [OpenTelemetry](https://opentelemetry.io/docs/migration/opentracing/). You should use the [OTEL Exporter for Zipkin](https://www.nuget.org/packages/OpenTelemetry.Exporter.Zipkin) instead going forward.
+
 YAZDC - Yet Another Zipkin Driver for C#.
 
 [Petabridge](https://petabridge.com/) develops highly tested, open source infrastructure software for .NET developers professionally.
